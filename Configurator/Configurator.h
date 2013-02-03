@@ -22,7 +22,7 @@
 #include "resource.h"
 #include <string>
 #include <vector>
-#include "DeviceAPOInfo.h"
+#include "../DeviceAPOInfo.h"
 
 class Configurator
 {
@@ -38,6 +38,7 @@ private:
 	HWND deviceList;
 	HWND okButton;
 	HWND cancelButton;
+	HWND copyDeviceCommandButton;
 	HWND requestLabel;
 	std::wstring cmdLine;
 
