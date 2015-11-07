@@ -22,6 +22,7 @@
 #include "filters/CopyFilter.h"
 #include "Editor/IFilterGUI.h"
 #include "CopyFilterGUIScene.h"
+#include "Editor/FilterTable.h"
 
 namespace Ui {
 class CopyFilterGUI;
@@ -32,7 +33,7 @@ class CopyFilterGUI : public IFilterGUI
 	Q_OBJECT
 
 public:
-	explicit CopyFilterGUI(CopyFilter* filter);
+	explicit CopyFilterGUI(CopyFilter* filter, FilterTable* filterTable);
 	~CopyFilterGUI();
 
 	void configureChannels(std::vector<std::wstring>& channelNames) override;
