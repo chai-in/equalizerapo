@@ -36,6 +36,9 @@ public:
 	void configureChannels(std::vector<std::wstring>& channelNames) override;
 	void store(QString& command, QString& parameters) override;
 
+	void loadPreferences(const QVariantMap& prefs) override;
+	void storePreferences(QVariantMap& prefs) override;
+
 private slots:
 	void on_actionPowerOn_toggled(bool checked);
 
