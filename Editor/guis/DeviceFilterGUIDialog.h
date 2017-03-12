@@ -47,4 +47,4 @@ private:
 	Ui::DeviceFilterGUIDialog* ui;
 };
 
-Q_DECLARE_METATYPE(const DeviceAPOInfo*)
+Q_DECLARE_METATYPE(std::shared_ptr<AbstractAPOInfo>)
