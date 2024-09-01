@@ -21,7 +21,7 @@
 
 #pragma once
 
-class DPIHelper
+class GUIHelper
 {
 public:
 	static QSize scale(QSize size);
@@ -29,4 +29,5 @@ public:
 	static double scaleZoom(double zoom);
 	static double invScale(int pixel);
 	static double invScaleZoom(double zoom);
+    static bool isDarkMode();
 };
