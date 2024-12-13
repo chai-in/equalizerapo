@@ -61,6 +61,7 @@ SetCompressor /SOLID lzma
   !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
   
   !insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder
+  !insertmacro MUI_PAGE_COMPONENTS
   !insertmacro MUI_PAGE_INSTFILES
   !insertmacro MUI_PAGE_FINISH
 
@@ -148,8 +149,13 @@ FunctionEnd
 
 ;--------------------------------
 ;Installer Sections
+LangString SecCheckForUpdates ${LANG_ENGLISH} "Check for updates automatically"
+LangString SecCheckForUpdates ${LANG_GERMAN} "Automatisch auf Updates prüfen"
 
-Section "Install" SecInstall
+Section $(SecCheckForUpdates) SecCheckForUpdates
+SectionEnd
+
+Section "-Install"
   SetOutPath "$INSTDIR"
 
   ;Possibly remove files from previous installation
@@ -185,6 +191,7 @@ Section "Install" SecInstall
   File "${BINPATH}\DeviceSelector.exe"
   File "${BINPATH}\Benchmark.exe"
   File "${BINPATH}\VoicemeeterClient.exe"
+  File "${BINPATH}\UpdateChecker.exe"
   
   File "${BINPATH_EDITOR}\Editor.exe"
   
@@ -195,6 +202,7 @@ Section "Install" SecInstall
   File "${LIBPATH}\msvcp140_2.dll"
   File "${LIBPATH}\Qt6Core.dll"
   File "${LIBPATH}\Qt6Gui.dll"
+  File "${LIBPATH}\Qt6Network.dll"
   File "${LIBPATH}\Qt6Svg.dll"
   File "${LIBPATH}\Qt6Widgets.dll"
   File "${LIBPATH}\vcruntime140.dll"
@@ -207,12 +215,14 @@ Section "Install" SecInstall
   CreateDirectory "$INSTDIR\qt\imageformats"
   CreateDirectory "$INSTDIR\qt\platforms"
   CreateDirectory "$INSTDIR\qt\styles"
+  CreateDirectory "$INSTDIR\qt\tls"
   
   File /oname=qt\iconengines\qsvgicon.dll "${LIBPATH}\qt\iconengines\qsvgicon.dll"
   File /oname=qt\imageformats\qico.dll "${LIBPATH}\qt\imageformats\qico.dll"
   File /oname=qt\imageformats\qsvg.dll "${LIBPATH}\qt\imageformats\qsvg.dll"
   File /oname=qt\platforms\qwindows.dll "${LIBPATH}\qt\platforms\qwindows.dll"
   File /oname=qt\styles\qmodernwindowsstyle.dll "${LIBPATH}\qt\styles\qmodernwindowsstyle.dll"
+  File /oname=qt\tls\qschannelbackend.dll "${LIBPATH}\qt\tls\qschannelbackend.dll"
   
   File "Configuration tutorial (online).url"
   File "Configuration reference (online).url"
@@ -271,6 +281,12 @@ Section "Install" SecInstall
   ExecWait '"$SYSDIR\regsvr32.exe" /s "$INSTDIR\EqualizerAPO.dll"'
 
   ExecWait '"$INSTDIR\DeviceSelector.exe" /i' $0
+  
+  ${If} ${SectionIsSelected} ${SecCheckForUpdates}
+    ExecWait '"$INSTDIR\UpdateChecker.exe" -i'
+  ${Else}
+    ExecWait '"$INSTDIR\UpdateChecker.exe" -u'
+  ${EndIf}
 
   ;Hopefully, the renamed files can be deleted without reboot after the Device Selector has restarted the audio service
   ${ForEachIn} deleteAfterRenameArray $R0 $R1
@@ -304,9 +320,10 @@ Section "-un.Uninstall"
 	SetRegView 64
   !endif
 
-  ;Device selector only works if working directory is set to application directory
+  ;Qt applications only work if working directory is set to application directory
   Push $OUTDIR
   SetOutPath $INSTDIR
+  ExecWait '"$INSTDIR\UpdateChecker.exe" -u'
   ExecWait '"$INSTDIR\DeviceSelector.exe" /u'
   Pop $OUTDIR
   SetOutPath $OUTDIR
@@ -330,6 +347,7 @@ Section "-un.Uninstall"
   Delete /REBOOTOK "$INSTDIR\vcruntime140.dll"
   Delete "$INSTDIR\Qt6Widgets.dll"
   Delete "$INSTDIR\Qt6Svg.dll"
+  Delete "$INSTDIR\Qt6Network.dll"
   Delete "$INSTDIR\Qt6Gui.dll"
   Delete "$INSTDIR\Qt6Core.dll"
   Delete /REBOOTOK "$INSTDIR\msvcp140_2.dll"
@@ -339,6 +357,7 @@ Section "-un.Uninstall"
   Delete /REBOOTOK "$INSTDIR\fftw3f.dll"
   Delete "$INSTDIR\Editor.exe"
   
+  Delete "$INSTDIR\UpdateChecker.exe"
   Delete "$INSTDIR\VoicemeeterClient.exe"
   Delete "$INSTDIR\Benchmark.exe"
   Delete "$INSTDIR\DeviceSelector.exe"
