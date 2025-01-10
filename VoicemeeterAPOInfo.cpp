@@ -26,6 +26,7 @@
 #include <TlHelp32.h>
 #include <Winternl.h>
 #include "helpers/RegistryHelper.h"
+#include "helpers/StringHelper.h"
 #include "VoicemeeterAPOInfo.h"
 
 using namespace std;
@@ -58,11 +59,11 @@ void VoicemeeterAPOInfo::prependInfos(vector<shared_ptr<AbstractAPOInfo>>& list)
 	{
 		size_t index = voicemeeterDirectory.find_last_of(L'\\');
 
-		wstring setupFilename = voicemeeterDirectory.substr(index + 1);
+		wstring setupFilename = StringHelper::toLowerCase(voicemeeterDirectory.substr(index + 1));
 		long voicemeeterType = 1;
-		if (setupFilename == L"VoicemeeterProSetup.exe")
+		if (setupFilename == L"voicemeeterprosetup.exe")
 			voicemeeterType = 2;// banana
-		else if (setupFilename == L"Voicemeeter8Setup.exe")
+		else if (setupFilename == L"voicemeeter8setup.exe")
 			voicemeeterType = 3;// potato
 
 		unsigned outputCount;
