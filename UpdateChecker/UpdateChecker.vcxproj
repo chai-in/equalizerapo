@@ -357,6 +357,7 @@
   </ItemGroup>
   <ItemGroup>
     <QtTranslation Include="translations\UpdateChecker_de.ts" />
+    <QtTranslation Include="translations\UpdateChecker_zh_CN.ts" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="icons\software-update-available.ico" />

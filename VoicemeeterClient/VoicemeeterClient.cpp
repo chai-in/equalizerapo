@@ -1,20 +1,20 @@
 /*
-    This file is part of Equalizer APO, a system-wide equalizer.
-    Copyright (C) 2022  Jonas Thedering
+	This file is part of Equalizer APO, a system-wide equalizer.
+	Copyright (C) 2022  Jonas Thedering
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License along
-    with this program; if not, write to the Free Software Foundation, Inc.,
-    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+	You should have received a copy of the GNU General Public License along
+	with this program; if not, write to the Free Software Foundation, Inc.,
+	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
 #include "stdafx.h"
@@ -63,7 +63,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	}
 	catch (InitError e)
 	{
-		MessageBoxW(NULL, e.getMessage().c_str(), L"Init Error", MB_APPLMODAL | MB_OK | MB_ICONERROR);
+		MessageBoxW(NULL, e.getMessage().c_str(), L"Equalizer APO Voicemeeter Client Initialization Error", MB_APPLMODAL | MB_OK | MB_ICONERROR);
 		return -1;
 	}
 }
@@ -153,61 +153,61 @@ void VoicemeeterClient::handle(long nCommand, void* lpData, long nnn)
 	switch (nCommand)
 	{
 	case VBVMR_CBCOMMAND_STARTING:
-		{
-			VBVMR_LPT_AUDIOINFO audioInfo = (VBVMR_LPT_AUDIOINFO)lpData;
-			sampleRate = (float)audioInfo->samplerate;
-			maxFrameCount = audioInfo->nbSamplePerFrame;
-			for (FilterEngine* engine : engines)
-				if (engine != NULL)
-					engine->initialize(sampleRate, 8, 8, 8, 0, maxFrameCount);
-			VoicemeeterAPOInfo::saveVoicemeeterSampleRate((unsigned)audioInfo->samplerate);
-		}
-		break;
+	{
+		VBVMR_LPT_AUDIOINFO audioInfo = (VBVMR_LPT_AUDIOINFO)lpData;
+		sampleRate = (float)audioInfo->samplerate;
+		maxFrameCount = audioInfo->nbSamplePerFrame;
+		for (FilterEngine* engine : engines)
+			if (engine != NULL)
+				engine->initialize(sampleRate, 8, 8, 8, 0, maxFrameCount);
+		VoicemeeterAPOInfo::saveVoicemeeterSampleRate((unsigned)audioInfo->samplerate);
+	}
+	break;
 	case VBVMR_CBCOMMAND_ENDING:
 		break;
 	case VBVMR_CBCOMMAND_CHANGE:
 		PostThreadMessage(mainThreadId, WM_COMMAND, IDM_RESTART, 0);
 		break;
 	case VBVMR_CBCOMMAND_BUFFER_OUT:
+	{
+		VBVMR_LPT_AUDIOBUFFER audioBuffer = (VBVMR_LPT_AUDIOBUFFER)lpData;
+		int nbi = audioBuffer->audiobuffer_nbi;
+		int nbo = audioBuffer->audiobuffer_nbo;
+		unsigned n = min(nbi, nbo) / 8;
+
+		for (unsigned i = 0; i < n; i++)
 		{
-			VBVMR_LPT_AUDIOBUFFER audioBuffer = (VBVMR_LPT_AUDIOBUFFER)lpData;
-			int nbi = audioBuffer->audiobuffer_nbi;
-			int nbo = audioBuffer->audiobuffer_nbo;
-			unsigned n = min(nbi, nbo) / 8;
+			FilterEngine* engine = NULL;
+			if (i < engines.size())
+				engine = engines[i];
 
-			for (unsigned i = 0; i < n; i++)
+			bool idle = true;
+			bool inputSilent = true;
+			if (engine != NULL)
 			{
-				FilterEngine* engine = NULL;
-				if (i < engines.size())
-					engine = engines[i];
+				inputSilent = isBufferSilent(audioBuffer->audiobuffer_r + 8 * i, audioBuffer->audiobuffer_nbs);
+				idle = inputSilent && idleSampleCounts[i] > 10 * engine->getSampleRate();
+			}
 
-				bool idle = true;
-				bool inputSilent = true;
-				if (engine != NULL)
-				{
-					inputSilent = isBufferSilent(audioBuffer->audiobuffer_r + 8 * i, audioBuffer->audiobuffer_nbs);
-					idle = inputSilent && idleSampleCounts[i] > 10 * engine->getSampleRate();
-				}
+			// avoid processing when idle (Voicemeeter does still call this when no audio is played)
+			if (!idle)
+			{
+				engine->process(audioBuffer->audiobuffer_w + 8 * i, audioBuffer->audiobuffer_r + 8 * i, audioBuffer->audiobuffer_nbs);
 
-				// avoid processing when idle (Voicemeeter does still call this when no audio is played)
-				if (!idle)
-				{
-					engine->process(audioBuffer->audiobuffer_w + 8 * i, audioBuffer->audiobuffer_r + 8 * i, audioBuffer->audiobuffer_nbs);
-
-					bool outputSilent = isBufferSilent(audioBuffer->audiobuffer_w + 8 * i, audioBuffer->audiobuffer_nbs);
-					if (inputSilent && outputSilent)
-						idleSampleCounts[i] += audioBuffer->audiobuffer_nbs;
-					else
-						idleSampleCounts[i] = 0;
-				}
+				bool outputSilent = isBufferSilent(audioBuffer->audiobuffer_w + 8 * i, audioBuffer->audiobuffer_nbs);
+				if (inputSilent && outputSilent)
+					idleSampleCounts[i] += audioBuffer->audiobuffer_nbs;
 				else
-				{
-					for (int j = 0; j < 8; j++)
-						memcpy(audioBuffer->audiobuffer_w[8 * i + j], audioBuffer->audiobuffer_r[8 * i + j], audioBuffer->audiobuffer_nbs * sizeof(float));
-				}
+					idleSampleCounts[i] = 0;
+			}
+			else
+			{
+				for (int j = 0; j < 8; j++)
+					memcpy(audioBuffer->audiobuffer_w[8 * i + j], audioBuffer->audiobuffer_r[8 * i + j], audioBuffer->audiobuffer_nbs * sizeof(float));
 			}
 		}
-		break;
+	}
+	break;
 	}
 }
 

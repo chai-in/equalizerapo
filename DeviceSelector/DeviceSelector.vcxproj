@@ -413,6 +413,7 @@
       <PluralOnly Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</PluralOnly>
       <PluralOnly Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">true</PluralOnly>
     </QtTranslation>
+    <QtTranslation Include="translations\DeviceSelector_zh_CN.ts" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="icons\preferences-system.ico" />

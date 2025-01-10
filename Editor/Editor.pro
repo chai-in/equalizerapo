@@ -301,7 +301,8 @@ contains(QT_ARCH, arm64) {
 
 RESOURCES += \
 	Editor.qrc
-TRANSLATIONS += translations/Editor_de.ts
+TRANSLATIONS += translations/Editor_de.ts \
+	translations/Editor_zh_CN.ts
 
 RC_FILE = Editor.rc
 

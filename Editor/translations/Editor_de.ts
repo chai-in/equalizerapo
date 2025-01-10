@@ -793,24 +793,24 @@ Wählen Sie eine andere Datei oder ändern Sie die Konfiguration des Geräts.</t
         <translation>Frequenzgang zurücksetzen</translation>
     </message>
     <message>
-        <location filename="../guis/GraphicEQFilterGUI.cpp" line="304"/>
+        <location filename="../guis/GraphicEQFilterGUI.cpp" line="310"/>
         <source>Import frequency response</source>
         <translation>Frequenzgang importieren</translation>
     </message>
     <message>
-        <location filename="../guis/GraphicEQFilterGUI.cpp" line="307"/>
-        <location filename="../guis/GraphicEQFilterGUI.cpp" line="380"/>
+        <location filename="../guis/GraphicEQFilterGUI.cpp" line="313"/>
+        <location filename="../guis/GraphicEQFilterGUI.cpp" line="386"/>
         <source>Frequency response (*.csv)</source>
         <translation>Frequenzgang (*.csv)</translation>
     </message>
     <message>
-        <location filename="../guis/GraphicEQFilterGUI.cpp" line="308"/>
-        <location filename="../guis/GraphicEQFilterGUI.cpp" line="381"/>
+        <location filename="../guis/GraphicEQFilterGUI.cpp" line="314"/>
+        <location filename="../guis/GraphicEQFilterGUI.cpp" line="387"/>
         <source>All files (*.*)</source>
         <translation>Alle Dateien (*.*)</translation>
     </message>
     <message>
-        <location filename="../guis/GraphicEQFilterGUI.cpp" line="376"/>
+        <location filename="../guis/GraphicEQFilterGUI.cpp" line="382"/>
         <source>Export frequency response</source>
         <translation>Frequenzgang exportieren</translation>
     </message>
@@ -1060,13 +1060,13 @@ Alexander Walch</translation>
     </message>
     <message>
         <location filename="../MainWindow.ui" line="106"/>
-        <location filename="../MainWindow.ui" line="682"/>
+        <location filename="../MainWindow.ui" line="628"/>
         <source>Toolbar</source>
         <translation>Werkzeugleiste</translation>
     </message>
     <message>
         <location filename="../MainWindow.ui" line="120"/>
-        <location filename="../MainWindow.ui" line="690"/>
+        <location filename="../MainWindow.ui" line="636"/>
         <source>Analysis panel</source>
         <translation>Analysepanel</translation>
     </message>
@@ -1110,17 +1110,17 @@ Alexander Walch</translation>
         <translation>Init.-Zeit:</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="412"/>
+        <location filename="../MainWindow.ui" line="385"/>
         <source>Latency: </source>
         <translation>Latenz:</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="419"/>
+        <location filename="../MainWindow.ui" line="392"/>
         <source>Peak gain:</source>
         <translation>Maximum:</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="570"/>
+        <location filename="../MainWindow.ui" line="516"/>
         <source>New</source>
         <translation>Neu</translation>
     </message>
@@ -1129,8 +1129,8 @@ Alexander Walch</translation>
         <translation type="vanished">Ctrl+N</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="582"/>
-        <location filename="../MainWindow.ui" line="585"/>
+        <location filename="../MainWindow.ui" line="528"/>
+        <location filename="../MainWindow.ui" line="531"/>
         <source>Open</source>
         <translation>Öffnen</translation>
     </message>
@@ -1139,8 +1139,8 @@ Alexander Walch</translation>
         <translation type="vanished">Ctrl+O</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="597"/>
-        <location filename="../MainWindow.ui" line="600"/>
+        <location filename="../MainWindow.ui" line="543"/>
+        <location filename="../MainWindow.ui" line="546"/>
         <source>Save</source>
         <translation>Speichern</translation>
     </message>
@@ -1149,13 +1149,13 @@ Alexander Walch</translation>
         <translation type="vanished">Ctrl+S</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="612"/>
-        <location filename="../MainWindow.ui" line="615"/>
+        <location filename="../MainWindow.ui" line="558"/>
+        <location filename="../MainWindow.ui" line="561"/>
         <source>Save as...</source>
         <translation>Speichern unter...</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="623"/>
+        <location filename="../MainWindow.ui" line="569"/>
         <source>Exit</source>
         <translation>Beenden</translation>
     </message>
@@ -1164,7 +1164,7 @@ Alexander Walch</translation>
         <translation type="vanished">Alt+F4</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="635"/>
+        <location filename="../MainWindow.ui" line="581"/>
         <source>Cut</source>
         <translation>Ausschneiden</translation>
     </message>
@@ -1173,7 +1173,7 @@ Alexander Walch</translation>
         <translation type="vanished">Ctrl+X</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="647"/>
+        <location filename="../MainWindow.ui" line="593"/>
         <source>Copy</source>
         <translation>Kopieren</translation>
     </message>
@@ -1182,7 +1182,7 @@ Alexander Walch</translation>
         <translation type="vanished">Ctrl+C</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="659"/>
+        <location filename="../MainWindow.ui" line="605"/>
         <source>Paste</source>
         <translation>Einfügen</translation>
     </message>
@@ -1191,22 +1191,22 @@ Alexander Walch</translation>
         <translation type="vanished">Ctrl+V</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="671"/>
+        <location filename="../MainWindow.ui" line="617"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="695"/>
+        <location filename="../MainWindow.ui" line="641"/>
         <source>Reset all global preferences</source>
         <translation>Alle globalen Einstellungen zurücksetzen</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="700"/>
+        <location filename="../MainWindow.ui" line="646"/>
         <source>Reset all file-specific preferences</source>
         <translation>Alle dateispezifischen Einstellungen zurücksetzen</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="709"/>
+        <location filename="../MainWindow.ui" line="655"/>
         <source>Select all</source>
         <translation>Alles auswählen</translation>
     </message>
