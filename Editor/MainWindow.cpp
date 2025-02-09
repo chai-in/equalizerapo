@@ -138,9 +138,9 @@ MainWindow::MainWindow(QDir configDir, QWidget* parent)
 	connect(analysisThread, SIGNAL(analysisFinished()), this, SLOT(updateAnalysisPanel()));
 
 	QLocale autoLocale = QLocale::system();
-	if (autoLocale.language() != QLocale::German && autoLocale.language() != QLocale::Chinese)
+	if (autoLocale.language() != QLocale::German && autoLocale.language() != QLocale::Chinese && autoLocale.language() != QLocale::French)
 		autoLocale = QLocale("en");
-	QLocale::Language languages[] = {QLocale::AnyLanguage, QLocale::English, QLocale::German, QLocale::Chinese};
+	QLocale::Language languages[] = {QLocale::AnyLanguage, QLocale::English, QLocale::German, QLocale::Chinese, QLocale::French};
 	for (size_t i = 0; i < sizeof(languages) / sizeof(QLocale::Language); i++)
 	{
 		QLocale::Language language = languages[i];
@@ -156,6 +156,8 @@ MainWindow::MainWindow(QDir configDir, QWidget* parent)
 			text = tr("Automatic (%0)").arg(languageName);
 		else
 			text = languageName;
+		if(text[0].isLower())
+			text[0] = text[0].toUpper();
 		QAction* action = ui->menuLanguage->addAction(text);
 		action->setData(language);
 		action->setCheckable(true);

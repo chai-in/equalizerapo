@@ -4,7 +4,7 @@
 <context>
     <name>DeviceSelector</name>
     <message>
-        <location filename="../DeviceSelector.cpp" line="+37"/>
+        <location filename="../DeviceSelector.cpp" line="+43"/>
         <source>Playback devices</source>
         <translation>Wiedergabegeräte</translation>
     </message>
@@ -15,8 +15,8 @@
     </message>
     <message>
         <location line="+7"/>
-        <location line="+128"/>
-        <location filename="../main.cpp" line="+66"/>
+        <location line="+132"/>
+        <location filename="../main.cpp" line="+68"/>
         <source>Error while accessing the registry</source>
         <translation>Fehler beim Zugriff auf die Registry</translation>
     </message>
@@ -229,7 +229,7 @@ ACHTUNG: Einige Soundkartentreiber erzeugen unerwünschte Geräusche, wenn diese
 <context>
     <name>DeviceTestDialog</name>
     <message>
-        <location filename="../DeviceTestDialog.cpp" line="+23"/>
+        <location filename="../DeviceTestDialog.cpp" line="+42"/>
         <source>Playback devices</source>
         <translation>Wiedergabegeräte</translation>
     </message>
@@ -244,7 +244,7 @@ ACHTUNG: Einige Soundkartentreiber erzeugen unerwünschte Geräusche, wenn diese
         <translation>Fehler beim Zugriff auf die Registry</translation>
     </message>
     <message>
-        <location line="+61"/>
+        <location line="+65"/>
         <source>Cannot test APO installation as device is disabled</source>
         <translation>Kann APO-Installation nicht testen, da Gerät deaktiviert ist</translation>
     </message>
@@ -296,7 +296,7 @@ ACHTUNG: Einige Soundkartentreiber erzeugen unerwünschte Geräusche, wenn diese
 <context>
     <name>DeviceTestThread</name>
     <message>
-        <location filename="../DeviceTestThread.cpp" line="+48"/>
+        <location filename="../DeviceTestThread.cpp" line="+67"/>
         <location line="+161"/>
         <source>Restarting audio service...</source>
         <translation>Starte Audio-Dienst neu...</translation>

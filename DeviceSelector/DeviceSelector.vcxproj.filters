@@ -66,6 +66,9 @@
     <QtTranslation Include="translations\DeviceSelector_zh_CN.ts">
       <Filter>Translation Files</Filter>
     </QtTranslation>
+    <QtTranslation Include="translations\DeviceSelector_fr.ts">
+      <Filter>Translation Files</Filter>
+    </QtTranslation>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="DeviceTestDialog.ui">

@@ -4,7 +4,7 @@
 <context>
     <name>DeviceTestThread</name>
     <message numerus="yes">
-        <location filename="../DeviceTestThread.cpp" line="+151"/>
+        <location filename="../DeviceTestThread.cpp" line="+170"/>
         <source>Check failed for %n device(s).</source>
         <translation>
             <numerusform>Check failed for one device.</numerusform>

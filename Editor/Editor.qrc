@@ -32,5 +32,7 @@
         <file>icons/dark-mode/toolbar-ext-v.svg</file>
         <file>translations/Editor_zh_CN.qm</file>
         <file>translations/qtbase_zh_CN.qm</file>
+        <file>translations/Editor_fr.qm</file>
+        <file>translations/qtbase_fr.qm</file>
     </qresource>
 </RCC>

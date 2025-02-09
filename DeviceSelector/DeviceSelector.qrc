@@ -10,5 +10,7 @@
         <file>icons/preferences-system.ico</file>
         <file>translations/DeviceSelector_zh_CN.qm</file>
         <file>translations/qtbase_zh_CN.qm</file>
+        <file>translations/DeviceSelector_fr.qm</file>
+        <file>translations/qtbase_fr.qm</file>
     </qresource>
 </RCC>
