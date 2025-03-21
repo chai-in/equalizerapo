@@ -1,20 +1,20 @@
 /*
-    This file is part of EqualizerAPO, a system-wide equalizer.
-    Copyright (C) 2015  Jonas Thedering
+	This file is part of EqualizerAPO, a system-wide equalizer.
+	Copyright (C) 2015  Jonas Thedering
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License along
-    with this program; if not, write to the Free Software Foundation, Inc.,
-    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+	You should have received a copy of the GNU General Public License along
+	with this program; if not, write to the Free Software Foundation, Inc.,
+	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
 #include "stdafx.h"
@@ -32,22 +32,17 @@
 using namespace std;
 
 GraphicEQFilter::GraphicEQFilter(const std::vector<FilterNode>& nodes, unsigned filterLength)
-	: nodes(nodes), filterLength(filterLength)
+	: ConvolutionFilter(L""), nodes(nodes), filterLength(filterLength)
 {
-	filters = NULL;
 }
 
-GraphicEQFilter::~GraphicEQFilter()
+const std::vector<FilterNode>& GraphicEQFilter::getNodes()
 {
-	cleanup();
+	return nodes;
 }
 
-vector<wstring> GraphicEQFilter::initialize(float sampleRate, unsigned maxFrameCount, vector<wstring> channelNames)
+void GraphicEQFilter::initializeFilters(unsigned frameCount)
 {
-	cleanup();
-
-	channelCount = (unsigned)channelNames.size();
-
 	fftwf_make_planner_thread_safe();
 	fftwf_complex* timeData = fftwf_alloc_complex(filterLength * 2);
 	fftwf_complex* freqData = fftwf_alloc_complex(filterLength * 2);
@@ -98,48 +93,10 @@ vector<wstring> GraphicEQFilter::initialize(float sampleRate, unsigned maxFrameC
 	filters = (HConvSingle*)MemoryHelper::alloc(sizeof(HConvSingle) * channelCount);
 	for (unsigned i = 0; i < channelCount; i++)
 	{
-		hcInitSingle(&filters[i], buf, filterLength, maxFrameCount, 1);
+		hcInitSingle(&filters[i], buf, filterLength, frameCount, 1);
 	}
 
 	delete buf;
-
-	return channelNames;
-}
-
-#pragma AVRT_CODE_BEGIN
-void GraphicEQFilter::process(float** output, float** input, unsigned frameCount)
-{
-	if (filters == NULL)
-		return;
-
-	for (unsigned i = 0; i < channelCount; i++)
-	{
-		float* inputChannel = input[i];
-		float* outputChannel = output[i];
-		HConvSingle* filter = &filters[i];
-
-		hcPutSingle(filter, inputChannel);
-		hcProcessSingle(filter);
-		hcGetSingle(filter, outputChannel);
-	}
-}
-#pragma AVRT_CODE_END
-
-const std::vector<FilterNode>& GraphicEQFilter::getNodes()
-{
-	return nodes;
-}
-
-void GraphicEQFilter::cleanup()
-{
-	if (filters != NULL)
-	{
-		for (unsigned i = 0; i < channelCount; i++)
-			hcCloseSingle(&filters[i]);
-
-		MemoryHelper::free(filters);
-		filters = NULL;
-	}
 }
 
 // Minimum phase spectrum from coefficients

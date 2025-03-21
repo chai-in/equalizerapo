@@ -33,7 +33,7 @@
 #endif
 #include <math.h>
 #include <fftw3.h>
-#include "libHybridConv.h"
+#include "libHybridConv_eapo.h"
 
 
 double hcTime(void)
