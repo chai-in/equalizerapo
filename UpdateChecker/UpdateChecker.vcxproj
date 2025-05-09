@@ -358,6 +358,7 @@
   <ItemGroup>
     <QtTranslation Include="translations\UpdateChecker_de.ts" />
     <QtTranslation Include="translations\UpdateChecker_fr.ts" />
+    <QtTranslation Include="translations\UpdateChecker_ru.ts" />
     <QtTranslation Include="translations\UpdateChecker_zh_CN.ts" />
   </ItemGroup>
   <ItemGroup>

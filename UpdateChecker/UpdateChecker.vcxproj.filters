@@ -64,6 +64,9 @@
     <QtTranslation Include="translations\UpdateChecker_fr.ts">
       <Filter>Translation Files</Filter>
     </QtTranslation>
+    <QtTranslation Include="translations\UpdateChecker_ru.ts">
+      <Filter>Translation Files</Filter>
+    </QtTranslation>
   </ItemGroup>
   <ItemGroup>
     <Image Include="icons\software-update-available.ico">

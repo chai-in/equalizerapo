@@ -34,5 +34,7 @@
         <file>translations/qtbase_zh_CN.qm</file>
         <file>translations/Editor_fr.qm</file>
         <file>translations/qtbase_fr.qm</file>
+        <file>translations/Editor_ru.qm</file>
+        <file>translations/qtbase_ru.qm</file>
     </qresource>
 </RCC>

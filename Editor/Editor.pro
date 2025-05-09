@@ -303,6 +303,7 @@ RESOURCES += \
 	Editor.qrc
 TRANSLATIONS += translations/Editor_de.ts \
 	translations/Editor_fr.ts \
+	translations/Editor_ru.ts \
 	translations/Editor_zh_CN.ts
 
 RC_FILE = Editor.rc

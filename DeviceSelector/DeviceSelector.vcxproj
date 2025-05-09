@@ -414,6 +414,7 @@
       <PluralOnly Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">true</PluralOnly>
     </QtTranslation>
     <QtTranslation Include="translations\DeviceSelector_fr.ts" />
+    <QtTranslation Include="translations\DeviceSelector_ru.ts" />
     <QtTranslation Include="translations\DeviceSelector_zh_CN.ts" />
   </ItemGroup>
   <ItemGroup>

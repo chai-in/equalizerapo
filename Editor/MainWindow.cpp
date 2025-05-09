@@ -138,9 +138,9 @@ MainWindow::MainWindow(QDir configDir, QWidget* parent)
 	connect(analysisThread, SIGNAL(analysisFinished()), this, SLOT(updateAnalysisPanel()));
 
 	QLocale autoLocale = QLocale::system();
-	if (autoLocale.language() != QLocale::German && autoLocale.language() != QLocale::Chinese && autoLocale.language() != QLocale::French)
+	if (autoLocale.language() != QLocale::German && autoLocale.language() != QLocale::Chinese && autoLocale.language() != QLocale::French && autoLocale.language() != QLocale::Russian)
 		autoLocale = QLocale("en");
-	QLocale::Language languages[] = {QLocale::AnyLanguage, QLocale::English, QLocale::German, QLocale::Chinese, QLocale::French};
+	QLocale::Language languages[] = {QLocale::AnyLanguage, QLocale::English, QLocale::German, QLocale::Chinese, QLocale::French, QLocale::Russian};
 	for (size_t i = 0; i < sizeof(languages) / sizeof(QLocale::Language); i++)
 	{
 		QLocale::Language language = languages[i];
