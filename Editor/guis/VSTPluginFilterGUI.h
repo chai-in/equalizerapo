@@ -19,8 +19,9 @@
 
 #pragma once
 
-#include <memory>
 #include <QElapsedTimer>
+#include <memory>
+
 #include "Editor/IFilterGUI.h"
 #include "helpers/VSTPluginLibrary.h"
 
@@ -33,7 +34,8 @@ class VSTPluginFilterGUI : public IFilterGUI
 	Q_OBJECT
 
 public:
-	explicit VSTPluginFilterGUI(std::shared_ptr<VSTPluginLibrary> library, const std::wstring& chunkData, const std::unordered_map<std::wstring, float>& paramMap);
+	explicit VSTPluginFilterGUI(std::shared_ptr<VSTPluginLibrary> library, const std::wstring& chunkData,
+		const std::unordered_map<std::wstring, float>& paramMap);
 	~VSTPluginFilterGUI();
 
 	void store(QString& command, QString& parameters) override;

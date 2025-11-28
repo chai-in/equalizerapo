@@ -44,9 +44,16 @@ class CopyFilter : public IFilter
 public:
 	CopyFilter(const std::vector<Assignment>& assignments);
 	virtual ~CopyFilter();
-	bool getAllChannels() override {return true;}
-	bool getInPlace() override {return false;}
-	std::vector<std::wstring> initialize(float sampleRate, unsigned maxFrameCount, std::vector<std::wstring> channelNames) override;
+	bool getAllChannels() override
+	{
+		return true;
+	}
+	bool getInPlace() override
+	{
+		return false;
+	}
+	std::vector<std::wstring> initialize(
+		float sampleRate, unsigned maxFrameCount, std::vector<std::wstring> channelNames) override;
 	void process(float** output, float** input, unsigned frameCount) override;
 
 	std::vector<Assignment> getAssignments() const;

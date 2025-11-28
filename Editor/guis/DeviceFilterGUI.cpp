@@ -17,11 +17,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include <string>
 #include "DeviceFilterGUI.h"
-#include "DeviceFilterGUIDialog.h"
+
 #include <filters/DeviceFilterFactory.h>
+#include <string>
 #include <VoicemeeterAPOInfo.h>
+
+#include "DeviceFilterGUIDialog.h"
 #include "ui_DeviceFilterGUI.h"
 
 using namespace std;
@@ -68,7 +70,8 @@ void DeviceFilterGUI::load(const QString& parameters)
 		bool anyInstalled = false;
 		for (const shared_ptr<AbstractAPOInfo>& apoInfo : devices)
 		{
-			if (apoInfo->isInstalled() && DeviceFilterFactory::matchDevice(apoInfo->getDeviceString(), pattern.toStdWString()))
+			if (apoInfo->isInstalled()
+				&& DeviceFilterFactory::matchDevice(apoInfo->getDeviceString(), pattern.toStdWString()))
 			{
 				anyInstalled = true;
 				break;

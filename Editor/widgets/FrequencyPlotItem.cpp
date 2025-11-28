@@ -17,10 +17,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#include "FrequencyPlotItem.h"
+
 #include <QGraphicsScene>
 
 #include "FrequencyPlotScene.h"
-#include "FrequencyPlotItem.h"
 
 FrequencyPlotItem::FrequencyPlotItem(double hz, double db)
 	: hz(hz), db(db)

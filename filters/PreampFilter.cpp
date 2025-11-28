@@ -28,7 +28,7 @@ using namespace std;
 PreampFilter::PreampFilter(double dbGain)
 	: dbGain(dbGain)
 {
-	gain = (float)pow(10.0, dbGain / 20.0);
+	gain = (float) pow(10.0, dbGain / 20.0);
 }
 
 vector<wstring> PreampFilter::initialize(float sampleRate, unsigned maxFrameCount, vector<wstring> channelNames)

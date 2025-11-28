@@ -17,10 +17,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#include "CopyFilterGUIChannelItem.h"
+
 #include <QGraphicsScene>
 
 #include "CopyFilterGUIScene.h"
-#include "CopyFilterGUIChannelItem.h"
 
 CopyFilterGUIChannelItem::CopyFilterGUIChannelItem(const QString& name, bool output)
 	: ChannelGraphItem(name), output(output)
@@ -143,8 +144,8 @@ void CopyFilterGUIChannelItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event
 
 			scene()->addItem(new CopyFilterGUIConnectionItem(source, target, factor, false));
 
-			emit((CopyFilterGUIScene*)scene())->updateModel();
-			emit((CopyFilterGUIScene*)scene())->updateChannels();
+			emit((CopyFilterGUIScene*) scene())->updateModel();
+			emit((CopyFilterGUIScene*) scene())->updateChannels();
 		}
 
 		scene()->removeItem(currentConnection);

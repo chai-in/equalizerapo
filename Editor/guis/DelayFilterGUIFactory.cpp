@@ -17,10 +17,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#include "DelayFilterGUIFactory.h"
+
 #include "filters/DelayFilter.h"
 #include "filters/DelayFilterFactory.h"
 #include "DelayFilterGUI.h"
-#include "DelayFilterGUIFactory.h"
 
 DelayFilterGUIFactory::DelayFilterGUIFactory()
 {
@@ -45,7 +46,7 @@ IFilterGUI* DelayFilterGUIFactory::createFilterGUI(QString& command, QString& pa
 		std::vector<IFilter*> filters = factory.createFilter(L"", commandWStr, paramWStr);
 		if (!filters.empty())
 		{
-			DelayFilter* filter = (DelayFilter*)filters[0];
+			DelayFilter* filter = (DelayFilter*) filters[0];
 			result = new DelayFilterGUI(filter->getDelay(), filter->getIsMs());
 		}
 

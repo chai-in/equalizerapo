@@ -18,10 +18,13 @@
 */
 
 #include "stdafx.h"
-#include <helpers/RegistryHelper.h>
-#include <helpers/ServiceHelper.h>
-#include <ObjBase.h>
+
 #include "DeviceTestThread.h"
+
+#include <ObjBase.h>
+
+#include "helpers/RegistryHelper.h"
+#include "helpers/ServiceHelper.h"
 
 using namespace std::chrono_literals;
 
@@ -49,8 +52,10 @@ DeviceTestThread::DeviceTestThread(QObject* parent, const QVector<std::shared_pt
 			testInfo.remainingInstallModes.append(apoInfo->getSelectedInstallState().installMode);
 		}
 		testInfo.bestInstallMode = apoInfo->getSelectedInstallState().installMode;
-		testInfo.wantsOriginalApoPreMix = apoInfo->getSelectedInstallState().useOriginalAPOPreMix || apoInfo->getOriginalAPOPreMix() == L"";
-		testInfo.wantsOriginalApoPostMix = apoInfo->getSelectedInstallState().useOriginalAPOPostMix || apoInfo->getOriginalAPOPostMix() == L"";
+		testInfo.wantsOriginalApoPreMix = apoInfo->getSelectedInstallState().useOriginalAPOPreMix
+			|| apoInfo->getOriginalAPOPreMix() == L"";
+		testInfo.wantsOriginalApoPostMix = apoInfo->getSelectedInstallState().useOriginalAPOPostMix
+			|| apoInfo->getOriginalAPOPostMix() == L"";
 
 		infoMap.insert(QString::fromStdWString(apoInfo->getDeviceGuid()).toLower(), testInfo);
 	}
@@ -58,10 +63,11 @@ DeviceTestThread::DeviceTestThread(QObject* parent, const QVector<std::shared_pt
 
 void DeviceTestThread::run()
 {
-	SCOPE_EXIT{emit finished(); };
+	SCOPE_EXIT(emit finished();)
 
 	CoInitializeEx(NULL, COINIT_MULTITHREADED);
-	SCOPE_EXIT{CoUninitialize(); };
+	SCOPE_EXIT(CoUninitialize();)
+
 	try
 	{
 		emit log(tr("Restarting audio service..."));
@@ -88,7 +94,7 @@ void DeviceTestThread::run()
 		ReceiveThread thread(pipeName);
 
 		RegistryHelper::writeValue(APP_REGPATH, L"DeviceTestPipeName", pipeName);
-		SCOPE_EXIT{RegistryHelper::deleteValue(APP_REGPATH, L"DeviceTestPipeName"); };
+		SCOPE_EXIT(RegistryHelper::deleteValue(APP_REGPATH, L"DeviceTestPipeName");)
 
 		for (QString deviceGuid : remainingDevices)
 		{
@@ -96,8 +102,12 @@ void DeviceTestThread::run()
 			try
 			{
 				testInfo->remainingInstallModes.removeOne(testInfo->deviceInfo->getSelectedInstallState().installMode);
-				testInfo->currentResult.childAPOPreMixOk = !testInfo->deviceInfo->getSelectedInstallState().useOriginalAPOPreMix || testInfo->deviceInfo->getOriginalAPOPreMix() == L"";
-				testInfo->currentResult.childAPOPostMixOk = !testInfo->deviceInfo->getSelectedInstallState().useOriginalAPOPostMix || testInfo->deviceInfo->getOriginalAPOPostMix() == L"";
+				testInfo->currentResult.childAPOPreMixOk = !testInfo->deviceInfo->getSelectedInstallState()
+																.useOriginalAPOPreMix
+					|| testInfo->deviceInfo->getOriginalAPOPreMix() == L"";
+				testInfo->currentResult.childAPOPostMixOk = !testInfo->deviceInfo->getSelectedInstallState()
+																 .useOriginalAPOPostMix
+					|| testInfo->deviceInfo->getOriginalAPOPostMix() == L"";
 				if (testInfo->deviceInfo->getSelectedInstallState().installPreMix)
 					emit setItemStatus(deviceGuid, false, ItemStatusType::waiting);
 				if (testInfo->deviceInfo->getSelectedInstallState().installPostMix && !testInfo->deviceInfo->isInput())
@@ -114,10 +124,11 @@ void DeviceTestThread::run()
 		std::string message;
 		try
 		{
-			while ((message= thread.waitUntil(timeout)) != "")
+			while ((message = thread.waitUntil(timeout)) != "")
 			{
 				QJsonParseError error;
-				QJsonDocument jsonDoc = QJsonDocument::fromJson(QByteArray(QString::fromStdString(message).toUtf8()), &error);
+				QJsonDocument jsonDoc = QJsonDocument::fromJson(
+					QByteArray(QString::fromStdString(message).toUtf8()), &error);
 				if (jsonDoc.isNull())
 				{
 					emit logError(error.errorString());
@@ -157,7 +168,8 @@ void DeviceTestThread::run()
 				}
 
 				if ((result.preMixOk && result.childAPOPreMixOk || !installState.installPreMix)
-					&& (result.postMixOk && result.childAPOPostMixOk || !installState.installPostMix || testInfo->deviceInfo->isInput()))
+					&& (result.postMixOk && result.childAPOPostMixOk || !installState.installPostMix
+						|| testInfo->deviceInfo->isInput()))
 				{
 					remainingDevices.remove(deviceGuid.toLower());
 					if (remainingDevices.isEmpty())
@@ -196,9 +208,17 @@ void DeviceTestThread::run()
 						nonWorkingDevices++;
 					}
 					if (installState.installPreMix)
-						emit setItemStatus(deviceGuid, false, result.preMixOk ? (result.childAPOPreMixOk || !installState.useOriginalAPOPreMix ? ItemStatusType::success : ItemStatusType::warning) : ItemStatusType::error);
+						emit setItemStatus(deviceGuid, false,
+							result.preMixOk ? (result.childAPOPreMixOk || !installState.useOriginalAPOPreMix
+													  ? ItemStatusType::success
+													  : ItemStatusType::warning)
+											: ItemStatusType::error);
 					if (installState.installPostMix && !testInfo->deviceInfo->isInput())
-						emit setItemStatus(deviceGuid, true, result.postMixOk ? (result.childAPOPostMixOk || !installState.useOriginalAPOPostMix ? ItemStatusType::success : ItemStatusType::warning) : ItemStatusType::error);
+						emit setItemStatus(deviceGuid, true,
+							result.postMixOk ? (result.childAPOPostMixOk || !installState.useOriginalAPOPostMix
+													   ? ItemStatusType::success
+													   : ItemStatusType::warning)
+											 : ItemStatusType::error);
 					QString installModeName;
 					switch (installMode)
 					{
@@ -212,11 +232,16 @@ void DeviceTestThread::run()
 						installModeName = "SFX/EFX";
 						break;
 					}
-					emit log(tr("Setting install mode for %1 %2 to %3.").arg(testInfo->deviceInfo->getDeviceName()).arg(testInfo->deviceInfo->getConnectionName()).arg(installModeName));
+					emit log(tr("Setting install mode for %1 %2 to %3.")
+							.arg(testInfo->deviceInfo->getDeviceName())
+							.arg(testInfo->deviceInfo->getConnectionName())
+							.arg(installModeName));
 
 					installState.installMode = installMode;
-					installState.useOriginalAPOPreMix = testInfo->wantsOriginalApoPreMix && testInfo->deviceInfo->getOriginalAPOPreMix() != L"";
-					installState.useOriginalAPOPostMix = testInfo->wantsOriginalApoPostMix && testInfo->deviceInfo->getOriginalAPOPostMix() != L"";
+					installState.useOriginalAPOPreMix = testInfo->wantsOriginalApoPreMix
+						&& testInfo->deviceInfo->getOriginalAPOPreMix() != L"";
+					installState.useOriginalAPOPostMix = testInfo->wantsOriginalApoPostMix
+						&& testInfo->deviceInfo->getOriginalAPOPostMix() != L"";
 					testInfo->deviceInfo->reinstall();
 				}
 
@@ -246,5 +271,6 @@ void DeviceTestThread::run()
 	if (nonWorkingDevices == 0)
 		emit log("<b>" + tr("Checks done. No problems were detected.") + "</b>");
 	else
-		emit logError("<b>" + tr("Checks done. Problems were detected for %n device(s).", nullptr, nonWorkingDevices) + "</b>");
+		emit logError(
+			"<b>" + tr("Checks done. Problems were detected for %n device(s).", nullptr, nonWorkingDevices) + "</b>");
 }

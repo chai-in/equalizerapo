@@ -17,12 +17,13 @@
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#include "FrequencyPlotVRuler.h"
+
 #include <QWheelEvent>
 
 #include "Editor/helpers/GUIHelper.h"
-#include "FrequencyPlotView.h"
 #include "FrequencyPlotScene.h"
-#include "FrequencyPlotVRuler.h"
+#include "FrequencyPlotView.h"
 
 FrequencyPlotVRuler::FrequencyPlotVRuler(QWidget* parent)
 	: QWidget(parent)
@@ -59,7 +60,8 @@ void FrequencyPlotVRuler::paintEvent(QPaintEvent*)
 			db = 0;
 		double y = s->dbToY(db);
 		if (y != -1)
-			painter.drawText(0, y - topLeft.y() - 1, width(), 0, Qt::TextDontClip | Qt::AlignCenter, QString("%0").arg(db));
+			painter.drawText(
+				0, y - topLeft.y() - 1, width(), 0, Qt::TextDontClip | Qt::AlignCenter, QString("%0").arg(db));
 	}
 
 	QPoint mousePos = view->getLastMousePos();
@@ -75,7 +77,8 @@ void FrequencyPlotVRuler::paintEvent(QPaintEvent*)
 			QFontMetrics metrics = painter.fontMetrics();
 			QRectF rect = metrics.boundingRect(text);
 			float center = y - topLeft.y() - 1;
-			rect = QRectF(ceil(width() / 2) - ceil(rect.width() / 2) - 2.5, center - ceil(rect.height() / 2) + 1.5, rect.width() + 3, rect.height() - 1);
+			rect = QRectF(ceil(width() / 2) - ceil(rect.width() / 2) - 2.5, center - ceil(rect.height() / 2) + 1.5,
+				rect.width() + 3, rect.height() - 1);
 			QPainterPath path;
 			path.addRect(rect);
 			QPainterPath rightTriangle;
@@ -84,10 +87,10 @@ void FrequencyPlotVRuler::paintEvent(QPaintEvent*)
 			rightTriangle.lineTo(QPoint(rect.right() + 4, center + 1));
 			path = path.united(rightTriangle);
 
-			painter.setPen(dark ? QColor(200,200,200) : Qt::black);
+			painter.setPen(dark ? QColor(200, 200, 200) : Qt::black);
 			painter.setBrush(dark ? Qt::black : Qt::white);
 			painter.drawPath(path);
-			painter.setPen(dark ? QColor(147,161,229) : Qt::blue);
+			painter.setPen(dark ? QColor(147, 161, 229) : Qt::blue);
 			painter.drawText(0, center, width() - 2, 0, Qt::TextDontClip | Qt::AlignCenter, text);
 		}
 	}

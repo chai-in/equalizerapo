@@ -29,9 +29,13 @@ class CopyFilterGUIConnectionItem : public QObject, public QGraphicsLineItem
 
 public:
 	CopyFilterGUIConnectionItem();
-	CopyFilterGUIConnectionItem(CopyFilterGUIChannelItem* source, CopyFilterGUIChannelItem* target, double factor, bool isDecibel);
+	CopyFilterGUIConnectionItem(
+		CopyFilterGUIChannelItem* source, CopyFilterGUIChannelItem* target, double factor, bool isDecibel);
 
-	enum {Type = UserType + 1};
+	enum
+	{
+		Type = UserType + 1
+	};
 	virtual int type() const
 	{
 		return Type;

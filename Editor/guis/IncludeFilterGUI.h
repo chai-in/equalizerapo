@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include "Editor/IFilterGUI.h"
 #include "Editor/FilterTable.h"
+#include "Editor/IFilterGUI.h"
 
 namespace Ui {
 class IncludeFilterGUI;

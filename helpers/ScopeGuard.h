@@ -14,7 +14,7 @@
 #undef noexcept
 #endif
 
-#define CONCATENATE_IMPL(s1, s2) s1 ## s2
+#define CONCATENATE_IMPL(s1, s2) s1##s2
 #define CONCATENATE(s1, s2) CONCATENATE_IMPL(s1, s2)
 #ifdef __COUNTER__
 #define ANONYMOUS_VARIABLE(str) CONCATENATE(str, __COUNTER__)
@@ -97,19 +97,22 @@ template<typename Fun> ScopeGuard<Fun> operator+(ScopeGuardOnExit, Fun&& fn)
 	return ScopeGuard<Fun>(std::forward<Fun>(fn));
 }
 
-template<typename Fun> ScopeGuardForNewException<typename std::decay_t<Fun>, true> operator+(detail::ScopeGuardOnFail, Fun&& fn)
+template<typename Fun>
+ScopeGuardForNewException<typename std::decay_t<Fun>, true> operator+(detail::ScopeGuardOnFail, Fun&& fn)
 {
 	return ScopeGuardForNewException<typename std::decay_t<Fun>, true>(std::forward<Fun>(fn));
 }
 
-template<typename Fun> ScopeGuardForNewException<typename std::decay_t<Fun>, false> operator+(detail::ScopeGuardOnSuccess, Fun&& fn)
+template<typename Fun>
+ScopeGuardForNewException<typename std::decay_t<Fun>, false> operator+(detail::ScopeGuardOnSuccess, Fun&& fn)
 {
 	return ScopeGuardForNewException<typename std::decay_t<Fun>, false>(std::forward<Fun>(fn));
 }
-}
+} // namespace detail
 
-#define SCOPE_FAIL auto ANONYMOUS_VARIABLE(SCOPE_FAIL_STATE) = ::detail::ScopeGuardOnFail() +[&]()
-#define SCOPE_SUCCESS auto ANONYMOUS_VARIABLE(SCOPE_FAIL_STATE) = ::detail::ScopeGuardOnSuccess() +[&]()
-#define SCOPE_EXIT auto ANONYMOUS_VARIABLE(SCOPE_EXIT_STATE) = ::detail::ScopeGuardOnExit() +[&]()
+#define SCOPE_FAIL(code) auto ANONYMOUS_VARIABLE(SCOPE_FAIL_STATE) = ::detail::ScopeGuardOnFail() + [&]() { code };
+#define SCOPE_SUCCESS(code) \
+	auto ANONYMOUS_VARIABLE(SCOPE_FAIL_STATE) = ::detail::ScopeGuardOnSuccess() + [&]() { code };
+#define SCOPE_EXIT(code) auto ANONYMOUS_VARIABLE(SCOPE_EXIT_STATE) = ::detail::ScopeGuardOnExit() + [&]() { code };
 
 #endif

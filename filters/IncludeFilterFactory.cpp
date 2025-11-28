@@ -18,12 +18,14 @@
 */
 
 #include "stdafx.h"
+
+#include "IncludeFilterFactory.h"
+
 #include <Shlwapi.h>
 
 #include "helpers/LogHelper.h"
 #include "helpers/StringHelper.h"
 #include "FilterEngine.h"
-#include "IncludeFilterFactory.h"
 
 using namespace std;
 

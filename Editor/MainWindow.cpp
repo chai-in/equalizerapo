@@ -17,34 +17,34 @@
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include <sstream>
 #include <QDrag>
 #include <QElapsedTimer>
+#include <QFileDialog>
+#include <QFileInfo>
 #include <QLabel>
+#include <QMessageBox>
 #include <QMimeData>
+#include <QProcess>
 #include <QPushButton>
+#include <QScrollArea>
+#include <QSettings>
 #include <QStandardItemModel>
 #include <QStringBuilder>
-#include <QScrollArea>
-#include <QFileInfo>
-#include <QFileDialog>
-#include <QMessageBox>
-#include <QProcess>
-#include <QSettings>
+#include <sstream>
 
 #define WIN32_LEAN_AND_MEAN
-#include <windows.h>
 #include <shellapi.h>
+#include <windows.h>
 
-#include "helpers/StringHelper.h"
-#include "helpers/LogHelper.h"
-#include "helpers/ChannelHelper.h"
 #include "Editor/helpers/GUIChannelHelper.h"
 #include "Editor/helpers/GUIHelper.h"
-#include "version.h"
+#include "helpers/ChannelHelper.h"
+#include "helpers/LogHelper.h"
+#include "helpers/StringHelper.h"
 #include "FilterTable.h"
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
+#include "version.h"
 
 using namespace std;
 
@@ -106,7 +106,9 @@ MainWindow::MainWindow(QDir configDir, QWidget* parent)
 
 	QStandardItemModel* model = qobject_cast<QStandardItemModel*>(deviceComboBox->model());
 	if (defaultOutputDevice != NULL)
-		deviceComboBox->addItem(tr("Default") + " (" + QString::fromStdWString(defaultOutputDevice->getConnectionName()) + " - " + QString::fromStdWString(defaultOutputDevice->getDeviceName()) + ")", NULL);
+		deviceComboBox->addItem(tr("Default") + " (" + QString::fromStdWString(defaultOutputDevice->getConnectionName())
+				+ " - " + QString::fromStdWString(defaultOutputDevice->getDeviceName()) + ")",
+			NULL);
 
 	deviceComboBox->addItem(tr("Playback devices:"));
 	QStandardItem* item = model->item(model->rowCount() - 1);
@@ -117,7 +119,9 @@ MainWindow::MainWindow(QDir configDir, QWidget* parent)
 
 	for (shared_ptr<AbstractAPOInfo>& apoInfo : outputDevices)
 		if (apoInfo->isInstalled())
-			deviceComboBox->addItem(QString::fromStdWString(apoInfo->getConnectionName()) + " - " + QString::fromStdWString(apoInfo->getDeviceName()), QVariant::fromValue(apoInfo));
+			deviceComboBox->addItem(QString::fromStdWString(apoInfo->getConnectionName()) + " - "
+					+ QString::fromStdWString(apoInfo->getDeviceName()),
+				QVariant::fromValue(apoInfo));
 
 	deviceComboBox->addItem(tr("Capture devices:"));
 	item = model->item(model->rowCount() - 1);
@@ -126,7 +130,9 @@ MainWindow::MainWindow(QDir configDir, QWidget* parent)
 
 	for (shared_ptr<AbstractAPOInfo>& apoInfo : inputDevices)
 		if (apoInfo->isInstalled())
-			deviceComboBox->addItem(QString::fromStdWString(apoInfo->getConnectionName()) + " - " + QString::fromStdWString(apoInfo->getDeviceName()), QVariant::fromValue(apoInfo));
+			deviceComboBox->addItem(QString::fromStdWString(apoInfo->getConnectionName()) + " - "
+					+ QString::fromStdWString(apoInfo->getDeviceName()),
+				QVariant::fromValue(apoInfo));
 
 	connect(channelConfigurationComboBox, SIGNAL(activated(int)), this, SLOT(channelConfigurationSelected(int)));
 
@@ -138,9 +144,11 @@ MainWindow::MainWindow(QDir configDir, QWidget* parent)
 	connect(analysisThread, SIGNAL(analysisFinished()), this, SLOT(updateAnalysisPanel()));
 
 	QLocale autoLocale = QLocale::system();
-	if (autoLocale.language() != QLocale::German && autoLocale.language() != QLocale::Chinese && autoLocale.language() != QLocale::French && autoLocale.language() != QLocale::Russian)
+	if (autoLocale.language() != QLocale::German && autoLocale.language() != QLocale::Chinese
+		&& autoLocale.language() != QLocale::French && autoLocale.language() != QLocale::Russian)
 		autoLocale = QLocale("en");
-	QLocale::Language languages[] = {QLocale::AnyLanguage, QLocale::English, QLocale::German, QLocale::Chinese, QLocale::French, QLocale::Russian};
+	QLocale::Language languages[] = {
+		QLocale::AnyLanguage, QLocale::English, QLocale::German, QLocale::Chinese, QLocale::French, QLocale::Russian};
 	for (size_t i = 0; i < sizeof(languages) / sizeof(QLocale::Language); i++)
 	{
 		QLocale::Language language = languages[i];
@@ -156,7 +164,7 @@ MainWindow::MainWindow(QDir configDir, QWidget* parent)
 			text = tr("Automatic (%0)").arg(languageName);
 		else
 			text = languageName;
-		if(text[0].isLower())
+		if (text[0].isLower())
 			text[0] = text[0].toUpper();
 		QAction* action = ui->menuLanguage->addAction(text);
 		action->setData(language);
@@ -178,7 +186,10 @@ void MainWindow::doChecks()
 {
 	if (!DeviceAPOInfo::checkProtectedAudioDG(false) || !DeviceAPOInfo::checkAPORegistration(false))
 	{
-		if (QMessageBox::warning(this, tr("Registry problem"), tr("A registry value that is required for the operation of Equalizer APO is not set correctly.\nDo you want to run the Device Selector application to fix the problem?"), QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes)
+		if (QMessageBox::warning(this, tr("Registry problem"),
+				tr("A registry value that is required for the operation of Equalizer APO is not set correctly.\nDo you want to run the Device Selector application to fix the problem?"),
+				QMessageBox::Yes, QMessageBox::No)
+			== QMessageBox::Yes)
 		{
 			runDeviceSelector();
 			return;
@@ -187,7 +198,10 @@ void MainWindow::doChecks()
 
 	if (defaultOutputDevice != NULL && !defaultOutputDevice->isInstalled())
 	{
-		if (QMessageBox::warning(this, tr("APO not installed to device"), tr("Equalizer APO has not been installed to the selected device.\nDo you want to run the Device Selector application to fix the problem?"), QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes)
+		if (QMessageBox::warning(this, tr("APO not installed to device"),
+				tr("Equalizer APO has not been installed to the selected device.\nDo you want to run the Device Selector application to fix the problem?"),
+				QMessageBox::Yes, QMessageBox::No)
+			== QMessageBox::Yes)
 		{
 			runDeviceSelector();
 			return;
@@ -218,7 +232,12 @@ void MainWindow::doChecks()
 
 	if (disabledApoInfo != NULL)
 	{
-		if (QMessageBox::warning(this, tr("Audio enhancements disabled"), tr("Audio enhancements are not enabled for the device\n%0 %1.\nDo you want to run the Device Selector application to fix the problem?").arg(QString::fromStdWString(disabledApoInfo->getConnectionName())).arg(QString::fromStdWString(disabledApoInfo->getDeviceName())), QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes)
+		if (QMessageBox::warning(this, tr("Audio enhancements disabled"),
+				tr("Audio enhancements are not enabled for the device\n%0 %1.\nDo you want to run the Device Selector application to fix the problem?")
+					.arg(QString::fromStdWString(disabledApoInfo->getConnectionName()))
+					.arg(QString::fromStdWString(disabledApoInfo->getDeviceName())),
+				QMessageBox::Yes, QMessageBox::No)
+			== QMessageBox::Yes)
 		{
 			runDeviceSelector();
 			return;
@@ -229,8 +248,10 @@ void MainWindow::doChecks()
 void MainWindow::runDeviceSelector()
 {
 	// cannot use QProcess::startDetached because of UAC
-	wstring file = (QDir::toNativeSeparators(QCoreApplication::applicationDirPath() + "/DeviceSelector.exe")).toStdWString();
-	unsigned long long result = (unsigned long long)ShellExecuteW(NULL, L"open", file.c_str(), NULL, NULL, SW_SHOWNORMAL);
+	wstring file = (QDir::toNativeSeparators(QCoreApplication::applicationDirPath() + "/DeviceSelector.exe"))
+					   .toStdWString();
+	unsigned long long result = (unsigned long long) ShellExecuteW(
+		NULL, L"open", file.c_str(), NULL, NULL, SW_SHOWNORMAL);
 	if (result == SE_ERR_ACCESSDENIED)
 		ShellExecuteW(NULL, L"runas", file.c_str(), NULL, NULL, SW_SHOWNORMAL);
 }
@@ -257,13 +278,16 @@ void MainWindow::load(QString path)
 	HANDLE hFile = INVALID_HANDLE_VALUE;
 	while (hFile == INVALID_HANDLE_VALUE)
 	{
-		hFile = CreateFile(path.toStdWString().c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+		hFile = CreateFile(path.toStdWString().c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING,
+			FILE_ATTRIBUTE_NORMAL, NULL);
 		if (hFile == INVALID_HANDLE_VALUE)
 		{
 			DWORD error = GetLastError();
 			if (error != ERROR_SHARING_VIOLATION)
 			{
-				QMessageBox::critical(this, tr("Error"), tr("Error while reading configuration file: %0").arg(QString::fromStdWString(StringHelper::getSystemErrorString(error))));
+				QMessageBox::critical(this, tr("Error"),
+					tr("Error while reading configuration file: %0")
+						.arg(QString::fromStdWString(StringHelper::getSystemErrorString(error))));
 				return;
 			}
 
@@ -301,7 +325,8 @@ void MainWindow::load(QString path)
 	}
 
 	QFileInfo fileInfo(path);
-	FilterTable* filterTable = addTab(fileInfo.fileName(), QDir::toNativeSeparators(fileInfo.absoluteFilePath()), path, lines);
+	FilterTable* filterTable = addTab(
+		fileInfo.fileName(), QDir::toNativeSeparators(fileInfo.absoluteFilePath()), path, lines);
 
 	connect(filterTable, SIGNAL(linesChanged()), this, SLOT(linesChanged()));
 
@@ -337,13 +362,16 @@ void MainWindow::save(FilterTable* filterTable, QString path)
 	HANDLE hFile = INVALID_HANDLE_VALUE;
 	while (hFile == INVALID_HANDLE_VALUE)
 	{
-		hFile = CreateFile(path.toStdWString().c_str(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		hFile = CreateFile(
+			path.toStdWString().c_str(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 		if (hFile == INVALID_HANDLE_VALUE)
 		{
 			DWORD error = GetLastError();
 			if (error != ERROR_SHARING_VIOLATION)
 			{
-				QMessageBox::critical(this, tr("Error"), tr("Error while writing configuration file: %0").arg(QString::fromStdWString(StringHelper::getSystemErrorString(error))));
+				QMessageBox::critical(this, tr("Error"),
+					tr("Error while writing configuration file: %0")
+						.arg(QString::fromStdWString(StringHelper::getSystemErrorString(error))));
 				return;
 			}
 
@@ -357,7 +385,8 @@ void MainWindow::save(FilterTable* filterTable, QString path)
 	if (bytesWritten != byteArray.length())
 	{
 		// should never happen
-		QMessageBox::critical(this, tr("Error"), tr("Only %0/%1 bytes have been written!").arg(bytesWritten).arg(byteArray.length()));
+		QMessageBox::critical(
+			this, tr("Error"), tr("Only %0/%1 bytes have been written!").arg(bytesWritten).arg(byteArray.length()));
 	}
 
 	CloseHandle(hFile);
@@ -410,14 +439,15 @@ void MainWindow::deviceSelected(int index)
 
 	channelConfigurationComboBox->clear();
 
-	const QList<GUIChannelHelper::ChannelConfigurationInfo>& infos = GUIChannelHelper::getInstance()->getChannelConfigurationInfos();
+	const QList<GUIChannelHelper::ChannelConfigurationInfo>& infos = GUIChannelHelper::getInstance()
+																		 ->getChannelConfigurationInfos();
 
 	if (apoInfo != NULL)
 	{
 		const GUIChannelHelper::ChannelConfigurationInfo* selectedInfo = NULL;
 		for (const GUIChannelHelper::ChannelConfigurationInfo& info : infos)
 		{
-			if (info.channelMask == (int)apoInfo->getChannelMask())
+			if (info.channelMask == (int) apoInfo->getChannelMask())
 			{
 				selectedInfo = &info;
 				break;
@@ -427,7 +457,8 @@ void MainWindow::deviceSelected(int index)
 		if (selectedInfo != NULL)
 			channelConfigurationComboBox->addItem(tr("From device") + " (" + selectedInfo->name + ")", 0);
 		else if (apoInfo->getChannelCount() != 0)
-			channelConfigurationComboBox->addItem((tr("From device") + " (%1 channels)").arg(apoInfo->getChannelCount()), 0);
+			channelConfigurationComboBox->addItem(
+				(tr("From device") + " (%1 channels)").arg(apoInfo->getChannelCount()), 0);
 		else
 			channelConfigurationComboBox->addItem(tr("From device") + " (? channels)", 0);
 	}
@@ -460,7 +491,7 @@ void MainWindow::channelConfigurationSelected(int index)
 	if (selectedDevice != NULL)
 	{
 		unsigned channelCount = selectedDevice->getChannelCount();
-		if (channelMask != 0 && channelMask != (int)selectedDevice->getChannelMask())
+		if (channelMask != 0 && channelMask != (int) selectedDevice->getChannelMask())
 		{
 			channelCount = 0;
 			for (int i = 0; i < 31; i++)
@@ -623,7 +654,8 @@ void MainWindow::on_actionSaveAs_triggered()
 
 		QFileInfo fileInfo(savePath);
 		ui->tabWidget->setTabText(ui->tabWidget->currentIndex(), fileInfo.fileName());
-		ui->tabWidget->setTabToolTip(ui->tabWidget->currentIndex(), QDir::toNativeSeparators(fileInfo.absoluteFilePath()));
+		ui->tabWidget->setTabToolTip(
+			ui->tabWidget->currentIndex(), QDir::toNativeSeparators(fileInfo.absoluteFilePath()));
 	}
 }
 
@@ -747,9 +779,11 @@ void MainWindow::updateAnalysisPanel()
 
 	ui->initTimeValueLabel->setText(tr("%0 ms").arg(analysisThread->getInitializationTime(), 0, 'f', 1));
 
-	double cpuUsage = analysisThread->getProcessingTime() * 100.0 / (analysisThread->getProcessedFrames() * 1000.0 / sampleRate);
+	double cpuUsage = analysisThread->getProcessingTime() * 100.0
+		/ (analysisThread->getProcessedFrames() * 1000.0 / sampleRate);
 	ui->cpuUsageValueLabel->setText(tr("%0 % (one core)").arg(cpuUsage, 0, 'f', 1));
-	ui->cpuUsageValueLabel->setForegroundRole(cpuUsage >= 20 ? (cpuUsage >= 50 ? QPalette::Dark : QPalette::Midlight) : QPalette::WindowText);
+	ui->cpuUsageValueLabel->setForegroundRole(
+		cpuUsage >= 20 ? (cpuUsage >= 50 ? QPalette::Dark : QPalette::Midlight) : QPalette::WindowText);
 
 	analysisThread->endGetResult();
 }
@@ -787,9 +821,11 @@ void MainWindow::languageSelected(bool selected)
 		return;
 	}
 
-	QLocale::Language language = (QLocale::Language)action->data().toInt();
+	QLocale::Language language = (QLocale::Language) action->data().toInt();
 
-	if (QMessageBox::question(this, tr("Restart required"), tr("Configuration Editor will be restarted to apply the changed settings. Proceed?")) == QMessageBox::Yes)
+	if (QMessageBox::question(this, tr("Restart required"),
+			tr("Configuration Editor will be restarted to apply the changed settings. Proceed?"))
+		== QMessageBox::Yes)
 	{
 		QSettings settings(QString::fromWCharArray(EDITOR_REGPATH), QSettings::NativeFormat);
 		if (language == QLocale::AnyLanguage)
@@ -816,7 +852,9 @@ void MainWindow::languageSelected(bool selected)
 
 void MainWindow::on_actionResetAllGlobalPreferences_triggered()
 {
-	if (QMessageBox::question(this, tr("Restart required"), tr("Configuration Editor will be restarted to apply the changed settings. Proceed?")) == QMessageBox::Yes)
+	if (QMessageBox::question(this, tr("Restart required"),
+			tr("Configuration Editor will be restarted to apply the changed settings. Proceed?"))
+		== QMessageBox::Yes)
 	{
 		QSettings settings(QString::fromWCharArray(EDITOR_REGPATH), QSettings::NativeFormat);
 		for (const QString& key : settings.childGroups())
@@ -835,7 +873,9 @@ void MainWindow::on_actionResetAllGlobalPreferences_triggered()
 
 void MainWindow::on_actionResetAllFileSpecificPreferences_triggered()
 {
-	if (QMessageBox::question(this, tr("Restart required"), tr("Configuration Editor will be restarted to apply the changed settings. Proceed?")) == QMessageBox::Yes)
+	if (QMessageBox::question(this, tr("Restart required"),
+			tr("Configuration Editor will be restarted to apply the changed settings. Proceed?"))
+		== QMessageBox::Yes)
 	{
 		QSettings settings(QString::fromWCharArray(EDITOR_PER_FILE_REGPATH), QSettings::NativeFormat);
 		for (const QString& key : settings.childGroups())
@@ -902,7 +942,8 @@ bool MainWindow::askForClose(int tabIndex)
 		messageBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
 		messageBox.setDefaultButton(QMessageBox::Save);
 		messageBox.setEscapeButton(QMessageBox::Cancel);
-		messageBox.setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
+		messageBox.setWindowFlags(
+			Qt::Dialog | Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
 		int result = messageBox.exec();
 
 		switch (result)
@@ -964,7 +1005,8 @@ void MainWindow::startAnalysis()
 			configPath = configDir.absoluteFilePath("config.txt");
 		configPath = QDir::toNativeSeparators(configPath);
 
-		analysisThread->setParameters(selectedDevice, channelMask, ui->analysisChannelComboBox->currentIndex(), configPath, ui->resolutionSpinBox->value());
+		analysisThread->setParameters(selectedDevice, channelMask, ui->analysisChannelComboBox->currentIndex(),
+			configPath, ui->resolutionSpinBox->value());
 	}
 }
 
@@ -983,7 +1025,8 @@ void MainWindow::loadPreferences()
 			shared_ptr<AbstractAPOInfo> apoInfo = deviceComboBox->itemData(i).value<shared_ptr<AbstractAPOInfo>>();
 			if (apoInfo != NULL)
 			{
-				if (QString::fromStdWString(apoInfo->getDeviceString()).compare(selectedDevice, Qt::CaseInsensitive) == 0)
+				if (QString::fromStdWString(apoInfo->getDeviceString()).compare(selectedDevice, Qt::CaseInsensitive)
+					== 0)
 				{
 					deviceComboBox->setCurrentIndex(i);
 					break;
@@ -1060,7 +1103,8 @@ void MainWindow::savePreferences()
 	settings.setValue("windowState", saveState());
 	settings.setValue("instantMode", instantModeCheckBox->isChecked());
 	shared_ptr<AbstractAPOInfo> selectedDevice = deviceComboBox->currentData().value<shared_ptr<AbstractAPOInfo>>();
-	settings.setValue("selectedDevice", selectedDevice != NULL ? QString::fromStdWString(selectedDevice->getDeviceString()) : "");
+	settings.setValue(
+		"selectedDevice", selectedDevice != NULL ? QString::fromStdWString(selectedDevice->getDeviceString()) : "");
 	int channelMask = channelConfigurationComboBox->currentData().toInt();
 	settings.setValue("selectedChannelMask", channelMask);
 
@@ -1132,7 +1176,7 @@ void MainWindow::updateRecentFiles()
 template<class T> QList<T> MainWindow::toQList(const std::vector<T>& vector)
 {
 	QList<T> list;
-	list.reserve((int)vector.size());
+	list.reserve((int) vector.size());
 	for (T t : vector)
 		list.append(t);
 

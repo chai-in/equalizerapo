@@ -21,6 +21,7 @@
 
 #include <QtWidgets/QDialog>
 #include <helpers/RegistryHelper.h>
+
 #include "ui_UpdateChecker.h"
 
 #define UPDATE_CHECKER_REGPATH USER_REGPATH L"\\Update Checker"

@@ -19,9 +19,10 @@
 
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
+
 #include "AbstractAPOInfo.h"
 
 #define APOGUID_NULL L"{00000000-0000-0000-0000-000000000000}"

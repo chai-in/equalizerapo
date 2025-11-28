@@ -1,4 +1,5 @@
 #include "stdafx.h"
+
 #include <QAbstractSpinBox>
 #include <QAbstractTableModel>
 #include <QApplication>

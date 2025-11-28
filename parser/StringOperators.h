@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include <mpParser.h>
 #include <mpOprtNonCmplx.h>
+#include <mpParser.h>
 
 class AddOperator : public mup::OprtAdd
 {

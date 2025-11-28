@@ -18,14 +18,16 @@
 */
 
 #include "stdafx.h"
+
+#include <QtWidgets/QApplication>
 #include <DeviceAPOInfo.h>
 #include <helpers/RegistryHelper.h>
 #include <ObjBase.h>
-#include <QtWidgets/QApplication>
 #include <VoicemeeterAPOInfo.h>
 #include <winsock2.h>
-#include "ReceiveThread.h"
+
 #include "DeviceSelector.h"
+#include "ReceiveThread.h"
 
 int main(int argc, char* argv[])
 {
@@ -44,16 +46,14 @@ int main(int argc, char* argv[])
 		app.installTranslator(&qtTranslator);
 
 	QTranslator deviceSelectorTranslator;
-	if (deviceSelectorTranslator.load(
-		QLocale(), ":/translations/DeviceSelector", "_"))
+	if (deviceSelectorTranslator.load(QLocale(), ":/translations/DeviceSelector", "_"))
 		app.installTranslator(&deviceSelectorTranslator);
 
 	if (app.arguments().contains("/u"))
 	{
 		for (int index = 0; index <= 1; index++)
 		{
-			std::vector<std::shared_ptr<AbstractAPOInfo>> apoInfos =
-				DeviceAPOInfo::loadAllInfos(index == 1);
+			std::vector<std::shared_ptr<AbstractAPOInfo>> apoInfos = DeviceAPOInfo::loadAllInfos(index == 1);
 
 			for (std::shared_ptr<AbstractAPOInfo>& apoInfo : apoInfos)
 			{
@@ -64,9 +64,7 @@ int main(int argc, char* argv[])
 				}
 				catch (RegistryException e)
 				{
-					QMessageBox::critical(nullptr,
-						DeviceSelector::tr(
-							"Error while accessing the registry"),
+					QMessageBox::critical(nullptr, DeviceSelector::tr("Error while accessing the registry"),
 						QString::fromStdWString(e.getMessage()));
 					result = -1;
 				}

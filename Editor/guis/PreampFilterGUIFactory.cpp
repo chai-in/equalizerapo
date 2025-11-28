@@ -17,9 +17,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include "PreampFilterGUI.h"
-#include <filters/PreampFilterFactory.h>
 #include "PreampFilterGUIFactory.h"
+
+#include <filters/PreampFilterFactory.h>
+
+#include "PreampFilterGUI.h"
 
 QList<FilterTemplate> PreampFilterGUIFactory::createFilterTemplates()
 {
@@ -40,7 +42,7 @@ IFilterGUI* PreampFilterGUIFactory::createFilterGUI(QString& command, QString& p
 		std::vector<IFilter*> filters = factory.createFilter(L"", commandWStr, paramWStr);
 		if (!filters.empty())
 		{
-			PreampFilter* filter = (PreampFilter*)filters[0];
+			PreampFilter* filter = (PreampFilter*) filters[0];
 			result = new PreampFilterGUI(filter->getDbGain());
 		}
 

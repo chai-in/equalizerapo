@@ -17,13 +17,14 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#include "ChannelFilterGUIDialog.h"
+
 #include <algorithm>
 #include <Ks.h>
 #include <KsMedia.h>
 
-#include "Editor/helpers/GUIHelper.h"
 #include "Editor/helpers/GUIChannelHelper.h"
-#include "ChannelFilterGUIDialog.h"
+#include "Editor/helpers/GUIHelper.h"
 #include "ui_ChannelFilterGUIDialog.h"
 
 #define PROPERTY_POSITION "CHANNEL_POSITION"
@@ -31,9 +32,9 @@
 
 using namespace std;
 
-ChannelFilterGUIDialog::ChannelFilterGUIDialog(QWidget* parent, QStringList selectedChannels, int selectedChannelMask, const vector<wstring>& channelNames)
-	: QDialog(parent),
-	ui(new Ui::ChannelFilterGUIDialog)
+ChannelFilterGUIDialog::ChannelFilterGUIDialog(
+	QWidget* parent, QStringList selectedChannels, int selectedChannelMask, const vector<wstring>& channelNames)
+	: QDialog(parent), ui(new Ui::ChannelFilterGUIDialog)
 {
 	ui->setupUi(this);
 	resize(GUIHelper::scale(QSize(355, 329)));
@@ -86,7 +87,9 @@ ChannelFilterGUIDialog::ChannelFilterGUIDialog(QWidget* parent, QStringList sele
 		{
 			channelIndex++;
 			bool checked = false;
-			remainingChannelNames.erase(remove(remainingChannelNames.begin(), remainingChannelNames.end(), channelName.toStdWString()), remainingChannelNames.end());
+			remainingChannelNames.erase(
+				remove(remainingChannelNames.begin(), remainingChannelNames.end(), channelName.toStdWString()),
+				remainingChannelNames.end());
 			if (remainingSelectedChannels.removeOne(channelName))
 				checked = true;
 			else if (channelName == "LFE" && remainingSelectedChannels.removeOne("SUB"))
@@ -106,7 +109,8 @@ ChannelFilterGUIDialog::ChannelFilterGUIDialog(QWidget* parent, QStringList sele
 	for (wstring channelName : remainingChannelNames)
 	{
 		QListWidgetItem* item = new QListWidgetItem(QString::fromStdWString(channelName));
-		item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
+		item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled
+			| Qt::ItemIsUserCheckable);
 		if (remainingSelectedChannels.removeOne(QString::fromStdWString(channelName)))
 			item->setCheckState(Qt::Checked);
 		else
@@ -117,7 +121,8 @@ ChannelFilterGUIDialog::ChannelFilterGUIDialog(QWidget* parent, QStringList sele
 	for (QString c : remainingSelectedChannels)
 	{
 		QListWidgetItem* item = new QListWidgetItem(c);
-		item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
+		item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled
+			| Qt::ItemIsUserCheckable);
 		item->setCheckState(Qt::Checked);
 		ui->listWidget->addItem(item);
 	}
@@ -133,7 +138,8 @@ ChannelFilterGUIDialog::~ChannelFilterGUIDialog()
 void ChannelFilterGUIDialog::on_addButton_clicked()
 {
 	QListWidgetItem* item = new QListWidgetItem("");
-	item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
+	item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled
+		| Qt::ItemIsUserCheckable);
 	item->setCheckState(Qt::Checked);
 	ui->listWidget->addItem(item);
 	ui->listWidget->editItem(item);

@@ -18,10 +18,11 @@
 */
 
 #include "stdafx.h"
+
 #include "OpacityIconEngine.h"
 
 OpacityIconEngine::OpacityIconEngine(const QIcon& icon)
-	:icon(icon)
+	: icon(icon)
 {
 }
 

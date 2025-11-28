@@ -17,13 +17,14 @@
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include <algorithm>
-#include <QWheelEvent>
+#include "FrequencyPlotView.h"
+
 #include <QScrollBar>
+#include <QWheelEvent>
+#include <algorithm>
 
 #include "Editor/helpers/GUIHelper.h"
 #include "FrequencyPlotItem.h"
-#include "FrequencyPlotView.h"
 
 using namespace std;
 
@@ -199,7 +200,8 @@ void FrequencyPlotView::resizeEvent(QResizeEvent* event)
 
 	const QRect rect = viewport()->geometry();
 	QMargins margins = viewportMargins();
-	hRuler->setGeometry(rect.x() - margins.left(), rect.y() + rect.height(), rect.width() + margins.left(), margins.bottom());
+	hRuler->setGeometry(
+		rect.x() - margins.left(), rect.y() + rect.height(), rect.width() + margins.left(), margins.bottom());
 	vRuler->setGeometry(rect.x() - margins.left(), rect.y(), margins.left(), rect.height() + margins.bottom());
 }
 

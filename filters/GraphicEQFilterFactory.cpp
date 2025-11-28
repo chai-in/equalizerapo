@@ -18,13 +18,15 @@
 */
 
 #include "stdafx.h"
+
+#include "GraphicEQFilterFactory.h"
+
 #include <regex>
 
+#include "helpers/LogHelper.h"
 #include "helpers/MemoryHelper.h"
 #include "helpers/StringHelper.h"
-#include "helpers/LogHelper.h"
 #include "GraphicEQFilter.h"
-#include "GraphicEQFilterFactory.h"
 
 using namespace std;
 
@@ -61,7 +63,7 @@ vector<IFilter*> GraphicEQFilterFactory::createFilter(const wstring& configPath,
 		TraceF(L"Graphic equalizer with %d nodes", nodes.size());
 
 		void* mem = MemoryHelper::alloc(sizeof(GraphicEQFilter));
-		filter = new(mem) GraphicEQFilter(nodes, 16384);
+		filter = new (mem) GraphicEQFilter(nodes, 16384);
 	}
 
 	if (filter == NULL)

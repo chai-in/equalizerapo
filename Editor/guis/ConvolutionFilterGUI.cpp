@@ -117,7 +117,8 @@ void ConvolutionFilterGUI::updateFileInfo()
 
 			if ((mask & GENERIC_READ) != GENERIC_READ && (mask & FILE_GENERIC_READ) != FILE_GENERIC_READ)
 			{
-				error = tr("The file is not readable for the audio service.\nChange the file permissions or copy the file to the config directory.");
+				error = tr(
+					"The file is not readable for the audio service.\nChange the file permissions or copy the file to the config directory.");
 				labelsVisible = false;
 			}
 			else
@@ -140,7 +141,9 @@ void ConvolutionFilterGUI::updateFileInfo()
 
 					if (sampleRate != deviceSampleRate)
 					{
-						error = tr("The file sample rate does not match the device sample rate (%0 Hz)!\nSelect a different file or change the device configuration.").arg(deviceSampleRate);
+						error = tr(
+							"The file sample rate does not match the device sample rate (%0 Hz)!\nSelect a different file or change the device configuration.")
+									.arg(deviceSampleRate);
 					}
 				}
 			}

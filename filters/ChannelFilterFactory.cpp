@@ -18,11 +18,13 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 #include "stdafx.h"
+
+#include "ChannelFilterFactory.h"
+
+#include "helpers/LogHelper.h"
 #include "helpers/MemoryHelper.h"
 #include "helpers/StringHelper.h"
-#include "helpers/LogHelper.h"
 #include "ChannelFilter.h"
-#include "ChannelFilterFactory.h"
 
 using namespace std;
 
@@ -56,7 +58,7 @@ vector<IFilter*> ChannelFilterFactory::createFilter(const wstring& configPath, w
 		}
 
 		void* mem = MemoryHelper::alloc(sizeof(ChannelFilter));
-		filter = new(mem) ChannelFilter(words);
+		filter = new (mem) ChannelFilter(words);
 	}
 
 	if (filter == NULL)

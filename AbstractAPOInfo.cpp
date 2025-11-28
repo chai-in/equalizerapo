@@ -18,6 +18,7 @@
 */
 
 #include "stdafx.h"
+
 #include "AbstractAPOInfo.h"
 
 AbstractAPOInfo::~AbstractAPOInfo()

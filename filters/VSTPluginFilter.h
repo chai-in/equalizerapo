@@ -19,18 +19,23 @@
 
 #pragma once
 
-#include "IFilter.h"
 #include "helpers/VSTPluginLibrary.h"
+#include "IFilter.h"
 
 #pragma AVRT_VTABLES_BEGIN
 class VSTPluginFilter : public IFilter
 {
 public:
-	VSTPluginFilter(std::shared_ptr<VSTPluginLibrary> library, std::wstring chunkData, std::unordered_map<std::wstring, float> paramMap);
+	VSTPluginFilter(std::shared_ptr<VSTPluginLibrary> library, std::wstring chunkData,
+		std::unordered_map<std::wstring, float> paramMap);
 	~VSTPluginFilter();
 
-	bool getInPlace() override {return false;}
-	std::vector<std::wstring> initialize(float sampleRate, unsigned maxFrameCount, std::vector<std::wstring> channelNames) override;
+	bool getInPlace() override
+	{
+		return false;
+	}
+	std::vector<std::wstring> initialize(
+		float sampleRate, unsigned maxFrameCount, std::vector<std::wstring> channelNames) override;
 	void prepareForProcessing(float sampleRate, unsigned maxFrameCount);
 	void process(float** output, float** input, unsigned frameCount) override;
 

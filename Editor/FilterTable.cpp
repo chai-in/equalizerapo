@@ -17,45 +17,46 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include <QDrag>
-#include <QMimeData>
+#include "FilterTable.h"
+
+#include <QAbstractSpinBox>
 #include <QApplication>
 #include <QClipboard>
-#include <QLabel>
-#include <QElapsedTimer>
-#include <QLineEdit>
-#include <QToolButton>
-#include <QScrollBar>
-#include <QToolBar>
 #include <QComboBox>
-#include <QAbstractSpinBox>
 #include <QDial>
+#include <QDrag>
+#include <QElapsedTimer>
 #include <QJsonDocument>
+#include <QLabel>
+#include <QLineEdit>
+#include <QMimeData>
+#include <QScrollBar>
 #include <QSettings>
+#include <QToolBar>
+#include <QToolButton>
 
-#include "MainWindow.h"
-#include "FilterTableRow.h"
-#include "FilterTableMimeData.h"
-#include "guis/ExpressionFilterGUIFactory.h"
-#include "guis/CommentFilterGUIFactory.h"
-#include "guis/DeviceFilterGUIFactory.h"
-#include "guis/ChannelFilterGUIFactory.h"
-#include "guis/StageFilterGUIFactory.h"
-#include "guis/PreampFilterGUIFactory.h"
+#include "Editor/helpers/GUIHelper.h"
 #include "guis/BiQuadFilterGUIFactory.h"
+#include "guis/ChannelFilterGUIFactory.h"
+#include "guis/CommentFilterGUIFactory.h"
+#include "guis/ConvolutionFilterGUIFactory.h"
 #include "guis/CopyFilterGUIFactory.h"
 #include "guis/DelayFilterGUIFactory.h"
-#include "guis/IncludeFilterGUIFactory.h"
+#include "guis/DeviceFilterGUIFactory.h"
+#include "guis/ExpressionFilterGUIFactory.h"
 #include "guis/GraphicEQFilterGUIFactory.h"
-#include "guis/ConvolutionFilterGUIFactory.h"
-#include "guis/VSTPluginFilterGUIFactory.h"
+#include "guis/IncludeFilterGUIFactory.h"
 #include "guis/LoudnessCorrectionFilterGUIFactory.h"
-#include "Editor/helpers/GUIHelper.h"
-#include "helpers/StringHelper.h"
-#include "helpers/LogHelper.h"
+#include "guis/PreampFilterGUIFactory.h"
+#include "guis/StageFilterGUIFactory.h"
+#include "guis/VSTPluginFilterGUIFactory.h"
 #include "helpers/ChannelHelper.h"
+#include "helpers/LogHelper.h"
 #include "helpers/RegistryHelper.h"
-#include "FilterTable.h"
+#include "helpers/StringHelper.h"
+#include "FilterTableMimeData.h"
+#include "FilterTableRow.h"
+#include "MainWindow.h"
 
 using namespace std;
 
@@ -94,7 +95,8 @@ FilterTable::~FilterTable()
 	factories.clear();
 }
 
-void FilterTable::initialize(QScrollArea* scrollArea, const QList<shared_ptr<AbstractAPOInfo>>& outputDevices, const QList<shared_ptr<AbstractAPOInfo>>& inputDevices)
+void FilterTable::initialize(QScrollArea* scrollArea, const QList<shared_ptr<AbstractAPOInfo>>& outputDevices,
+	const QList<shared_ptr<AbstractAPOInfo>>& inputDevices)
 {
 	this->scrollArea = scrollArea;
 	this->outputDevices = outputDevices;
@@ -709,7 +711,8 @@ void FilterTable::mouseMoveEvent(QMouseEvent* event)
 
 					if (!dragPosInside)
 					{
-						FilterTableRow* tableRow = qobject_cast<FilterTableRow*>(gridLayout->itemAtPosition(i, 0)->widget());
+						FilterTableRow* tableRow = qobject_cast<FilterTableRow*>(
+							gridLayout->itemAtPosition(i, 0)->widget());
 						QRect rect = tableRow->getHeaderRect().translated(tableRow->pos());
 						if (rect.contains(dragStartPos))
 							dragPosInside = true;
@@ -938,7 +941,7 @@ bool FilterTable::eventFilter(QObject* obj, QEvent* event)
 	{
 		if (type == QEvent::Wheel)
 		{
-			QWheelEvent* wheelEvent = (QWheelEvent*)event;
+			QWheelEvent* wheelEvent = (QWheelEvent*) event;
 			scrollStartPoint = wheelEvent->globalPosition();
 
 			QWidget* widget = qobject_cast<QWidget*>(obj);
@@ -953,7 +956,7 @@ bool FilterTable::eventFilter(QObject* obj, QEvent* event)
 		}
 		else if (type == QEvent::MouseMove)
 		{
-			QMouseEvent* mouseEvent = (QMouseEvent*)event;
+			QMouseEvent* mouseEvent = (QMouseEvent*) event;
 
 			if ((mouseEvent->globalPos() - scrollStartPoint).manhattanLength() > GUIHelper::scale(30))
 				scrollingNow = false;

@@ -26,10 +26,14 @@ class PreampFilter : public IFilter
 {
 public:
 	PreampFilter(double dbGain);
-	std::vector<std::wstring> initialize(float sampleRate, unsigned maxFrameCount, std::vector<std::wstring> channelNames) override;
+	std::vector<std::wstring> initialize(
+		float sampleRate, unsigned maxFrameCount, std::vector<std::wstring> channelNames) override;
 	void process(float** output, float** input, unsigned frameCount) override;
 
-	double getDbGain() const {return dbGain;}
+	double getDbGain() const
+	{
+		return dbGain;
+	}
 
 private:
 	float gain;

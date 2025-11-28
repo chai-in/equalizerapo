@@ -20,12 +20,11 @@
 #pragma once
 
 #define ENABLE_SNDFILE_WINDOWS_PROTOTYPES 1
-#include <sndfile.hh>
 #include <QIODevice>
+#include <sndfile.hh>
 
 class QtSndfileHandle : public SndfileHandle
 {
 public:
-	QtSndfileHandle(QIODevice& device, int mode = SFM_READ,
-		int format = 0, int channels = 0, int samplerate = 0);
+	QtSndfileHandle(QIODevice& device, int mode = SFM_READ, int format = 0, int channels = 0, int samplerate = 0);
 };

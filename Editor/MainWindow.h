@@ -19,18 +19,18 @@
 
 #pragma once
 
-#include <string>
-#include <vector>
-#include <QMainWindow>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDir>
+#include <QMainWindow>
+#include <string>
+#include <vector>
 
-#include "FilterTable.h"
-#include "DeviceAPOInfo.h"
 #include "Editor/AnalysisPlotScene.h"
 #include "Editor/AnalysisThread.h"
 #include "helpers/RegistryHelper.h"
+#include "DeviceAPOInfo.h"
+#include "FilterTable.h"
 
 #define EDITOR_REGPATH USER_REGPATH L"\\Configuration Editor"
 #define EDITOR_PER_FILE_REGPATH EDITOR_REGPATH L"\\file-specific"

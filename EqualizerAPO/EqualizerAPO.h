@@ -19,10 +19,11 @@
 
 #pragma once
 
-#include <string>
-#include <Unknwn.h>
 #include <audioenginebaseapo.h>
 #include <BaseAudioProcessingObject.h>
+#include <string>
+#include <Unknwn.h>
+
 #include "FilterEngine.h"
 
 class INonDelegatingUnknown
@@ -56,9 +57,8 @@ public:
 	virtual HRESULT __stdcall UnlockForProcess(void);
 
 	// IAudioProcessingObjectRT
-	virtual void __stdcall APOProcess(UINT32 u32NumInputConnections,
-		APO_CONNECTION_PROPERTY** ppInputConnections, UINT32 u32NumOutputConnections,
-		APO_CONNECTION_PROPERTY** ppOutputConnections);
+	virtual void __stdcall APOProcess(UINT32 u32NumInputConnections, APO_CONNECTION_PROPERTY** ppInputConnections,
+		UINT32 u32NumOutputConnections, APO_CONNECTION_PROPERTY** ppOutputConnections);
 
 	// INonDelegatingUnknown
 	virtual HRESULT __stdcall NonDelegatingQueryInterface(const IID& iid, void** ppv);
@@ -76,7 +76,8 @@ private:
 	bool allowSilentBufferModification;
 
 	void resetChild();
-	void sendMessage(std::wstring& deviceTestPipeName, const std::wstring& deviceGuid, GUID apoGuid, const std::string& phase);
+	void sendMessage(
+		std::wstring& deviceTestPipeName, const std::wstring& deviceGuid, GUID apoGuid, const std::string& phase);
 
 	IAudioProcessingObject* childAPO;
 	IAudioProcessingObjectRT* childRT;

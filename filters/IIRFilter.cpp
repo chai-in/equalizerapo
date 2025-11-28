@@ -18,8 +18,10 @@
 */
 
 #include "stdafx.h"
-#include "helpers/MemoryHelper.h"
+
 #include "IIRFilter.h"
+
+#include "helpers/MemoryHelper.h"
 
 using namespace std;
 
@@ -27,9 +29,9 @@ using namespace std;
 
 IIRFilter::IIRFilter(const vector<double>& coefficients)
 {
-	order = (unsigned)coefficients.size() / 2 - 1;
-	a = (double*)MemoryHelper::alloc(order * sizeof(double));
-	b = (double*)MemoryHelper::alloc(order * sizeof(double));
+	order = (unsigned) coefficients.size() / 2 - 1;
+	a = (double*) MemoryHelper::alloc(order * sizeof(double));
+	b = (double*) MemoryHelper::alloc(order * sizeof(double));
 	x = NULL;
 	y = NULL;
 
@@ -55,15 +57,15 @@ IIRFilter::~IIRFilter()
 
 vector<wstring> IIRFilter::initialize(float sampleRate, unsigned maxFrameCount, vector<wstring> channelNames)
 {
-	channelCount = (unsigned)channelNames.size();
+	channelCount = (unsigned) channelNames.size();
 
 	if (x != NULL)
 		MemoryHelper::free(x);
 	if (y != NULL)
 		MemoryHelper::free(y);
 
-	x = (double*)MemoryHelper::alloc(order * channelCount * sizeof(double));
-	y = (double*)MemoryHelper::alloc(order * channelCount * sizeof(double));
+	x = (double*) MemoryHelper::alloc(order * channelCount * sizeof(double));
+	y = (double*) MemoryHelper::alloc(order * channelCount * sizeof(double));
 	memset(x, 0, order * channelCount * sizeof(double));
 	memset(y, 0, order * channelCount * sizeof(double));
 
@@ -105,7 +107,7 @@ void IIRFilter::process(float** output, float** input, unsigned frameCount)
 			xo[0] = sample;
 			yo[0] = sum;
 
-			outputChannel[j] = (float)sum;
+			outputChannel[j] = (float) sum;
 		}
 	}
 

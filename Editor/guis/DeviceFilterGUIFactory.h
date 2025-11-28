@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include "DeviceAPOInfo.h"
 #include "Editor/IFilterGUIFactory.h"
+#include "DeviceAPOInfo.h"
 
 class DeviceFilterGUIFactory : public IFilterGUIFactory
 {

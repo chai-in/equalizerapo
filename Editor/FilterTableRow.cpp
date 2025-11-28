@@ -17,18 +17,18 @@
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include <QToolBar>
+#include "FilterTableRow.h"
+
 #include <QLineEdit>
 #include <QPainter>
 #include <QScrollBar>
+#include <QToolBar>
 
 #include "Editor/helpers/GUIHelper.h"
-#include "FilterTableRow.h"
 #include "ui_FilterTableRow.h"
 
 FilterTableRow::FilterTableRow(FilterTable* table, int number, FilterTable::Item* item, IFilterGUI* gui)
-	: QWidget(table),
-	ui(new Ui::FilterTableRow)
+	: QWidget(table), ui(new Ui::FilterTableRow)
 {
 	ui->setupUi(this);
 	ui->labelNumber->setMinimumWidth(GUIHelper::scale(25));
@@ -119,8 +119,8 @@ void FilterTableRow::paintEvent(QPaintEvent*)
 	painter.setPen(color);
 
 	QLinearGradient gradient(r.topLeft(), r.bottomLeft());
-	gradient.setColorAt(0, dark ? QColor(70,70,70) : QColor(255, 255, 255));
-	gradient.setColorAt(1, dark ? QColor(45,45,45) : QColor(230, 230, 230));
+	gradient.setColorAt(0, dark ? QColor(70, 70, 70) : QColor(255, 255, 255));
+	gradient.setColorAt(1, dark ? QColor(45, 45, 45) : QColor(230, 230, 230));
 	painter.setBrush(gradient);
 	painter.drawRoundedRect(r, 5, 5);
 

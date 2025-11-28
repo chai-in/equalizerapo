@@ -19,14 +19,14 @@
 
 #pragma once
 
+#include <QGridLayout>
+#include <QJsonObject>
 #include <QLabel>
 #include <QListWidget>
-#include <QTableWidget>
-#include <QMouseEvent>
-#include <QGridLayout>
-#include <QScrollArea>
 #include <QMenu>
-#include <QJsonObject>
+#include <QMouseEvent>
+#include <QScrollArea>
+#include <QTableWidget>
 
 #include "Editor/helpers/DisableWheelFilter.h"
 #include "DeviceAPOInfo.h"
@@ -57,7 +57,8 @@ public:
 
 	explicit FilterTable(MainWindow* mainWindow, QWidget* parent = 0);
 	~FilterTable();
-	void initialize(QScrollArea* scrollArea, const QList<std::shared_ptr<AbstractAPOInfo>>& outputDevices, const QList<std::shared_ptr<AbstractAPOInfo>>& inputDevices);
+	void initialize(QScrollArea* scrollArea, const QList<std::shared_ptr<AbstractAPOInfo>>& outputDevices,
+		const QList<std::shared_ptr<AbstractAPOInfo>>& inputDevices);
 	void updateDeviceAndChannelMask(std::shared_ptr<AbstractAPOInfo> selectedDevice, int selectedChannelMask);
 	void updateGuis();
 	void propagateChannels();

@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include <vector>
 #include <QGraphicsScene>
+#include <vector>
 
 #include "Editor/widgets/ChannelGraphScene.h"
 #include "filters/CopyFilter.h"

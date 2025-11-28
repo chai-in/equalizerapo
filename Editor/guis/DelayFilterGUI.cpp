@@ -17,8 +17,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include "Editor/helpers/GUIHelper.h"
 #include "DelayFilterGUI.h"
+
+#include "Editor/helpers/GUIHelper.h"
 #include "ui_DelayFilterGUI.h"
 
 static const double dialSteps = 1000;

@@ -20,8 +20,8 @@
 #pragma once
 
 #define WIN32_LEAN_AND_MEAN
-#include <windows.h>
 #include <EndpointVolume.h>
+#include <windows.h>
 
 class VolumeController
 {
@@ -29,6 +29,7 @@ public:
 	VolumeController();
 	HRESULT getVolume(float& currentVolume);
 	HRESULT setVolume(float volume);
+
 private:
 	IAudioEndpointVolume* _endpointVolume;
 	float _minVol;

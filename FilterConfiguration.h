@@ -46,10 +46,14 @@ public:
 	void read(float* input, unsigned frameCount);
 	void read(float** input, unsigned frameCount);
 	void process(unsigned frameCount);
-	unsigned doTransition(FilterConfiguration* nextConfig, unsigned frameCount, unsigned transitionCounter, unsigned transitionLength);
+	unsigned doTransition(
+		FilterConfiguration* nextConfig, unsigned frameCount, unsigned transitionCounter, unsigned transitionLength);
 	void write(float* output, unsigned frameCount);
 	void write(float** output, unsigned frameCount);
-	float** getOutputSamples() {return allSamples;}
+	float** getOutputSamples()
+	{
+		return allSamples;
+	}
 	bool isEmpty();
 
 private:

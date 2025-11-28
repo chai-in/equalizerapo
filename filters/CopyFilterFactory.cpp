@@ -18,11 +18,13 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 #include "stdafx.h"
+
+#include "CopyFilterFactory.h"
+
+#include "helpers/LogHelper.h"
 #include "helpers/MemoryHelper.h"
 #include "helpers/StringHelper.h"
-#include "helpers/LogHelper.h"
 #include "CopyFilter.h"
-#include "CopyFilterFactory.h"
 
 using namespace std;
 
@@ -75,7 +77,8 @@ vector<IFilter*> CopyFilterFactory::createFilter(const wstring& configPath, wstr
 					else
 					{
 						summand.factor = wcstod(factor.c_str(), NULL);
-						summand.isDecibel = factor.size() > 2 && StringHelper::toLowerCase(factor.substr(factor.size() - 2)) == L"db";
+						summand.isDecibel = factor.size() > 2
+							&& StringHelper::toLowerCase(factor.substr(factor.size() - 2)) == L"db";
 					}
 
 					summand.channel = channel;
@@ -88,7 +91,7 @@ vector<IFilter*> CopyFilterFactory::createFilter(const wstring& configPath, wstr
 		}
 
 		void* mem = MemoryHelper::alloc(sizeof(CopyFilter));
-		filter = new(mem) CopyFilter(assignments);
+		filter = new (mem) CopyFilter(assignments);
 	}
 
 	if (filter == NULL)

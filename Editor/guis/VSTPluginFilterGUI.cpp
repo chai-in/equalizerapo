@@ -17,26 +17,28 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include <QFileInfo>
-#include <QFileDialog>
-#include <QSettings>
 #include <QAbstractEventDispatcher>
+#include <QFileDialog>
+#include <QFileInfo>
+#include <QSettings>
 #include <QStringList>
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include "helpers/aeffectx.h"
-#include "helpers/StringHelper.h"
+
 #include "Editor/helpers/GUIHelper.h"
 #include "Editor/MainWindow.h"
-#include "VSTPluginFilterGUIDialog.h"
-#include "VSTPluginFilterGUI.h"
+#include "helpers/aeffectx.h"
+#include "helpers/StringHelper.h"
 #include "ui_VSTPluginFilterGUI.h"
+#include "VSTPluginFilterGUI.h"
+#include "VSTPluginFilterGUIDialog.h"
 
 using namespace std;
 using namespace std::placeholders;
 
-VSTPluginFilterGUI::VSTPluginFilterGUI(std::shared_ptr<VSTPluginLibrary> library, const std::wstring& chunkData, const std::unordered_map<std::wstring, float>& paramMap)
+VSTPluginFilterGUI::VSTPluginFilterGUI(std::shared_ptr<VSTPluginLibrary> library, const std::wstring& chunkData,
+	const std::unordered_map<std::wstring, float>& paramMap)
 	: ui(new Ui::VSTPluginFilterGUI), library(library), chunkData(chunkData), paramMap(paramMap)
 {
 	ui->setupUi(this);
@@ -384,7 +386,7 @@ bool VSTPluginFilterGUI::embedPlugin()
 	{
 		effect->writeToEffect(chunkData, paramMap);
 
-		HWND hwnd = (HWND)ui->frame->winId();
+		HWND hwnd = (HWND) ui->frame->winId();
 		short width, height;
 
 		effect->startEditing(hwnd, &width, &height);
@@ -419,7 +421,8 @@ void VSTPluginFilterGUI::updatePermissionWarning()
 
 	if ((mask & GENERIC_READ) != GENERIC_READ && (mask & FILE_GENERIC_READ) != FILE_GENERIC_READ)
 	{
-		QString text = tr("The library is not readable by the audio service.\nChange the file permissions or copy the file to the VSTPlugins directory.");
+		QString text = tr(
+			"The library is not readable by the audio service.\nChange the file permissions or copy the file to the VSTPlugins directory.");
 
 		ui->warningTextEdit->setPlainText(text);
 		QSize textSize = ui->warningTextEdit->fontMetrics().size(0, text);
@@ -467,8 +470,9 @@ void VSTPluginFilterGUI::updatePermissionWarning()
 	{
 		files.removeDuplicates();
 		QString text = tr("The plugin seemingly accesses these files not readable by the audio service:\n"
-				"%0\n"
-				"Change the file permissions or copy the files to the config directory.").arg(files.join("\n"));
+						  "%0\n"
+						  "Change the file permissions or copy the files to the config directory.")
+						   .arg(files.join("\n"));
 		ui->warningTextEdit->setPlainText(text);
 		QSize textSize = ui->warningTextEdit->fontMetrics().size(0, text);
 		ui->warningTextEdit->setFixedSize(textSize + GUIHelper::scale(QSize(40, 15)));

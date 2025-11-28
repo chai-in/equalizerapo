@@ -17,9 +17,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include <QKeyEvent>
-
 #include "EscapableLineEdit.h"
+
+#include <QKeyEvent>
 
 EscapableLineEdit::EscapableLineEdit(QWidget* parent)
 	: QLineEdit(parent)

@@ -22,8 +22,8 @@
 #include <windows.h>
 
 #include "PrecisionTimer.h"
-#include "StringHelper.h"
 #include "ServiceHelper.h"
+#include "StringHelper.h"
 
 using namespace std;
 
@@ -32,7 +32,7 @@ void ServiceHelper::restartService(const wstring& serviceName)
 	SC_HANDLE scManager = OpenSCManagerW(NULL, NULL, SC_MANAGER_ALL_ACCESS);
 	if (scManager == NULL)
 		throw ServiceException(L"OpenSCManager failed (" + StringHelper::getSystemErrorString(GetLastError()) + L")");
-	SCOPE_EXIT{CloseServiceHandle(scManager); };
+	SCOPE_EXIT(CloseServiceHandle(scManager);)
 
 	vector<shared_ptr<Service>> services;
 	shared_ptr<Service> mainService(new Service(scManager, serviceName, true));
@@ -102,7 +102,8 @@ Service::Service(SC_HANDLE scManager, const std::wstring& serviceName, bool allo
 	DWORD desiredAccess = SERVICE_START | SERVICE_STOP | SERVICE_QUERY_STATUS;
 	if (allowEnumerate)
 		desiredAccess |= SERVICE_ENUMERATE_DEPENDENTS;
-	serviceHandle = OpenServiceW(scManager, serviceName.c_str(), SERVICE_START | SERVICE_STOP | SERVICE_QUERY_STATUS | SERVICE_ENUMERATE_DEPENDENTS);
+	serviceHandle = OpenServiceW(scManager, serviceName.c_str(),
+		SERVICE_START | SERVICE_STOP | SERVICE_QUERY_STATUS | SERVICE_ENUMERATE_DEPENDENTS);
 	if (serviceHandle == NULL)
 		fail(L"OpenService", GetLastError());
 }
@@ -121,7 +122,8 @@ DWORD Service::getState()
 {
 	SERVICE_STATUS_PROCESS ssp;
 	DWORD dwBytesNeeded;
-	if (!QueryServiceStatusEx(serviceHandle, SC_STATUS_PROCESS_INFO, (LPBYTE)&ssp, sizeof(SERVICE_STATUS_PROCESS), &dwBytesNeeded))
+	if (!QueryServiceStatusEx(
+			serviceHandle, SC_STATUS_PROCESS_INFO, (LPBYTE) &ssp, sizeof(SERVICE_STATUS_PROCESS), &dwBytesNeeded))
 		fail(L"QueryServiceStatusEx", GetLastError());
 
 	return ssp.dwCurrentState;
@@ -153,11 +155,12 @@ vector<wstring> Service::getActiveDependentServices()
 	if (error != ERROR_MORE_DATA)
 		fail(L"EnumDependentServices", error);
 
-	LPENUM_SERVICE_STATUSW dependencies = (LPENUM_SERVICE_STATUSW)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, bytesNeeded);
+	LPENUM_SERVICE_STATUSW dependencies = (LPENUM_SERVICE_STATUSW) HeapAlloc(
+		GetProcessHeap(), HEAP_ZERO_MEMORY, bytesNeeded);
 	if (!dependencies)
 		throw ServiceException(L"HeapAlloc for EnumDependentServices failed");
 
-	SCOPE_EXIT{HeapFree(GetProcessHeap(), 0, dependencies); };
+	SCOPE_EXIT(HeapFree(GetProcessHeap(), 0, dependencies);)
 
 	if (!EnumDependentServicesW(serviceHandle, SERVICE_ACTIVE, dependencies, bytesNeeded, &bytesNeeded, &count))
 		fail(L"EnumDependentServices", GetLastError());
@@ -171,5 +174,6 @@ vector<wstring> Service::getActiveDependentServices()
 
 void Service::fail(const wstring& functionName, DWORD error)
 {
-	throw ServiceException(functionName + L" failed for service \"" + serviceName + L"\" (" + StringHelper::getSystemErrorString(error) + L")");
+	throw ServiceException(functionName + L" failed for service \"" + serviceName + L"\" ("
+		+ StringHelper::getSystemErrorString(error) + L")");
 }

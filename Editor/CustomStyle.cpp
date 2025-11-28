@@ -17,6 +17,7 @@
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 #include "CustomStyle.h"
+
 #include "Editor/helpers/GUIHelper.h"
 
 CustomStyle::CustomStyle(QStyle* style)
@@ -38,16 +39,16 @@ int CustomStyle::pixelMetric(QStyle::PixelMetric metric, const QStyleOption* opt
 	}
 }
 
-QIcon CustomStyle::standardIcon(StandardPixmap standardIcon, const QStyleOption *option, const QWidget *widget) const
+QIcon CustomStyle::standardIcon(StandardPixmap standardIcon, const QStyleOption* option, const QWidget* widget) const
 {
-	if(GUIHelper::isDarkMode())
+	if (GUIHelper::isDarkMode())
 	{
 		switch (standardIcon)
 		{
-		case QStyle::SP_ToolBarHorizontalExtensionButton :
+		case QStyle::SP_ToolBarHorizontalExtensionButton:
 			return QIcon(":/icons/dark-mode/toolbar-ext-h.svg");
 
-		case QStyle::SP_ToolBarVerticalExtensionButton :
+		case QStyle::SP_ToolBarVerticalExtensionButton:
 			return QIcon(":/icons/dark-mode/toolbar-ext-v.svg");
 
 		default:

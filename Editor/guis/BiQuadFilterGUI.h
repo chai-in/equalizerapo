@@ -19,8 +19,9 @@
 
 #pragma once
 
-#include "Editor/IFilterGUI.h"
 #include <filters/BiQuadFilter.h>
+
+#include "Editor/IFilterGUI.h"
 
 namespace Ui {
 class BiQuadFilterGUI;

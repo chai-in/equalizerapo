@@ -19,84 +19,129 @@
 
 #pragma once
 
+#include <helpers/StringHelper.h>
 #include <regex>
 #include <string>
 #include <vector>
-#include <helpers/StringHelper.h>
 
 template<typename type> struct to_WString_type_traits
 {
-	static inline std::wstring cast_ToWString(const type& input) {return std::wstring();}
+	static inline std::wstring cast_ToWString(const type& input)
+	{
+		return std::wstring();
+	}
 };
 
 template<> struct to_WString_type_traits<float>
 {
-	static inline std::wstring cast_ToWString(const float& input) {return std::to_wstring((long double)input);}
+	static inline std::wstring cast_ToWString(const float& input)
+	{
+		return std::to_wstring((long double) input);
+	}
 };
 
 template<> struct to_WString_type_traits<double>
 {
-	static inline std::wstring cast_ToWString(const double& input) {return std::to_wstring((long double)input);}
+	static inline std::wstring cast_ToWString(const double& input)
+	{
+		return std::to_wstring((long double) input);
+	}
 };
 
 template<> struct to_WString_type_traits<int>
 {
-	static inline std::wstring cast_ToWString(const int& input) {return std::to_wstring((long long)input);}
+	static inline std::wstring cast_ToWString(const int& input)
+	{
+		return std::to_wstring((long long) input);
+	}
 };
 
 template<> struct to_WString_type_traits<bool>
 {
-	static inline std::wstring cast_ToWString(const bool& input) {return std::to_wstring((long long)input);}
+	static inline std::wstring cast_ToWString(const bool& input)
+	{
+		return std::to_wstring((long long) input);
+	}
 };
 
 template<> struct to_WString_type_traits<std::string>
 {
-	static inline std::wstring cast_ToWString(const std::string& input) {return StringHelper::toWString(input, CP_ACP);}
+	static inline std::wstring cast_ToWString(const std::string& input)
+	{
+		return StringHelper::toWString(input, CP_ACP);
+	}
 };
 
 template<> struct to_WString_type_traits<std::wstring>
 {
-	static inline std::wstring cast_ToWString(const std::wstring& input) {return input;}
+	static inline std::wstring cast_ToWString(const std::wstring& input)
+	{
+		return input;
+	}
 };
 
 template<typename type> struct from_WString_type_traits
 {
-	static inline type cast_fromWString(const std::wstring& input) {return (type)wcstod(input.c_str(), NULL);}
+	static inline type cast_fromWString(const std::wstring& input)
+	{
+		return (type) wcstod(input.c_str(), NULL);
+	}
 };
 
 template<> struct from_WString_type_traits<float>
 {
-	static inline float cast_fromWString(const std::wstring& input) {return (float)wcstod(input.c_str(), NULL);}
+	static inline float cast_fromWString(const std::wstring& input)
+	{
+		return (float) wcstod(input.c_str(), NULL);
+	}
 };
 
 template<> struct from_WString_type_traits<double>
 {
-	static inline double cast_fromWString(const std::wstring& input) {return wcstod(input.c_str(), NULL);}
+	static inline double cast_fromWString(const std::wstring& input)
+	{
+		return wcstod(input.c_str(), NULL);
+	}
 };
 
 template<> struct from_WString_type_traits<int>
 {
-	static inline int cast_fromWString(const std::wstring& input) {return (int)wcstol(input.c_str(), NULL, 10);}
+	static inline int cast_fromWString(const std::wstring& input)
+	{
+		return (int) wcstol(input.c_str(), NULL, 10);
+	}
 };
 
 template<> struct from_WString_type_traits<bool>
 {
-	static inline bool cast_fromWString(const std::wstring& input) {return wcstol(input.c_str(), NULL, 10) == 0 ? false : true;}
+	static inline bool cast_fromWString(const std::wstring& input)
+	{
+		return wcstol(input.c_str(), NULL, 10) == 0 ? false : true;
+	}
 };
 
 template<> struct from_WString_type_traits<std::wstring>
 {
-	static inline std::wstring cast_fromWString(const std::wstring& input) {return input;}
+	static inline std::wstring cast_fromWString(const std::wstring& input)
+	{
+		return input;
+	}
 };
 
 template<typename type> struct constructor_traits
 {
-	static inline std::wstring initFrom(type input) {return std::wstring();}
+	static inline std::wstring initFrom(type input)
+	{
+		return std::wstring();
+	}
 };
 
 template<> struct constructor_traits<std::wstring>
 {
-	static inline std::wstring initFrom(std::wstring input) {return input;}
+	static inline std::wstring initFrom(std::wstring input)
+	{
+		return input;
+	}
 };
 
 template<> struct constructor_traits<std::vector<char>>

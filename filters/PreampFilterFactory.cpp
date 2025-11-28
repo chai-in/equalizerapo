@@ -18,11 +18,13 @@
 */
 
 #include "stdafx.h"
+
+#include "PreampFilterFactory.h"
+
+#include "helpers/LogHelper.h"
 #include "helpers/MemoryHelper.h"
 #include "helpers/StringHelper.h"
-#include "helpers/LogHelper.h"
 #include "PreampFilter.h"
-#include "PreampFilterFactory.h"
 
 using namespace std;
 
@@ -42,7 +44,7 @@ vector<IFilter*> PreampFilterFactory::createFilter(const wstring& configPath, ws
 			TraceF(L"Adjusting preamp by %g dB", preamp_dB);
 
 			void* mem = MemoryHelper::alloc(sizeof(PreampFilter));
-			filter = new(mem) PreampFilter(preamp_dB);
+			filter = new (mem) PreampFilter(preamp_dB);
 		}
 	}
 

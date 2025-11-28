@@ -17,18 +17,19 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include "Editor/helpers/GUIHelper.h"
 #include "DeviceFilterGUIDialog.h"
-#include "ui_DeviceFilterGUIDialog.h"
 
 #include <filters/DeviceFilterFactory.h>
 #include <VoicemeeterAPOInfo.h>
 
+#include "Editor/helpers/GUIHelper.h"
+#include "ui_DeviceFilterGUIDialog.h"
+
 using namespace std;
 
-DeviceFilterGUIDialog::DeviceFilterGUIDialog(DeviceFilterGUI* gui, DeviceFilterGUIFactory* factory, const QString& pattern)
-	: QDialog(gui),
-	ui(new Ui::DeviceFilterGUIDialog)
+DeviceFilterGUIDialog::DeviceFilterGUIDialog(
+	DeviceFilterGUI* gui, DeviceFilterGUIFactory* factory, const QString& pattern)
+	: QDialog(gui), ui(new Ui::DeviceFilterGUIDialog)
 {
 	ui->setupUi(this);
 	resize(GUIHelper::scale(QSize(500, 350)));
@@ -99,7 +100,8 @@ QString DeviceFilterGUIDialog::getPattern()
 				{
 					if (pattern != "")
 						pattern += "; ";
-					shared_ptr<AbstractAPOInfo> apoInfo = item->data(0, Qt::UserRole).value<shared_ptr<AbstractAPOInfo>>();
+					shared_ptr<AbstractAPOInfo> apoInfo = item->data(0, Qt::UserRole)
+															  .value<shared_ptr<AbstractAPOInfo>>();
 					pattern += QString::fromStdWString(apoInfo->getDeviceString());
 				}
 			}

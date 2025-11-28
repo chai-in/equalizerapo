@@ -18,9 +18,11 @@
 */
 
 #include "stdafx.h"
-#include "RegistryHelper.h"
-#include "LogHelper.h"
+
 #include "VSTPluginLibrary.h"
+
+#include "LogHelper.h"
+#include "RegistryHelper.h"
 
 using namespace std;
 
@@ -65,7 +67,7 @@ std::wstring VSTPluginLibrary::getLibPath()
 
 bool VSTPluginLibrary::loadFunctions()
 {
-	VSTPluginMain = (vstPluginMain)GetProcAddress(module, "VSTPluginMain");
+	VSTPluginMain = (vstPluginMain) GetProcAddress(module, "VSTPluginMain");
 
 	return VSTPluginMain != NULL;
 }

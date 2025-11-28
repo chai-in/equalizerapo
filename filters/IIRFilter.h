@@ -27,8 +27,12 @@ class IIRFilter : public IFilter
 public:
 	IIRFilter(const std::vector<double>& coefficients);
 	virtual ~IIRFilter();
-	bool getInPlace() override {return true;}
-	std::vector<std::wstring> initialize(float sampleRate, unsigned maxFrameCount, std::vector<std::wstring> channelNames) override;
+	bool getInPlace() override
+	{
+		return true;
+	}
+	std::vector<std::wstring> initialize(
+		float sampleRate, unsigned maxFrameCount, std::vector<std::wstring> channelNames) override;
 	void process(float** output, float** input, unsigned frameCount) override;
 
 private:

@@ -17,10 +17,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#include "CopyFilterGUIFactory.h"
+
 #include "filters/CopyFilter.h"
 #include "filters/CopyFilterFactory.h"
 #include "CopyFilterGUI.h"
-#include "CopyFilterGUIFactory.h"
 
 CopyFilterGUIFactory::CopyFilterGUIFactory()
 {
@@ -50,7 +51,7 @@ IFilterGUI* CopyFilterGUIFactory::createFilterGUI(QString& command, QString& par
 		std::vector<IFilter*> filters = factory.createFilter(L"", commandWStr, paramWStr);
 		if (!filters.empty())
 		{
-			CopyFilter* filter = (CopyFilter*)filters[0];
+			CopyFilter* filter = (CopyFilter*) filters[0];
 			result = new CopyFilterGUI(filter, filterTable);
 		}
 

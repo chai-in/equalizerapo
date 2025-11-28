@@ -19,10 +19,10 @@
 
 #pragma once
 
+#include <list>
+#include <mutex>
 #include <string>
 #include <thread>
-#include <mutex>
-#include <list>
 #include <winsock2.h>
 
 class ReceiveException

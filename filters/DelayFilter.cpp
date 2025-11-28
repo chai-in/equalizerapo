@@ -18,10 +18,12 @@
 */
 
 #include "stdafx.h"
+
+#include "DelayFilter.h"
+
 #include <cmath>
 
 #include "helpers/MemoryHelper.h"
-#include "DelayFilter.h"
 
 using namespace std;
 
@@ -40,18 +42,18 @@ vector<wstring> DelayFilter::initialize(float sampleRate, unsigned maxFrameCount
 {
 	cleanup();
 
-	channelCount = (unsigned)channelNames.size();
+	channelCount = (unsigned) channelNames.size();
 
 	if (isMs)
-		bufferLength = (unsigned)(sampleRate * delay / 1000.0 + 0.5);
+		bufferLength = (unsigned) (sampleRate * delay / 1000.0 + 0.5);
 	else
-		bufferLength = (unsigned)(delay + 0.5);
+		bufferLength = (unsigned) (delay + 0.5);
 
-	buffers = (float**)MemoryHelper::alloc(sizeof(float*) * channelCount);
+	buffers = (float**) MemoryHelper::alloc(sizeof(float*) * channelCount);
 
 	for (unsigned i = 0; i < channelCount; i++)
 	{
-		buffers[i] = (float*)MemoryHelper::alloc(sizeof(float) * bufferLength);
+		buffers[i] = (float*) MemoryHelper::alloc(sizeof(float) * bufferLength);
 		memset(buffers[i], 0, sizeof(float) * bufferLength);
 	}
 
@@ -81,9 +83,11 @@ void DelayFilter::process(float** output, float** input, unsigned frameCount)
 			if (bufferLength < bufferOffset + frameCount)
 			{
 				memcpy(outputChannel, bufferChannel + bufferOffset, (bufferLength - bufferOffset) * sizeof(float));
-				memcpy(outputChannel + bufferLength - bufferOffset, bufferChannel, (frameCount - (bufferLength - bufferOffset)) * sizeof(float));
+				memcpy(outputChannel + bufferLength - bufferOffset, bufferChannel,
+					(frameCount - (bufferLength - bufferOffset)) * sizeof(float));
 				memcpy(bufferChannel + bufferOffset, inputChannel, (bufferLength - bufferOffset) * sizeof(float));
-				memcpy(bufferChannel, inputChannel + bufferLength - bufferOffset, (frameCount - (bufferLength - bufferOffset)) * sizeof(float));
+				memcpy(bufferChannel, inputChannel + bufferLength - bufferOffset,
+					(frameCount - (bufferLength - bufferOffset)) * sizeof(float));
 			}
 			else
 			{

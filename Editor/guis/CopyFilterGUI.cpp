@@ -17,11 +17,12 @@
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include "Editor/widgets/ResizeCorner.h"
+#include "CopyFilterGUI.h"
+
 #include "Editor/helpers/GUIHelper.h"
+#include "Editor/widgets/ResizeCorner.h"
 #include "helpers/ChannelHelper.h"
 #include "CopyFilterGUIForm.h"
-#include "CopyFilterGUI.h"
 #include "ui_CopyFilterGUI.h"
 
 static const double DEFAULT_HEIGHT = 88;
@@ -39,14 +40,10 @@ CopyFilterGUI::CopyFilterGUI(CopyFilter* filter, FilterTable* filterTable)
 
 	ui->form->load(filter->getAssignments());
 
-	ResizeCorner* cornerWidget = new ResizeCorner(filterTable,
-			QSize(0, GUIHelper::scale(85)), QSize(0, INT_MAX),
-			[this]() {
-		return QSize(0, ui->scrollArea->height());
-	},
-			[this](QSize size) {
-		ui->scrollArea->setFixedHeight(size.height());
-	}, ui->scrollArea);
+	ResizeCorner* cornerWidget = new ResizeCorner(
+		filterTable, QSize(0, GUIHelper::scale(85)), QSize(0, INT_MAX),
+		[this]() { return QSize(0, ui->scrollArea->height()); },
+		[this](QSize size) { ui->scrollArea->setFixedHeight(size.height()); }, ui->scrollArea);
 	cornerWidget->setCursor(Qt::SizeVerCursor);
 	cornerWidget->setAutoFillBackground(true);
 	ui->scrollArea->setCornerWidget(cornerWidget);

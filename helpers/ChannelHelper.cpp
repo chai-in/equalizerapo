@@ -18,14 +18,15 @@
 */
 
 #include "stdafx.h"
+
 #include <algorithm>
 #define WIN32_LEAN_AND_MEAN
-#include <windows.h>
 #include <Ks.h>
 #include <KsMedia.h>
+#include <windows.h>
 
-#include "LogHelper.h"
 #include "ChannelHelper.h"
+#include "LogHelper.h"
 
 using namespace std;
 
@@ -90,14 +91,14 @@ vector<wstring> ChannelHelper::getChannelNames(int channelCount, int channelMask
 			if (channelPosToNameMap.find(channelPos) != channelPosToNameMap.end())
 				channelNames.push_back(channelPosToNameMap[channelPos]);
 			else
-				channelNames.push_back(to_wstring((unsigned long long)c));
+				channelNames.push_back(to_wstring((unsigned long long) c));
 			c++;
 		}
 	}
 
 	// handle channels not covered by channelMask
 	for (; c <= channelCount; c++)
-		channelNames.push_back(to_wstring((unsigned long long)c));
+		channelNames.push_back(to_wstring((unsigned long long) c));
 
 	return channelNames;
 }
@@ -110,7 +111,7 @@ int ChannelHelper::getChannelIndex(std::wstring word, const std::vector<std::wst
 	{
 		channelIndex = wcstol(word.c_str(), NULL, 10) - 1;
 
-		if (channelIndex < 0 || channelIndex >= (int)channelNames.size())
+		if (channelIndex < 0 || channelIndex >= (int) channelNames.size())
 		{
 			LogFStatic(L"Channel number %s out of range (1 - %d)", word.c_str(), channelNames.size());
 			channelIndex = -1;
@@ -136,7 +137,7 @@ int ChannelHelper::getChannelIndex(std::wstring word, const std::vector<std::wst
 		}
 
 		if (pos != channelNames.end())
-			channelIndex = (int)(pos - channelNames.begin());
+			channelIndex = (int) (pos - channelNames.begin());
 		else if (!allowNew)
 			LogFStatic(L"Invalid channel position %s", word.c_str());
 	}

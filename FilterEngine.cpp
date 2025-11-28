@@ -18,44 +18,46 @@
 */
 
 #include "stdafx.h"
+
+#include "FilterEngine.h"
+
 #define _USE_MATH_DEFINES
-#include <cmath>
-#include <sstream>
-#include <fstream>
 #include <algorithm>
+#include <cmath>
 #include <exception>
+#include <fstream>
+#include <sstream>
 #define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <Shlwapi.h>
 #include <Ks.h>
 #include <KsMedia.h>
-#include <mpParser.h>
 #include <mpPackageCommon.h>
+#include <mpPackageMatrix.h>
 #include <mpPackageNonCmplx.h>
 #include <mpPackageStr.h>
-#include <mpPackageMatrix.h>
+#include <mpParser.h>
+#include <Shlwapi.h>
+#include <windows.h>
 
-#include "helpers/RegistryHelper.h"
-#include "helpers/StringHelper.h"
+#include "filters/BiQuadFilterFactory.h"
+#include "filters/ChannelFilterFactory.h"
+#include "filters/ConvolutionFilterFactory.h"
+#include "filters/CopyFilterFactory.h"
+#include "filters/DelayFilterFactory.h"
+#include "filters/DeviceFilterFactory.h"
+#include "filters/ExpressionFilterFactory.h"
+#include "filters/GraphicEQFilterFactory.h"
+#include "filters/IfFilterFactory.h"
+#include "filters/IIRFilterFactory.h"
+#include "filters/IncludeFilterFactory.h"
+#include "filters/loudnessCorrection/LoudnessCorrectionFilterFactory.h"
+#include "filters/PreampFilterFactory.h"
+#include "filters/StageFilterFactory.h"
+#include "filters/VSTPluginFilterFactory.h"
+#include "helpers/ChannelHelper.h"
 #include "helpers/LogHelper.h"
 #include "helpers/MemoryHelper.h"
-#include "helpers/ChannelHelper.h"
-#include "FilterEngine.h"
-#include "filters/ExpressionFilterFactory.h"
-#include "filters/DeviceFilterFactory.h"
-#include "filters/StageFilterFactory.h"
-#include "filters/IfFilterFactory.h"
-#include "filters/ChannelFilterFactory.h"
-#include "filters/BiQuadFilterFactory.h"
-#include "filters/IIRFilterFactory.h"
-#include "filters/PreampFilterFactory.h"
-#include "filters/DelayFilterFactory.h"
-#include "filters/CopyFilterFactory.h"
-#include "filters/IncludeFilterFactory.h"
-#include "filters/ConvolutionFilterFactory.h"
-#include "filters/GraphicEQFilterFactory.h"
-#include "filters/VSTPluginFilterFactory.h"
-#include "filters/loudnessCorrection/LoudnessCorrectionFilterFactory.h"
+#include "helpers/RegistryHelper.h"
+#include "helpers/StringHelper.h"
 
 using namespace std;
 using namespace mup;
@@ -125,7 +127,8 @@ void FilterEngine::setPreMix(bool preMix)
 	this->preMix = preMix;
 }
 
-void FilterEngine::setDeviceInfo(bool capture, bool postMixInstalled, const wstring& deviceName, const wstring& connectionName, const wstring& deviceGuid, const wstring& deviceString)
+void FilterEngine::setDeviceInfo(bool capture, bool postMixInstalled, const wstring& deviceName,
+	const wstring& connectionName, const wstring& deviceGuid, const wstring& deviceString)
 {
 	this->capture = capture;
 	this->postMixInstalled = postMixInstalled;
@@ -135,7 +138,8 @@ void FilterEngine::setDeviceInfo(bool capture, bool postMixInstalled, const wstr
 	this->deviceString = deviceString;
 }
 
-void FilterEngine::initialize(float sampleRate, unsigned inputChannelCount, unsigned realChannelCount, unsigned outputChannelCount, unsigned channelMask, unsigned maxFrameCount, const wstring& customPath)
+void FilterEngine::initialize(float sampleRate, unsigned inputChannelCount, unsigned realChannelCount,
+	unsigned outputChannelCount, unsigned channelMask, unsigned maxFrameCount, const wstring& customPath)
 {
 	EnterCriticalSection(&loadSection);
 
@@ -147,7 +151,7 @@ void FilterEngine::initialize(float sampleRate, unsigned inputChannelCount, unsi
 	this->outputChannelCount = outputChannelCount;
 	this->maxFrameCount = maxFrameCount;
 	this->transitionCounter = 0;
-	this->transitionLength = (unsigned)(sampleRate / 100);
+	this->transitionLength = (unsigned) (sampleRate / 100);
 
 	unsigned deviceChannelCount;
 	if (capture)
@@ -201,7 +205,8 @@ void FilterEngine::initialize(float sampleRate, unsigned inputChannelCount, unsi
 			if (threadHandle == INVALID_HANDLE_VALUE)
 				threadHandle = NULL;
 			else
-				TraceF(L"Successfully created directory change notification thread %d for %s and its subtree", GetThreadId(threadHandle), configPath.c_str());
+				TraceF(L"Successfully created directory change notification thread %d for %s and its subtree",
+					GetThreadId(threadHandle), configPath.c_str());
 		}
 	}
 	LeaveCriticalSection(&loadSection);
@@ -248,7 +253,7 @@ void FilterEngine::loadConfig(const wstring& customPath)
 	}
 
 	void* mem = MemoryHelper::alloc(sizeof(FilterConfiguration));
-	FilterConfiguration* config = new(mem) FilterConfiguration(this, filterInfos, (unsigned)allChannelNames.size());
+	FilterConfiguration* config = new (mem) FilterConfiguration(this, filterInfos, (unsigned) allChannelNames.size());
 
 	filterInfos.clear();
 
@@ -270,13 +275,15 @@ void FilterEngine::loadConfigFile(const wstring& path)
 	HANDLE hFile = INVALID_HANDLE_VALUE;
 	while (hFile == INVALID_HANDLE_VALUE)
 	{
-		hFile = CreateFile(path.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+		hFile = CreateFile(
+			path.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 		if (hFile == INVALID_HANDLE_VALUE)
 		{
 			DWORD error = GetLastError();
 			if (error != ERROR_SHARING_VIOLATION)
 			{
-				LogF(L"Error while reading configuration file %s: %s", path.c_str(), StringHelper::getSystemErrorString(error).c_str());
+				LogF(L"Error while reading configuration file %s: %s", path.c_str(),
+					StringHelper::getSystemErrorString(error).c_str());
 				return;
 			}
 
@@ -452,7 +459,7 @@ void FilterEngine::addFilters(vector<IFilter*> filters)
 	for (vector<IFilter*>::iterator it = filters.begin(); it != filters.end(); it++)
 	{
 		IFilter* filter = *it;
-		FilterInfo* filterInfo = (FilterInfo*)MemoryHelper::alloc(sizeof(FilterInfo));
+		FilterInfo* filterInfo = (FilterInfo*) MemoryHelper::alloc(sizeof(FilterInfo));
 		filterInfo->filter = filter;
 		filterInfo->inPlace = filter->getInPlace();
 		vector<wstring> savedChannelNames = currentChannelNames;
@@ -468,7 +475,7 @@ void FilterEngine::addFilters(vector<IFilter*> filters)
 		else
 		{
 			filterInfo->inChannelCount = currentChannelNames.size();
-			filterInfo->inChannels = (size_t*)MemoryHelper::alloc(filterInfo->inChannelCount * sizeof(size_t));
+			filterInfo->inChannels = (size_t*) MemoryHelper::alloc(filterInfo->inChannelCount * sizeof(size_t));
 
 			size_t c = 0;
 			for (vector<wstring>::iterator it2 = currentChannelNames.begin(); it2 != currentChannelNames.end(); it2++)
@@ -490,7 +497,7 @@ void FilterEngine::addFilters(vector<IFilter*> filters)
 		else
 		{
 			filterInfo->outChannelCount = newChannelNames.size();
-			filterInfo->outChannels = (size_t*)MemoryHelper::alloc(filterInfo->outChannelCount * sizeof(size_t));
+			filterInfo->outChannels = (size_t*) MemoryHelper::alloc(filterInfo->outChannelCount * sizeof(size_t));
 
 			size_t c = 0;
 			for (vector<wstring>::iterator it2 = newChannelNames.begin(); it2 != newChannelNames.end(); it2++)
@@ -548,9 +555,10 @@ void FilterEngine::cleanupConfigurations()
 
 unsigned long __stdcall FilterEngine::notificationThread(void* parameter)
 {
-	FilterEngine* engine = (FilterEngine*)parameter;
+	FilterEngine* engine = (FilterEngine*) parameter;
 
-	HANDLE notificationHandle = FindFirstChangeNotificationW(engine->configPath.c_str(), true, FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_LAST_WRITE);
+	HANDLE notificationHandle = FindFirstChangeNotificationW(
+		engine->configPath.c_str(), true, FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_LAST_WRITE);
 	if (notificationHandle == INVALID_HANDLE_VALUE)
 		notificationHandle = NULL;
 

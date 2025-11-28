@@ -19,8 +19,9 @@
 
 #pragma once
 
-#include <AbstractAPOInfo.h>
 #include <QtWidgets/QDialog>
+#include <AbstractAPOInfo.h>
+
 #include "ui_DeviceSelector.h"
 
 class DeviceSelector : public QDialog

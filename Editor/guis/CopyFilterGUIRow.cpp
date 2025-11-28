@@ -18,13 +18,13 @@
 */
 
 #include "CopyFilterGUIRow.h"
+
 #include "ui_CopyFilterGUIRow.h"
 
 using namespace std;
 
 CopyFilterGUIRow::CopyFilterGUIRow(Assignment::Summand summand, std::vector<wstring> channelNames, QWidget* parent)
-	: QWidget(parent),
-	ui(new Ui::CopyFilterGUIRow)
+	: QWidget(parent), ui(new Ui::CopyFilterGUIRow)
 {
 	ui->setupUi(this);
 

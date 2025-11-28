@@ -17,8 +17,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include "Editor/helpers/GUIHelper.h"
 #include "CompactToolBar.h"
+
+#include "Editor/helpers/GUIHelper.h"
 
 CompactToolBar::CompactToolBar(QWidget* parent)
 	: QToolBar(parent)

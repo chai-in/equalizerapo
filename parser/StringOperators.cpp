@@ -18,6 +18,7 @@
 */
 
 #include "stdafx.h"
+
 #include "StringOperators.h"
 
 using namespace std;

@@ -22,15 +22,16 @@
 #include <string>
 #include <unordered_map>
 
-#include "IFilterFactory.h"
-#include "IFilter.h"
 #include "BiQuad.h"
+#include "IFilter.h"
+#include "IFilterFactory.h"
 
 class BiQuadFilterFactory : public IFilterFactory
 {
 public:
 	BiQuadFilterFactory();
-	std::vector<IFilter*> createFilter(const std::wstring& configPath, std::wstring& command, std::wstring& parameters) override;
+	std::vector<IFilter*> createFilter(
+		const std::wstring& configPath, std::wstring& command, std::wstring& parameters) override;
 
 private:
 	double getFreq(const std::wstring& freqString);

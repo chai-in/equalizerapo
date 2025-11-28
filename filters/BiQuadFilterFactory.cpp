@@ -23,9 +23,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <regex>
 #include <sstream>
 
+#include "helpers/LogHelper.h"
 #include "helpers/MemoryHelper.h"
 #include "helpers/StringHelper.h"
-#include "helpers/LogHelper.h"
 #include "BiQuadFilter.h"
 #include "BiQuadFilterFactory.h"
 
@@ -113,7 +113,8 @@ vector<IFilter*> BiQuadFilterFactory::createFilter(const wstring& configPath, ws
 				found = regex_search(parameters, match, regexGain);
 				if (found)
 				{
-					if (type == BiQuad::LOW_PASS || type == BiQuad::HIGH_PASS || type == BiQuad::NOTCH || type == BiQuad::ALL_PASS)
+					if (type == BiQuad::LOW_PASS || type == BiQuad::HIGH_PASS || type == BiQuad::NOTCH
+						|| type == BiQuad::ALL_PASS)
 						TraceF(L"Ignoring gain for filter of type %s", typeDescription.c_str());
 					else
 					{
@@ -202,7 +203,7 @@ vector<IFilter*> BiQuadFilterFactory::createFilter(const wstring& configPath, ws
 					TraceF(L"%s", stream.str().c_str());
 
 					void* mem = MemoryHelper::alloc(sizeof(BiQuadFilter));
-					filter = new(mem) BiQuadFilter(type, gain, freq, bandwidthOrQOrS, isBandwidthOrS, isCornerFreq);
+					filter = new (mem) BiQuadFilter(type, gain, freq, bandwidthOrQOrS, isBandwidthOrS, isCornerFreq);
 				}
 			}
 			else if (typeString != L"None")

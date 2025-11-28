@@ -29,5 +29,6 @@ public:
 	explicit DelayFilterGUIFactory();
 
 	QList<FilterTemplate> createFilterTemplates() override;
-	IFilterGUI* createFilterGUI(QString& command, QString& parameters) override;;
+	IFilterGUI* createFilterGUI(QString& command, QString& parameters) override;
+	;
 };

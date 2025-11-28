@@ -24,8 +24,10 @@
 class TaskSchedulerHelper
 {
 public:
-	static void scheduleAtLogon(const std::wstring& taskName, const std::wstring& programPath, const std::wstring& programArgs, const std::wstring& workingDir);
+	static void scheduleAtLogon(const std::wstring& taskName, const std::wstring& programPath,
+		const std::wstring& programArgs, const std::wstring& workingDir);
 	static void unschedule(const std::wstring& taskName);
+
 private:
 	static void fail(const std::wstring& functionName, unsigned long error);
 };

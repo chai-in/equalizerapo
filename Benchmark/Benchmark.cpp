@@ -19,22 +19,22 @@
 
 #include "stdafx.h"
 #ifdef DEBUG
-#include <stdlib.h>
 #include <crtdbg.h>
+#include <stdlib.h>
 #endif
 #include <cstdio>
 #define _USE_MATH_DEFINES
 #include <cmath>
-#include <string>
 #include <sndfile.h>
+#include <string>
 #include <tclap/CmdLine.h>
 
-#include "version.h"
-#include "FilterEngine.h"
 #include "helpers/LogHelper.h"
-#include "helpers/StringHelper.h"
-#include "helpers/PrecisionTimer.h"
 #include "helpers/MemoryHelper.h"
+#include "helpers/PrecisionTimer.h"
+#include "helpers/StringHelper.h"
+#include "FilterEngine.h"
+#include "version.h"
 
 using namespace std;
 
@@ -47,22 +47,34 @@ int main(int argc, char** argv)
 		if (REVISION != 0)
 			versionStream << "." << REVISION;
 		TCLAP::CmdLine cmd("Benchmark generates a linear sine sweep or reads from the given input file. "
-			"It then filters the waveform using the Equalizer APO filter configuration "
-			"and finally writes to the given file or into the user's temp directory.", ' ', versionStream.str());
+						   "It then filters the waveform using the Equalizer APO filter configuration "
+						   "and finally writes to the given file or into the user's temp directory.",
+			' ', versionStream.str());
 
 		TCLAP::SwitchArg noPauseArg("", "nopause", "Do not wait for key press at the end", cmd);
 		TCLAP::SwitchArg verboseArg("v", "verbose", "Print trace and error messages to console instead of logfile", cmd);
-		TCLAP::ValueArg<string> guidArg("", "guid", "Endpoint GUID to use when parsing configuration (Default: <empty>)", false, "", "string", cmd);
-		TCLAP::ValueArg<string> connectionnameArg("", "connectionname", "Connection name to use when parsing configuration (Default: File output)", false, "File output", "string", cmd);
-		TCLAP::ValueArg<string> devicenameArg("", "devicename", "Device name to use when parsing configuration (Default: Benchmark)", false, "Benchmark", "string", cmd);
-		TCLAP::ValueArg<unsigned> batchsizeArg("", "batchsize", "Number of frames processed in one batch (Default: 65536)", false, 65536, "integer", cmd);
+		TCLAP::ValueArg<string> guidArg(
+			"", "guid", "Endpoint GUID to use when parsing configuration (Default: <empty>)", false, "", "string", cmd);
+		TCLAP::ValueArg<string> connectionnameArg("", "connectionname",
+			"Connection name to use when parsing configuration (Default: File output)", false, "File output", "string",
+			cmd);
+		TCLAP::ValueArg<string> devicenameArg("", "devicename",
+			"Device name to use when parsing configuration (Default: Benchmark)", false, "Benchmark", "string", cmd);
+		TCLAP::ValueArg<unsigned> batchsizeArg(
+			"", "batchsize", "Number of frames processed in one batch (Default: 65536)", false, 65536, "integer", cmd);
 		TCLAP::ValueArg<string> outputArg("o", "output", "File to write sound data to", false, "", "string", cmd);
-		TCLAP::ValueArg<string> inputArg("i", "input", "File to load sound data from instead of generating sweep", false, "", "string", cmd);
-		TCLAP::ValueArg<unsigned> rateArg("r", "rate", "Sample rate of generated sweep (Default: 44100)", false, 44100, "integer", cmd);
-		TCLAP::ValueArg<float> toArg("t", "to", "End frequency of generated sweep in Hz (Default: 20000.0)", false, 20000.0f, "float", cmd);
-		TCLAP::ValueArg<float> fromArg("f", "from", "Start frequency of generated sweep in Hz (Default: 0.1)", false, 1.0f, "float", cmd);
-		TCLAP::ValueArg<float> lengthArg("l", "length", "Length of generated sweep in seconds (Default: 200.0)", false, 200.0f, "float", cmd);
-		TCLAP::ValueArg<unsigned> channelArg("c", "channels", "Number of channels of generated sweep (Default: 2)", false, 2, "integer", cmd);
+		TCLAP::ValueArg<string> inputArg(
+			"i", "input", "File to load sound data from instead of generating sweep", false, "", "string", cmd);
+		TCLAP::ValueArg<unsigned> rateArg(
+			"r", "rate", "Sample rate of generated sweep (Default: 44100)", false, 44100, "integer", cmd);
+		TCLAP::ValueArg<float> toArg(
+			"t", "to", "End frequency of generated sweep in Hz (Default: 20000.0)", false, 20000.0f, "float", cmd);
+		TCLAP::ValueArg<float> fromArg(
+			"f", "from", "Start frequency of generated sweep in Hz (Default: 0.1)", false, 1.0f, "float", cmd);
+		TCLAP::ValueArg<float> lengthArg(
+			"l", "length", "Length of generated sweep in seconds (Default: 200.0)", false, 200.0f, "float", cmd);
+		TCLAP::ValueArg<unsigned> channelArg(
+			"c", "channels", "Number of channels of generated sweep (Default: 2)", false, 2, "integer", cmd);
 
 		cmd.parse(argc, argv);
 
@@ -107,7 +119,7 @@ int main(int argc, char** argv)
 			sampleRate = info.samplerate;
 			channelCount = info.channels;
 			channelMask = 0;
-			frameCount = (unsigned)info.frames;
+			frameCount = (unsigned) info.frames;
 			length = float(frameCount) / sampleRate;
 
 			buf = new float[frameCount * channelCount];
@@ -131,9 +143,10 @@ int main(int argc, char** argv)
 			float sweepTo = toArg.getValue();
 			float sweepDiff = sweepTo - sweepFrom;
 			length = lengthArg.getValue();
-			frameCount = (unsigned)(length * sampleRate);
+			frameCount = (unsigned) (length * sampleRate);
 
-			printf("No input file given, so generating linear sine sweep from %g to %g Hz over %g seconds\n", sweepFrom, sweepTo, length);
+			printf("No input file given, so generating linear sine sweep from %g to %g Hz over %g seconds\n", sweepFrom,
+				sweepTo, length);
 
 			PrecisionTimer timer;
 			timer.start();
@@ -142,7 +155,7 @@ int main(int argc, char** argv)
 			for (unsigned i = 0; i < frameCount; i++)
 			{
 				double t = i * 1.0 / sampleRate;
-				float s = (float)sin(((sweepFrom + sweepDiff * (t / length) / 2) * t) * 2 * M_PI);
+				float s = (float) sin(((sweepFrom + sweepDiff * (t / length) / 2) * t) * 2 * M_PI);
 
 				for (unsigned j = 0; j < channelCount; j++)
 					buf[i * channelCount + j] = s;
@@ -165,8 +178,9 @@ int main(int argc, char** argv)
 			wstring deviceName = StringHelper::toWString(devicenameArg.getValue(), CP_ACP);
 			wstring connectionName = StringHelper::toWString(connectionnameArg.getValue(), CP_ACP);
 			wstring deviceGuid = StringHelper::toWString(guidArg.getValue(), CP_ACP);
-			engine.setDeviceInfo(false, true, deviceName, connectionName, deviceGuid, deviceName + L" " + connectionName + L" " + deviceGuid);
-			engine.initialize((float)sampleRate, channelCount, channelCount, channelCount, channelMask, batchsize);
+			engine.setDeviceInfo(false, true, deviceName, connectionName, deviceGuid,
+				deviceName + L" " + connectionName + L" " + deviceGuid);
+			engine.initialize((float) sampleRate, channelCount, channelCount, channelCount, channelMask, batchsize);
 
 			double initTime = timer.stop();
 			if (!verbose)
@@ -184,7 +198,8 @@ int main(int argc, char** argv)
 			double time = timer.stop();
 
 			printf("%d samples processed in %f seconds\n", frameCount * channelCount, time);
-			printf("This is equivalent to %.2f%% CPU load (one core) when processing in real time\n", 100.0f * time / length);
+			printf("This is equivalent to %.2f%% CPU load (one core) when processing in real time\n",
+				100.0f * time / length);
 
 			unsigned clipCount = 0;
 			float max = 0;
@@ -214,7 +229,7 @@ int main(int argc, char** argv)
 
 			printf("\nWriting output to %s\n", output.c_str());
 
-			SF_INFO info = {frameCount, (int)sampleRate, (int)channelCount, SF_FORMAT_WAV | SF_FORMAT_PCM_16, 0};
+			SF_INFO info = {frameCount, (int) sampleRate, (int) channelCount, SF_FORMAT_WAV | SF_FORMAT_PCM_16, 0};
 			SNDFILE* outFile = sf_open(output.c_str(), SFM_WRITE, &info);
 			if (outFile == NULL)
 			{

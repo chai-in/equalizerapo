@@ -28,16 +28,29 @@
 class IFilter
 {
 public:
-	virtual ~IFilter() {}
+	virtual ~IFilter()
+	{
+	}
 
 	// request to get all channel names instead of selection
-	virtual bool getAllChannels() {return false;}
+	virtual bool getAllChannels()
+	{
+		return false;
+	}
 	// return false to request that output and input do not point to the same memory locations
-	virtual bool getInPlace() {return true;}
+	virtual bool getInPlace()
+	{
+		return true;
+	}
 	// request that the channelNames returned by initialize become the new selection
-	virtual bool getSelectChannels() {return false;}
+	virtual bool getSelectChannels()
+	{
+		return false;
+	}
 	// return value is the channelNames vector, which may contain additional or fewer channel names
-	virtual std::vector<std::wstring> initialize(float sampleRate, unsigned maxFrameCount, std::vector<std::wstring> channelNames) = 0;
+	virtual std::vector<std::wstring> initialize(
+		float sampleRate, unsigned maxFrameCount, std::vector<std::wstring> channelNames)
+		= 0;
 	virtual void process(float** output, float** input, unsigned frameCount) = 0;
 
 protected:

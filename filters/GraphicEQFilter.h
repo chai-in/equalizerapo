@@ -21,9 +21,9 @@
 
 #include <fftw3.h>
 
-#include "ConvolutionFilter.h"
-#include "libHybridConv-0.1.1/libHybridConv_eapo.h"
 #include "helpers/GainIterator.h"
+#include "libHybridConv-0.1.1/libHybridConv_eapo.h"
+#include "ConvolutionFilter.h"
 
 #pragma AVRT_VTABLES_BEGIN
 class GraphicEQFilter : public ConvolutionFilter

@@ -17,9 +17,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#include "LoudnessCorrectionFilterGUIFactory.h"
+
 #include "filters/loudnessCorrection/LoudnessCorrectionFilter.h"
 #include "LoudnessCorrectionFilterGUI.h"
-#include "LoudnessCorrectionFilterGUIFactory.h"
 
 LoudnessCorrectionFilterGUIFactory::LoudnessCorrectionFilterGUIFactory()
 {
@@ -45,7 +46,9 @@ void LoudnessCorrectionFilterGUIFactory::initialize(FilterTable* filterTable)
 QList<FilterTemplate> LoudnessCorrectionFilterGUIFactory::createFilterTemplates()
 {
 	QList<FilterTemplate> list;
-	list.append(FilterTemplate(tr("Loudness correction"), "LoudnessCorrection: State 1 ReferenceLevel 0 ReferenceOffset 0 Attenuation 1.0", QStringList(tr("Advanced filters"))));
+	list.append(FilterTemplate(tr("Loudness correction"),
+		"LoudnessCorrection: State 1 ReferenceLevel 0 ReferenceOffset 0 Attenuation 1.0",
+		QStringList(tr("Advanced filters"))));
 	return list;
 }
 

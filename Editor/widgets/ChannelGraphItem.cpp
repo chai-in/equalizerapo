@@ -17,11 +17,12 @@
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#include "ChannelGraphItem.h"
+
 #include <QGraphicsScene>
 #include <QPainter>
 
 #include "Editor/helpers/GUIHelper.h"
-#include "ChannelGraphItem.h"
 
 static const float margin = 5;
 
@@ -64,7 +65,7 @@ void ChannelGraphItem::paint(QPainter* painter, QColor color)
 	gradient.setColorAt(1, color);
 	painter->setBrush(gradient);
 	// make sure that text is visible in dark mode
-	if(painter->pen().color() == Qt::white)
+	if (painter->pen().color() == Qt::white)
 		painter->setPen(Qt::black);
 	painter->drawRoundedRect(rect, GUIHelper::scale(margin), GUIHelper::scale(margin));
 	painter->drawText(rect.translated(1, -1), Qt::AlignCenter, name);

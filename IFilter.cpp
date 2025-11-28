@@ -18,6 +18,7 @@
 */
 
 #include "stdafx.h"
+
 #include "IFilter.h"
 
 using namespace std;

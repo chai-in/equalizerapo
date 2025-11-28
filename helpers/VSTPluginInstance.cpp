@@ -18,12 +18,15 @@
 */
 
 #include "stdafx.h"
-#include <wincrypt.h>
+
+#include "VSTPluginInstance.h"
+
 #include <inttypes.h>
+#include <wincrypt.h>
+
 #include "StringHelper.h"
 #include "version.h"
 #include "VSTPluginLibrary.h"
-#include "VSTPluginInstance.h"
 
 using namespace std;
 
@@ -31,10 +34,10 @@ using namespace std;
 
 static intptr_t callback(AEffect* effect, int32_t opcode, int32_t index, intptr_t value, void* ptr, float opt)
 {
-	VSTPluginInstance* instance = effect != NULL ? (VSTPluginInstance*)effect->user : NULL;
+	VSTPluginInstance* instance = effect != NULL ? (VSTPluginInstance*) effect->user : NULL;
 #ifdef _DEBUG
-	printf("vst: %p opcode: %d index: %d value: %" PRIdPTR " ptr: %p opt: %f user: %p\n",
-		effect, opcode, index, value, ptr, opt, effect != NULL ? effect->user : NULL);
+	printf("vst: %p opcode: %d index: %d value: %" PRIdPTR " ptr: %p opt: %f user: %p\n", effect, opcode, index, value,
+		ptr, opt, effect != NULL ? effect->user : NULL);
 	fflush(stdout);
 #endif
 
@@ -70,7 +73,7 @@ static intptr_t callback(AEffect* effect, int32_t opcode, int32_t index, intptr_
 
 	case audioMasterGetSampleRate:
 		if (instance != NULL)
-			return (intptr_t)instance->getSampleRate();
+			return (intptr_t) instance->getSampleRate();
 		return 0;
 
 	case audioMasterGetCurrentProcessLevel:
@@ -88,20 +91,18 @@ static intptr_t callback(AEffect* effect, int32_t opcode, int32_t index, intptr_
 
 	case audioMasterSizeWindow:
 		if (instance != NULL)
-			instance->onSizeWindow((int)index, (int)value);
+			instance->onSizeWindow((int) index, (int) value);
 		return 1;
 
-	case audioMasterCanDo:
-		{
-			char* s = (char*)ptr;
+	case audioMasterCanDo: {
+		char* s = (char*) ptr;
 #ifdef _DEBUG
-			printf("VST canDo: %s\n", s);
-			fflush(stdout);
+		printf("VST canDo: %s\n", s);
+		fflush(stdout);
 #endif
-			if (strcmp(s, "startStopProcess") == 0 ||
-				strcmp(s, "sizeWindow") == 0)
-				return 1;
-		}
+		if (strcmp(s, "startStopProcess") == 0 || strcmp(s, "sizeWindow") == 0)
+			return 1;
+	}
 		return 0;
 
 	case audioMasterAutomate:
@@ -250,7 +251,8 @@ void VSTPluginInstance::prepareForProcessing(float sampleRate, int blockSize)
 	effect->dispatcher(effect, effSetBlockSize, 0, blockSize, NULL, 0.0f);
 }
 
-void VSTPluginInstance::writeToEffect(const std::wstring& chunkData, const std::unordered_map<std::wstring, float>& paramMap)
+void VSTPluginInstance::writeToEffect(
+	const std::wstring& chunkData, const std::unordered_map<std::wstring, float>& paramMap)
 {
 	if (effect == NULL)
 		return;
@@ -293,7 +295,7 @@ void VSTPluginInstance::readFromEffect(std::wstring& chunkData, std::unordered_m
 	if (effect->flags & effFlagsProgramChunks)
 	{
 		BYTE* chunk = NULL;
-		int size = (int)effect->dispatcher(effect, effGetChunk, 1, 0, &chunk, 0.0f);
+		int size = (int) effect->dispatcher(effect, effGetChunk, 1, 0, &chunk, 0.0f);
 		DWORD stringLength = 0;
 		CryptBinaryToStringW(chunk, size, CRYPT_STRING_BASE64 | CRYPT_STRING_NOCRLF, NULL, &stringLength);
 		wchar_t* string = new wchar_t[stringLength];

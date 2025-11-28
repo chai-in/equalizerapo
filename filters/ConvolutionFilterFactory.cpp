@@ -18,13 +18,15 @@
 */
 
 #include "stdafx.h"
+
+#include "ConvolutionFilterFactory.h"
+
 #include <Shlwapi.h>
 
+#include "helpers/LogHelper.h"
 #include "helpers/MemoryHelper.h"
 #include "helpers/StringHelper.h"
-#include "helpers/LogHelper.h"
 #include "ConvolutionFilter.h"
-#include "ConvolutionFilterFactory.h"
 
 using namespace std;
 
@@ -55,7 +57,7 @@ vector<IFilter*> ConvolutionFilterFactory::createFilter(const wstring& configPat
 			absolutePath = value;
 
 		void* mem = MemoryHelper::alloc(sizeof(ConvolutionFilter));
-		filter = new(mem) ConvolutionFilter(absolutePath);
+		filter = new (mem) ConvolutionFilter(absolutePath);
 	}
 
 	if (filter == NULL)

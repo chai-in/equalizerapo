@@ -17,13 +17,14 @@
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include <algorithm>
-#include <QPainter>
+#include "FrequencyPlotHRuler.h"
+
 #include <QMouseEvent>
+#include <QPainter>
+#include <algorithm>
 
 #include "Editor/helpers/GUIHelper.h"
 #include "FrequencyPlotView.h"
-#include "FrequencyPlotHRuler.h"
 
 using namespace std;
 
@@ -66,7 +67,8 @@ void FrequencyPlotHRuler::paintEvent(QPaintEvent*)
 				else
 					text = QString("%0k").arg(hz / 1000);
 				if (metrics.size(0, text).width() + 2 < s->hzToX(hz + hzBase) - x)
-					painter.drawText(x - topLeft.x() + offsetLeft + 1, 0, 0, height(), Qt::TextDontClip | Qt::AlignCenter, text);
+					painter.drawText(
+						x - topLeft.x() + offsetLeft + 1, 0, 0, height(), Qt::TextDontClip | Qt::AlignCenter, text);
 			}
 
 			hz += hzBase;
@@ -88,7 +90,8 @@ void FrequencyPlotHRuler::paintEvent(QPaintEvent*)
 					text = QString("%0").arg(hz);
 				else
 					text = QString("%0k").arg(hz / 1000);
-				painter.drawText(x - topLeft.x() + offsetLeft + 1, 0, 0, height(), Qt::TextDontClip | Qt::AlignCenter, text);
+				painter.drawText(
+					x - topLeft.x() + offsetLeft + 1, 0, 0, height(), Qt::TextDontClip | Qt::AlignCenter, text);
 			}
 		}
 	}
@@ -106,7 +109,8 @@ void FrequencyPlotHRuler::paintEvent(QPaintEvent*)
 			QFontMetrics metrics = painter.fontMetrics();
 			QRectF rect = metrics.boundingRect(text);
 			float center = x - topLeft.x() + offsetLeft + 1;
-			rect = QRectF(center - ceil(rect.width() / 2) - 3 + 0.5, ceil(height() / 2) - ceil(rect.height() / 2) + 1.5, rect.width() + 5, rect.height() - 1);
+			rect = QRectF(center - ceil(rect.width() / 2) - 3 + 0.5, ceil(height() / 2) - ceil(rect.height() / 2) + 1.5,
+				rect.width() + 5, rect.height() - 1);
 			QPainterPath path;
 			path.addRect(rect);
 			QPainterPath topTriangle;
@@ -115,10 +119,10 @@ void FrequencyPlotHRuler::paintEvent(QPaintEvent*)
 			topTriangle.lineTo(QPoint(center, rect.top() - 3));
 			path = path.united(topTriangle);
 
-			painter.setPen(dark ? QColor(200,200,200) : Qt::black);
+			painter.setPen(dark ? QColor(200, 200, 200) : Qt::black);
 			painter.setBrush(dark ? Qt::black : Qt::white);
 			painter.drawPath(path);
-			painter.setPen(dark ? QColor(147,161,229) : Qt::blue);
+			painter.setPen(dark ? QColor(147, 161, 229) : Qt::blue);
 			painter.drawText(center, 0, 0, height(), Qt::TextDontClip | Qt::AlignCenter, text);
 		}
 	}

@@ -17,16 +17,17 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include <algorithm>
-#include <QKeyEvent>
+#include "CopyFilterGUIScene.h"
+
 #include <QGraphicsProxyWidget>
+#include <QKeyEvent>
 #include <QLineEdit>
 #include <QToolButton>
+#include <algorithm>
 
 #include "Editor/helpers/GUIHelper.h"
 #include "Editor/widgets/ResizingLineEdit.h"
 #include "CopyFilterGUIChannelItem.h"
-#include "CopyFilterGUIScene.h"
 
 using namespace std;
 
@@ -101,7 +102,8 @@ void CopyFilterGUIScene::load(const vector<wstring>& channelNames, vector<Assign
 				lastInputItem = inputItem;
 			}
 
-			CopyFilterGUIConnectionItem* connItem = new CopyFilterGUIConnectionItem(inputItem, outputItem, summand.factor, summand.isDecibel);
+			CopyFilterGUIConnectionItem* connItem = new CopyFilterGUIConnectionItem(
+				inputItem, outputItem, summand.factor, summand.isDecibel);
 			addItem(connItem);
 		}
 	}
@@ -129,8 +131,7 @@ std::vector<Assignment> CopyFilterGUIScene::buildAssignments()
 		}
 	}
 
-	std::sort(connItems.begin(), connItems.end(), [](CopyFilterGUIConnectionItem* a, CopyFilterGUIConnectionItem* b)
-	{
+	std::sort(connItems.begin(), connItems.end(), [](CopyFilterGUIConnectionItem* a, CopyFilterGUIConnectionItem* b) {
 		double diff = a->getTarget()->x() - b->getTarget()->x();
 		if (diff == 0.0)
 			diff = a->getSource()->x() - b->getSource()->x();

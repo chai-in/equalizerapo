@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include <QThread>
 #include <QMutex>
+#include <QThread>
 #include <QWaitCondition>
 #include <fftw3.h>
 
@@ -33,7 +33,8 @@ class AnalysisThread : public QThread
 public:
 	AnalysisThread();
 	~AnalysisThread();
-	void setParameters(std::shared_ptr<AbstractAPOInfo> device, int channelMask, int channelIndex, QString configPath, int frameCount);
+	void setParameters(
+		std::shared_ptr<AbstractAPOInfo> device, int channelMask, int channelIndex, QString configPath, int frameCount);
 	void beginGetResult();
 	void endGetResult();
 

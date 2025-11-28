@@ -23,9 +23,9 @@
 #include <regex>
 #include <sstream>
 
+#include "helpers/LogHelper.h"
 #include "helpers/MemoryHelper.h"
 #include "helpers/StringHelper.h"
-#include "helpers/LogHelper.h"
 #include "LoudnessCorrectionFilter.h"
 #include "LoudnessCorrectionFilterFactory.h"
 
@@ -35,7 +35,8 @@ LoudnessCorrectionFilterFactory::LoudnessCorrectionFilterFactory()
 {
 }
 
-vector<IFilter*> LoudnessCorrectionFilterFactory::createFilter(const wstring& configPath, wstring& command, wstring& parameters)
+vector<IFilter*> LoudnessCorrectionFilterFactory::createFilter(
+	const wstring& configPath, wstring& command, wstring& parameters)
 {
 	vector<IFilter*> allFilter(0);
 
@@ -46,7 +47,7 @@ vector<IFilter*> LoudnessCorrectionFilterFactory::createFilter(const wstring& co
 		{
 			TraceF(L"Adding loudness correction filter");
 			void* mem = MemoryHelper::alloc(sizeof(LoudnessCorrectionFilter));
-			allFilter.push_back(new(mem) LoudnessCorrectionFilter(filterParameters));
+			allFilter.push_back(new (mem) LoudnessCorrectionFilter(filterParameters));
 		}
 	}
 

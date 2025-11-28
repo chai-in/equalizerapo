@@ -18,9 +18,12 @@
 */
 
 #include "stdafx.h"
+
+#include "DeviceTestDialog.h"
+
 #include <DeviceAPOInfo.h>
 #include <helpers/RegistryHelper.h>
-#include "DeviceTestDialog.h"
+
 #include "OpacityIconEngine.h"
 
 DeviceTestDialog::DeviceTestDialog(QWidget* parent)
@@ -68,7 +71,7 @@ DeviceTestDialog::DeviceTestDialog(QWidget* parent)
 
 	// workaround for Qt 6 to not initially have scrollbars despite correct dialog size
 	ui.deviceTreeWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	QTimer::singleShot(0, [&] {ui.deviceTreeWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded); });
+	QTimer::singleShot(0, [&] { ui.deviceTreeWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded); });
 
 	QVariantAnimation* animation = new QVariantAnimation(this);
 	connect(animation, &QVariantAnimation::valueChanged, this, &DeviceTestDialog::animateIcon);
@@ -92,7 +95,8 @@ DeviceTestDialog::DeviceTestDialog(QWidget* parent)
 	thread->start();
 }
 
-std::vector<std::shared_ptr<DeviceAPOInfo>> DeviceTestDialog::filterDevices(const std::vector<std::shared_ptr<AbstractAPOInfo>>& devices)
+std::vector<std::shared_ptr<DeviceAPOInfo>> DeviceTestDialog::filterDevices(
+	const std::vector<std::shared_ptr<AbstractAPOInfo>>& devices)
 {
 	std::vector<std::shared_ptr<DeviceAPOInfo>> filteredList;
 	for (const std::shared_ptr<AbstractAPOInfo>& apoInfo : devices)
@@ -184,7 +188,8 @@ void DeviceTestDialog::setItemStatus(const QString& guid, bool postMix, ItemStat
 			break;
 		case ItemStatusType::warning:
 			icon = QIcon(":/icons/circle-warning.svg");
-			tooltip = tr("Equalizer APO works but original APO could not be initialized. Maybe unset \"Use original APO\" in troubleshooting options.");
+			tooltip = tr(
+				"Equalizer APO works but original APO could not be initialized. Maybe unset \"Use original APO\" in troubleshooting options.");
 			break;
 		case ItemStatusType::error:
 			icon = QIcon(":/icons/circle-error.svg");

@@ -18,9 +18,10 @@
 */
 
 #include "stdafx.h"
-#include <regex>
 
 #include "RegexFunctions.h"
+
+#include <regex>
 
 using namespace std;
 using namespace mup;

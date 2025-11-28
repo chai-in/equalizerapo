@@ -17,8 +17,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include "MiddleClickTabBar.h"
 #include "MiddleClickTabWidget.h"
+
+#include "MiddleClickTabBar.h"
 
 MiddleClickTabWidget::MiddleClickTabWidget(QWidget* parent)
 	: QTabWidget(parent)

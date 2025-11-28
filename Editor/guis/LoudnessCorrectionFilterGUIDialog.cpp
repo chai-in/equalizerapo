@@ -19,16 +19,15 @@
 
 #include <QFile>
 #define WIN32_LEAN_AND_MEAN
-#include <windows.h>
 #include <mmsystem.h>
-#include "Editor/helpers/QtSndfileHandle.h"
+#include <windows.h>
 
+#include "Editor/helpers/QtSndfileHandle.h"
 #include "LoudnessCorrectionFilterGUIDialog.h"
 #include "ui_LoudnessCorrectionFilterGUIDialog.h"
 
 LoudnessCorrectionFilterGUIDialog::LoudnessCorrectionFilterGUIDialog(QWidget* parent)
-	: QDialog(parent),
-	ui(new Ui::LoudnessCorrectionFilterGUIDialog)
+	: QDialog(parent), ui(new Ui::LoudnessCorrectionFilterGUIDialog)
 {
 	ui->setupUi(this);
 }

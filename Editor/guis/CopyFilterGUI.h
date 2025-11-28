@@ -19,10 +19,10 @@
 
 #pragma once
 
-#include "filters/CopyFilter.h"
-#include "Editor/IFilterGUI.h"
-#include "CopyFilterGUIScene.h"
 #include "Editor/FilterTable.h"
+#include "Editor/IFilterGUI.h"
+#include "filters/CopyFilter.h"
+#include "CopyFilterGUIScene.h"
 
 namespace Ui {
 class CopyFilterGUI;

@@ -17,8 +17,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include "StageFilterGUI.h"
 #include "StageFilterGUIFactory.h"
+
+#include "StageFilterGUI.h"
 
 QList<FilterTemplate> StageFilterGUIFactory::createFilterTemplates()
 {

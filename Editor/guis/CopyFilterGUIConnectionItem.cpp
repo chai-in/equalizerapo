@@ -17,17 +17,18 @@
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#include "CopyFilterGUIConnectionItem.h"
+
+#include <QGraphicsProxyWidget>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
-#include <QGraphicsProxyWidget>
-#include <QPainter>
 #include <QLineEdit>
+#include <QPainter>
 
 #include "Editor/helpers/GUIHelper.h"
 #include "Editor/widgets/ResizingLineEdit.h"
 #include "CopyFilterGUIChannelItem.h"
 #include "CopyFilterGUIScene.h"
-#include "CopyFilterGUIConnectionItem.h"
 
 static const int maxArrowSize = 6;
 
@@ -35,7 +36,8 @@ CopyFilterGUIConnectionItem::CopyFilterGUIConnectionItem()
 {
 }
 
-CopyFilterGUIConnectionItem::CopyFilterGUIConnectionItem(CopyFilterGUIChannelItem* source, CopyFilterGUIChannelItem* target, double factor, bool isDecibel)
+CopyFilterGUIConnectionItem::CopyFilterGUIConnectionItem(
+	CopyFilterGUIChannelItem* source, CopyFilterGUIChannelItem* target, double factor, bool isDecibel)
 {
 	this->source = source;
 	this->target = target;
@@ -165,7 +167,7 @@ void CopyFilterGUIConnectionItem::paint(QPainter* painter, const QStyleOptionGra
 			painter->setBrush(Qt::white);
 			painter->drawRoundedRect(rect.adjusted(-0.5, 0.5, 0.5, 0.5), 3, 3);
 			// make sure that text is visible in dark mode
-			if(painter->pen().color() == Qt::white)
+			if (painter->pen().color() == Qt::white)
 				painter->setPen(Qt::black);
 			painter->drawText(rect, Qt::AlignCenter, text);
 		}
@@ -234,7 +236,7 @@ void CopyFilterGUIConnectionItem::lineEditEditingFinished()
 	lineEdit->setVisible(false);
 	lineEdit->deleteLater();
 
-	emit((CopyFilterGUIScene*)scene())->updateModel();
+	emit((CopyFilterGUIScene*) scene())->updateModel();
 }
 
 void CopyFilterGUIConnectionItem::lineEditEditingCanceled()

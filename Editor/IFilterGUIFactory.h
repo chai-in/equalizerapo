@@ -31,18 +31,24 @@ class IFilterGUIFactory : public QObject
 public:
 	virtual ~IFilterGUIFactory();
 
-	virtual void initialize(FilterTable* filterTable) {}
+	virtual void initialize(FilterTable* filterTable)
+	{
+	}
 
 	virtual QList<FilterTemplate> createFilterTemplates()
 	{
 		return QList<FilterTemplate>();
 	}
 
-	virtual void startOfFile(const QString& configPath) {}
+	virtual void startOfFile(const QString& configPath)
+	{
+	}
 	virtual IFilterGUI* createFilterGUI(QString& command, QString& parameters) = 0;
 	virtual IFilterGUI* decorateFilterGUI(IFilterGUI* gui)
 	{
 		return gui;
 	}
-	virtual void endOfFile(const QString& configPath) {}
+	virtual void endOfFile(const QString& configPath)
+	{
+	}
 };

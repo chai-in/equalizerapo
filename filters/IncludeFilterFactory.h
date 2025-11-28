@@ -21,8 +21,8 @@
 
 #include <string>
 
-#include "IFilterFactory.h"
 #include "IFilter.h"
+#include "IFilterFactory.h"
 
 class IncludeFilterFactory : public IFilterFactory
 {
@@ -31,7 +31,8 @@ public:
 
 	std::vector<IFilter*> startOfConfiguration() override;
 	std::vector<IFilter*> startOfFile(const std::wstring& configPath) override;
-	std::vector<IFilter*> createFilter(const std::wstring& configPath, std::wstring& command, std::wstring& parameters) override;
+	std::vector<IFilter*> createFilter(
+		const std::wstring& configPath, std::wstring& command, std::wstring& parameters) override;
 	std::vector<IFilter*> endOfFile(const std::wstring& configPath) override;
 
 private:

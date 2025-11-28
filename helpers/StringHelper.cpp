@@ -18,10 +18,12 @@
 */
 
 #include "stdafx.h"
-#include <string>
+
 #include <sstream>
+#include <string>
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+
 #include "StringHelper.h"
 
 using namespace std;
@@ -164,7 +166,9 @@ wstring StringHelper::getSystemErrorString(long status)
 {
 	wchar_t* buf;
 
-	if (FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, status, 0, (LPTSTR)&buf, 0, NULL) != 0)
+	if (FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+			NULL, status, 0, (LPTSTR) &buf, 0, NULL)
+		!= 0)
 	{
 		wstring result(buf);
 		LocalFree(buf);

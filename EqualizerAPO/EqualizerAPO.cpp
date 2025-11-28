@@ -18,6 +18,7 @@
 */
 
 #include "stdafx.h"
+
 #include <Unknwn.h>
 #define INITGUID
 #include <mmdeviceapi.h>
@@ -31,12 +32,12 @@
 using namespace std;
 
 long EqualizerAPO::instCount = 0;
-const CRegAPOProperties<1> EqualizerAPO::regPostMixProperties(
-	EQUALIZERAPO_POST_MIX_GUID, L"EqualizerAPO", L"Copyright (C) 2015", 1, 0, __uuidof(IAudioProcessingObject),
-	(APO_FLAG)(APO_FLAG_FRAMESPERSECOND_MUST_MATCH | APO_FLAG_BITSPERSAMPLE_MUST_MATCH | APO_FLAG_INPLACE));
-const CRegAPOProperties<1> EqualizerAPO::regPreMixProperties(
-	EQUALIZERAPO_PRE_MIX_GUID, L"EqualizerAPO", L"Copyright (C) 2015", 1, 0, __uuidof(IAudioProcessingObject),
-	(APO_FLAG)(APO_FLAG_FRAMESPERSECOND_MUST_MATCH | APO_FLAG_BITSPERSAMPLE_MUST_MATCH | APO_FLAG_INPLACE));
+const CRegAPOProperties<1> EqualizerAPO::regPostMixProperties(EQUALIZERAPO_POST_MIX_GUID, L"EqualizerAPO",
+	L"Copyright (C) 2015", 1, 0, __uuidof(IAudioProcessingObject),
+	(APO_FLAG) (APO_FLAG_FRAMESPERSECOND_MUST_MATCH | APO_FLAG_BITSPERSAMPLE_MUST_MATCH | APO_FLAG_INPLACE));
+const CRegAPOProperties<1> EqualizerAPO::regPreMixProperties(EQUALIZERAPO_PRE_MIX_GUID, L"EqualizerAPO",
+	L"Copyright (C) 2015", 1, 0, __uuidof(IAudioProcessingObject),
+	(APO_FLAG) (APO_FLAG_FRAMESPERSECOND_MUST_MATCH | APO_FLAG_BITSPERSAMPLE_MUST_MATCH | APO_FLAG_INPLACE));
 
 EqualizerAPO::EqualizerAPO(IUnknown* pUnkOuter)
 	: CBaseAudioProcessingObject(regPostMixProperties)
@@ -108,7 +109,7 @@ HRESULT EqualizerAPO::Initialize(UINT32 cbDataSize, BYTE* pbyData)
 
 	resetChild();
 
-	APOInitSystemEffects* initStruct = (APOInitSystemEffects*)pbyData;
+	APOInitSystemEffects* initStruct = (APOInitSystemEffects*) pbyData;
 	GUID apoGuid = initStruct->APOInit.clsid;
 	try
 	{
@@ -152,7 +153,9 @@ HRESULT EqualizerAPO::Initialize(UINT32 cbDataSize, BYTE* pbyData)
 		DeviceAPOInfo apoInfo;
 		if (apoInfo.load(deviceGuid))
 		{
-			engine.setDeviceInfo(apoInfo.isInput(), apoInfo.getCurrentInstallState().installPostMix, apoInfo.getDeviceName(), apoInfo.getConnectionName(), apoInfo.getDeviceGuid(), apoInfo.getDeviceString());
+			engine.setDeviceInfo(apoInfo.isInput(), apoInfo.getCurrentInstallState().installPostMix,
+				apoInfo.getDeviceName(), apoInfo.getConnectionName(), apoInfo.getDeviceGuid(),
+				apoInfo.getDeviceString());
 
 			if (apoGuid == EQUALIZERAPO_PRE_MIX_GUID)
 				childApoGuid = apoInfo.getPreMixChildGuid();
@@ -169,7 +172,8 @@ HRESULT EqualizerAPO::Initialize(UINT32 cbDataSize, BYTE* pbyData)
 
 	TraceF(L"Child APO GUID: %s", childApoGuid.c_str());
 
-	if (childApoGuid != L"" && childApoGuid != APOGUID_NULL && childApoGuid != APOGUID_NOKEY && childApoGuid != APOGUID_NOVALUE)
+	if (childApoGuid != L"" && childApoGuid != APOGUID_NULL && childApoGuid != APOGUID_NOKEY
+		&& childApoGuid != APOGUID_NOVALUE)
 	{
 		GUID childGuid;
 		hr = CLSIDFromString(childApoGuid.c_str(), &childGuid);
@@ -179,7 +183,8 @@ HRESULT EqualizerAPO::Initialize(UINT32 cbDataSize, BYTE* pbyData)
 			return S_OK;
 		}
 
-		hr = CoCreateInstance(childGuid, NULL, CLSCTX_INPROC_SERVER, __uuidof(IAudioProcessingObject), (void**)&childAPO);
+		hr = CoCreateInstance(
+			childGuid, NULL, CLSCTX_INPROC_SERVER, __uuidof(IAudioProcessingObject), (void**) &childAPO);
 		if (FAILED(hr))
 		{
 			LogF(L"Error in CoCreateInstance for child apo");
@@ -187,7 +192,7 @@ HRESULT EqualizerAPO::Initialize(UINT32 cbDataSize, BYTE* pbyData)
 			return S_OK;
 		}
 
-		hr = childAPO->QueryInterface(__uuidof(IAudioProcessingObjectRT), (void**)&childRT);
+		hr = childAPO->QueryInterface(__uuidof(IAudioProcessingObjectRT), (void**) &childRT);
 		if (FAILED(hr))
 		{
 			LogF(L"Error in QueryInterface for child apo RT");
@@ -195,7 +200,7 @@ HRESULT EqualizerAPO::Initialize(UINT32 cbDataSize, BYTE* pbyData)
 			return S_OK;
 		}
 
-		hr = childAPO->QueryInterface(__uuidof(IAudioProcessingObjectConfiguration), (void**)&childCfg);
+		hr = childAPO->QueryInterface(__uuidof(IAudioProcessingObjectConfiguration), (void**) &childCfg);
 		if (FAILED(hr))
 		{
 			LogF(L"Error in QueryInterface for child apo configuration");
@@ -220,8 +225,8 @@ HRESULT EqualizerAPO::Initialize(UINT32 cbDataSize, BYTE* pbyData)
 	return S_OK;
 }
 
-HRESULT EqualizerAPO::IsInputFormatSupported(IAudioMediaType* pOutputFormat,
-	IAudioMediaType* pRequestedInputFormat, IAudioMediaType** ppSupportedInputFormat)
+HRESULT EqualizerAPO::IsInputFormatSupported(
+	IAudioMediaType* pOutputFormat, IAudioMediaType* pRequestedInputFormat, IAudioMediaType** ppSupportedInputFormat)
 {
 	if (!pRequestedInputFormat)
 		return E_POINTER;
@@ -234,9 +239,9 @@ HRESULT EqualizerAPO::IsInputFormatSupported(IAudioMediaType* pOutputFormat,
 		return hr;
 	}
 
-	TraceF(L"RequestedInputFormat = { %08X, %u, %u, %u, %f, %08X }",
-		inFormat.guidFormatType.Data1, inFormat.dwSamplesPerFrame, inFormat.dwBytesPerSampleContainer,
-		inFormat.dwValidBitsPerSample, inFormat.fFramesPerSecond, inFormat.dwChannelMask);
+	TraceF(L"RequestedInputFormat = { %08X, %u, %u, %u, %f, %08X }", inFormat.guidFormatType.Data1,
+		inFormat.dwSamplesPerFrame, inFormat.dwBytesPerSampleContainer, inFormat.dwValidBitsPerSample,
+		inFormat.fFramesPerSecond, inFormat.dwChannelMask);
 
 	UNCOMPRESSEDAUDIOFORMAT outFormat;
 	hr = pOutputFormat->GetUncompressedAudioFormat(&outFormat);
@@ -246,9 +251,9 @@ HRESULT EqualizerAPO::IsInputFormatSupported(IAudioMediaType* pOutputFormat,
 		return hr;
 	}
 
-	TraceF(L"Output format = { %08X, %u, %u, %u, %f, %08X }",
-		outFormat.guidFormatType.Data1, outFormat.dwSamplesPerFrame, outFormat.dwBytesPerSampleContainer,
-		outFormat.dwValidBitsPerSample, outFormat.fFramesPerSecond, outFormat.dwChannelMask);
+	TraceF(L"Output format = { %08X, %u, %u, %u, %f, %08X }", outFormat.guidFormatType.Data1,
+		outFormat.dwSamplesPerFrame, outFormat.dwBytesPerSampleContainer, outFormat.dwValidBitsPerSample,
+		outFormat.fFramesPerSecond, outFormat.dwChannelMask);
 
 	if (childAPO)
 	{
@@ -266,7 +271,8 @@ HRESULT EqualizerAPO::IsInputFormatSupported(IAudioMediaType* pOutputFormat,
 
 	if (!childAPO || !SUCCEEDED(hr))
 	{
-		hr = CBaseAudioProcessingObject::IsInputFormatSupported(pOutputFormat, pRequestedInputFormat, ppSupportedInputFormat);
+		hr = CBaseAudioProcessingObject::IsInputFormatSupported(
+			pOutputFormat, pRequestedInputFormat, ppSupportedInputFormat);
 
 		// we do not support downmixing currently
 		if (hr == S_OK && inFormat.dwSamplesPerFrame > 2 && inFormat.dwSamplesPerFrame > outFormat.dwSamplesPerFrame)
@@ -287,8 +293,9 @@ HRESULT EqualizerAPO::IsInputFormatSupported(IAudioMediaType* pOutputFormat,
 		}
 
 		TraceF(L"InputFormat not accepted, SupportedInputFormat = { %08X, %u, %u, %u, %f, %08X }",
-			supportedFormat.guidFormatType.Data1, supportedFormat.dwSamplesPerFrame, supportedFormat.dwBytesPerSampleContainer,
-			supportedFormat.dwValidBitsPerSample, supportedFormat.fFramesPerSecond, supportedFormat.dwChannelMask);
+			supportedFormat.guidFormatType.Data1, supportedFormat.dwSamplesPerFrame,
+			supportedFormat.dwBytesPerSampleContainer, supportedFormat.dwValidBitsPerSample,
+			supportedFormat.fFramesPerSecond, supportedFormat.dwChannelMask);
 	}
 	else if (hr == S_OK)
 	{
@@ -298,9 +305,8 @@ HRESULT EqualizerAPO::IsInputFormatSupported(IAudioMediaType* pOutputFormat,
 	return hr;
 }
 
-HRESULT EqualizerAPO::LockForProcess(UINT32 u32NumInputConnections,
-	APO_CONNECTION_DESCRIPTOR** ppInputConnections, UINT32 u32NumOutputConnections,
-	APO_CONNECTION_DESCRIPTOR** ppOutputConnections)
+HRESULT EqualizerAPO::LockForProcess(UINT32 u32NumInputConnections, APO_CONNECTION_DESCRIPTOR** ppInputConnections,
+	UINT32 u32NumOutputConnections, APO_CONNECTION_DESCRIPTOR** ppOutputConnections)
 {
 	HRESULT hr;
 
@@ -314,9 +320,9 @@ HRESULT EqualizerAPO::LockForProcess(UINT32 u32NumInputConnections,
 
 	unsigned maxInputFrameCount = ppInputConnections[0]->u32MaxFrameCount;
 
-	TraceF(L"Input format in LockForProcess = { %08X, %u, %u, %u, %f, %08X, %u }",
-		inFormat.guidFormatType.Data1, inFormat.dwSamplesPerFrame, inFormat.dwBytesPerSampleContainer,
-		inFormat.dwValidBitsPerSample, inFormat.fFramesPerSecond, inFormat.dwChannelMask, maxInputFrameCount);
+	TraceF(L"Input format in LockForProcess = { %08X, %u, %u, %u, %f, %08X, %u }", inFormat.guidFormatType.Data1,
+		inFormat.dwSamplesPerFrame, inFormat.dwBytesPerSampleContainer, inFormat.dwValidBitsPerSample,
+		inFormat.fFramesPerSecond, inFormat.dwChannelMask, maxInputFrameCount);
 
 	UNCOMPRESSEDAUDIOFORMAT outFormat;
 	hr = ppOutputConnections[0]->pFormat->GetUncompressedAudioFormat(&outFormat);
@@ -328,20 +334,20 @@ HRESULT EqualizerAPO::LockForProcess(UINT32 u32NumInputConnections,
 
 	unsigned maxOutputFrameCount = ppOutputConnections[0]->u32MaxFrameCount;
 
-	TraceF(L"Output format in LockForProcess = { %08X, %u, %u, %u, %f, %08X, %u }",
-		outFormat.guidFormatType.Data1, outFormat.dwSamplesPerFrame, outFormat.dwBytesPerSampleContainer,
-		outFormat.dwValidBitsPerSample, outFormat.fFramesPerSecond, outFormat.dwChannelMask, maxOutputFrameCount);
+	TraceF(L"Output format in LockForProcess = { %08X, %u, %u, %u, %f, %08X, %u }", outFormat.guidFormatType.Data1,
+		outFormat.dwSamplesPerFrame, outFormat.dwBytesPerSampleContainer, outFormat.dwValidBitsPerSample,
+		outFormat.fFramesPerSecond, outFormat.dwChannelMask, maxOutputFrameCount);
 
 	if (childCfg != NULL)
 	{
-		hr = childCfg->LockForProcess(u32NumInputConnections, ppInputConnections, u32NumOutputConnections,
-			ppOutputConnections);
+		hr = childCfg->LockForProcess(
+			u32NumInputConnections, ppInputConnections, u32NumOutputConnections, ppOutputConnections);
 		if (SUCCEEDED(hr))
 			TraceF(L"Success in LockForProcess of child apo");
 	}
 
-	hr = CBaseAudioProcessingObject::LockForProcess(u32NumInputConnections, ppInputConnections,
-		u32NumOutputConnections, ppOutputConnections);
+	hr = CBaseAudioProcessingObject::LockForProcess(
+		u32NumInputConnections, ppInputConnections, u32NumOutputConnections, ppOutputConnections);
 	if (FAILED(hr))
 	{
 		LogF(L"Error in CBaseAudioProcessingObject::LockForProcess");
@@ -376,7 +382,8 @@ HRESULT EqualizerAPO::LockForProcess(UINT32 u32NumInputConnections,
 			channelMask = inFormat.dwChannelMask;
 	}
 
-	engine.initialize(outFormat.fFramesPerSecond, inFormat.dwSamplesPerFrame, realChannelCount, outFormat.dwSamplesPerFrame, channelMask, maxFrameCount);
+	engine.initialize(outFormat.fFramesPerSecond, inFormat.dwSamplesPerFrame, realChannelCount,
+		outFormat.dwSamplesPerFrame, channelMask, maxFrameCount);
 
 	return hr;
 }
@@ -417,20 +424,24 @@ void EqualizerAPO::resetChild()
 	}
 }
 
-void EqualizerAPO::sendMessage(std::wstring& deviceTestPipeName, const std::wstring& deviceGuid, GUID apoGuid, const std::string& phase)
+void EqualizerAPO::sendMessage(
+	std::wstring& deviceTestPipeName, const std::wstring& deviceGuid, GUID apoGuid, const std::string& phase)
 {
-	string message = "{\"deviceGuid\":\"" + StringHelper::toString(deviceGuid, CP_UTF8) + "\", \"stage\":\"" + (apoGuid == EQUALIZERAPO_PRE_MIX_GUID ? "PreMix" : "PostMix") + "\", \"phase\":\"" + phase + "\"}";
+	string message = "{\"deviceGuid\":\"" + StringHelper::toString(deviceGuid, CP_UTF8) + "\", \"stage\":\""
+		+ (apoGuid == EQUALIZERAPO_PRE_MIX_GUID ? "PreMix" : "PostMix") + "\", \"phase\":\"" + phase + "\"}";
 
-	HANDLE pipe = CreateFileW((L"\\\\.\\pipe\\" + deviceTestPipeName).c_str(), GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+	HANDLE pipe = CreateFileW(
+		(L"\\\\.\\pipe\\" + deviceTestPipeName).c_str(), GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
 	if (pipe == INVALID_HANDLE_VALUE)
 	{
 		if (WaitNamedPipeW((L"\\\\.\\pipe\\" + deviceTestPipeName).c_str(), 1000))
-			pipe = CreateFileW((L"\\\\.\\pipe\\" + deviceTestPipeName).c_str(), GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+			pipe = CreateFileW(
+				(L"\\\\.\\pipe\\" + deviceTestPipeName).c_str(), GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
 	}
 	if (pipe != INVALID_HANDLE_VALUE)
 	{
 		DWORD bytesWritten;
-		if (!WriteFile(pipe, message.c_str(), (int)message.length(), &bytesWritten, NULL))
+		if (!WriteFile(pipe, message.c_str(), (int) message.length(), &bytesWritten, NULL))
 			LogF(L"Could not write to pipe: %s", StringHelper::getSystemErrorString(GetLastError()).c_str());
 
 		FlushFileBuffers(pipe);
@@ -444,24 +455,24 @@ void EqualizerAPO::sendMessage(std::wstring& deviceTestPipeName, const std::wstr
 }
 
 #pragma AVRT_CODE_BEGIN
-void EqualizerAPO::APOProcess(UINT32 u32NumInputConnections,
-	APO_CONNECTION_PROPERTY** ppInputConnections, UINT32 u32NumOutputConnections,
-	APO_CONNECTION_PROPERTY** ppOutputConnections)
+void EqualizerAPO::APOProcess(UINT32 u32NumInputConnections, APO_CONNECTION_PROPERTY** ppInputConnections,
+	UINT32 u32NumOutputConnections, APO_CONNECTION_PROPERTY** ppOutputConnections)
 {
 	switch (ppInputConnections[0]->u32BufferFlags)
 	{
 	case BUFFER_VALID:
-	case BUFFER_SILENT:
-	{
+	case BUFFER_SILENT: {
 		float* inputFrames = reinterpret_cast<float*>(ppInputConnections[0]->pBuffer);
 		float* outputFrames = reinterpret_cast<float*>(ppOutputConnections[0]->pBuffer);
 
 		if (ppInputConnections[0]->u32BufferFlags == BUFFER_SILENT)
-			memset(inputFrames, 0, ppInputConnections[0]->u32ValidFrameCount * engine.getInputChannelCount() * sizeof(float));
+			memset(inputFrames, 0,
+				ppInputConnections[0]->u32ValidFrameCount * engine.getInputChannelCount() * sizeof(float));
 
 		if (childRT)
 		{
-			childRT->APOProcess(u32NumInputConnections, ppInputConnections, u32NumOutputConnections, ppOutputConnections);
+			childRT->APOProcess(
+				u32NumInputConnections, ppInputConnections, u32NumOutputConnections, ppOutputConnections);
 
 			engine.process(outputFrames, outputFrames, ppInputConnections[0]->u32ValidFrameCount);
 		}
@@ -489,7 +500,8 @@ void EqualizerAPO::APOProcess(UINT32 u32NumInputConnections,
 			}
 			else
 			{
-				memset(outputFrames, 0, ppOutputConnections[0]->u32ValidFrameCount * engine.getOutputChannelCount() * sizeof(float));
+				memset(outputFrames, 0,
+					ppOutputConnections[0]->u32ValidFrameCount * engine.getOutputChannelCount() * sizeof(float));
 				ppOutputConnections[0]->u32BufferFlags = BUFFER_SILENT;
 			}
 		}

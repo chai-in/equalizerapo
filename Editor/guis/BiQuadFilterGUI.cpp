@@ -18,11 +18,12 @@
 */
 
 #define _USE_MATH_DEFINES
-#include <cmath>
+#include "BiQuadFilterGUI.h"
+
 #include <QStandardItemModel>
+#include <cmath>
 
 #include "Editor/helpers/GUIHelper.h"
-#include "BiQuadFilterGUI.h"
 #include "ui_BiQuadFilterGUI.h"
 
 static const double dialFreqSteps = 1000;
@@ -65,11 +66,14 @@ BiQuadFilterGUI::BiQuadFilterGUI(BiQuadFilter* filter)
 	else if (type == BiQuad::LOW_PASS || type == BiQuad::HIGH_PASS || type == BiQuad::BAND_PASS)
 		ui->qComboBox->setCurrentIndex(filter->getBandwidthOrQOrS() == M_SQRT1_2 ? 0 : 1);
 	else if ((type == BiQuad::LOW_SHELF || type == BiQuad::HIGH_SHELF))
-		ui->qComboBox->setCurrentIndex(filter->getIsBandwidthOrS() ? (filter->getBandwidthOrQOrS() == 0.9 || filter->getIsCornerFreq() ? 0 : 1) : (filter->getIsCornerFreq() ? 1 : 2));
+		ui->qComboBox->setCurrentIndex(filter->getIsBandwidthOrS()
+				? (filter->getBandwidthOrQOrS() == 0.9 || filter->getIsCornerFreq() ? 0 : 1)
+				: (filter->getIsCornerFreq() ? 1 : 2));
 	else if (type == BiQuad::NOTCH)
 		ui->qComboBox->setCurrentIndex(filter->getBandwidthOrQOrS() == 30.0 ? 0 : 1);
 
-	if ((type == BiQuad::LOW_SHELF || type == BiQuad::HIGH_SHELF) && filter->getIsBandwidthOrS() && filter->getBandwidthOrQOrS() != 0.9)
+	if ((type == BiQuad::LOW_SHELF || type == BiQuad::HIGH_SHELF) && filter->getIsBandwidthOrS()
+		&& filter->getBandwidthOrQOrS() != 0.9)
 		ui->qSpinBox->setValue(filter->getBandwidthOrQOrS() * 12.0);
 	else
 		ui->qSpinBox->setValue(filter->getBandwidthOrQOrS());
@@ -84,7 +88,7 @@ BiQuadFilterGUI::~BiQuadFilterGUI()
 
 void BiQuadFilterGUI::store(QString& command, QString& parameters)
 {
-	BiQuad::Type type = (BiQuad::Type)ui->typeComboBox->currentData().toInt();
+	BiQuad::Type type = (BiQuad::Type) ui->typeComboBox->currentData().toInt();
 	QChar freqMode = ui->freqComboBox->currentData().toChar();
 	QChar mode = ui->qComboBox->currentData().toChar();
 
@@ -135,8 +139,7 @@ void BiQuadFilterGUI::store(QString& command, QString& parameters)
 
 	parameters += QString(" Fc %1 Hz").arg(ui->freqSpinBox->value());
 
-	if (type == BiQuad::PEAKING || type == BiQuad::LOW_SHELF
-		|| type == BiQuad::HIGH_SHELF)
+	if (type == BiQuad::PEAKING || type == BiQuad::LOW_SHELF || type == BiQuad::HIGH_SHELF)
 		parameters += QString(" Gain %1 dB").arg(ui->gainSpinBox->value());
 
 	if (mode == 'Q')
@@ -189,13 +192,14 @@ void BiQuadFilterGUI::on_gainSpinBox_valueChanged(double value)
 
 void BiQuadFilterGUI::on_typeComboBox_currentIndexChanged(int index)
 {
-	BiQuad::Type type = (BiQuad::Type)ui->typeComboBox->itemData(index).toInt();
+	BiQuad::Type type = (BiQuad::Type) ui->typeComboBox->itemData(index).toInt();
 	bool sameTypeCategory = getTypeCategory(previousType) == getTypeCategory(type);
 
 	QChar freqMode = ui->freqComboBox->currentData().toChar();
 	double freqValue = ui->freqSpinBox->value();
 	ui->freqComboBox->clear();
-	if (type == BiQuad::PEAKING || type == BiQuad::BAND_PASS || type == BiQuad::LOW_SHELF || type == BiQuad::HIGH_SHELF || type == BiQuad::NOTCH || type == BiQuad::ALL_PASS)
+	if (type == BiQuad::PEAKING || type == BiQuad::BAND_PASS || type == BiQuad::LOW_SHELF || type == BiQuad::HIGH_SHELF
+		|| type == BiQuad::NOTCH || type == BiQuad::ALL_PASS)
 		ui->freqComboBox->addItem(tr("Center frequency"), 'E');
 	if (type == BiQuad::LOW_PASS || type == BiQuad::HIGH_PASS || type == BiQuad::LOW_SHELF || type == BiQuad::HIGH_SHELF)
 		ui->freqComboBox->addItem(tr("Corner frequency"), 'O');
@@ -220,7 +224,9 @@ void BiQuadFilterGUI::on_typeComboBox_currentIndexChanged(int index)
 		ui->qComboBox->addItem(tr("Fixed S"), 'F');
 	if (type == BiQuad::LOW_SHELF || type == BiQuad::HIGH_SHELF)
 		ui->qComboBox->addItem(tr("Slope"), 'S');
-	if (type == BiQuad::PEAKING || type == BiQuad::LOW_PASS || type == BiQuad::HIGH_PASS || type == BiQuad::ALL_PASS || type == BiQuad::BAND_PASS || type == BiQuad::LOW_SHELF || type == BiQuad::HIGH_SHELF || type == BiQuad::NOTCH)
+	if (type == BiQuad::PEAKING || type == BiQuad::LOW_PASS || type == BiQuad::HIGH_PASS || type == BiQuad::ALL_PASS
+		|| type == BiQuad::BAND_PASS || type == BiQuad::LOW_SHELF || type == BiQuad::HIGH_SHELF
+		|| type == BiQuad::NOTCH)
 		ui->qComboBox->addItem(tr("Q factor"), 'Q');
 	if (type == BiQuad::PEAKING)
 		ui->qComboBox->addItem(tr("Bandwidth"), 'B');
@@ -236,8 +242,7 @@ void BiQuadFilterGUI::on_typeComboBox_currentIndexChanged(int index)
 		ui->qSpinBox->setValue(10);
 	}
 
-	bool gainVisible = type == BiQuad::PEAKING || type == BiQuad::LOW_SHELF
-		|| type == BiQuad::HIGH_SHELF;
+	bool gainVisible = type == BiQuad::PEAKING || type == BiQuad::LOW_SHELF || type == BiQuad::HIGH_SHELF;
 	ui->gainDial->setVisible(gainVisible);
 	ui->gainLabel->setVisible(gainVisible);
 	ui->gainSpinBox->setVisible(gainVisible);
@@ -249,7 +254,7 @@ void BiQuadFilterGUI::on_typeComboBox_currentIndexChanged(int index)
 
 void BiQuadFilterGUI::on_freqComboBox_currentIndexChanged(int index)
 {
-	BiQuad::Type type = (BiQuad::Type)ui->typeComboBox->currentData().toInt();
+	BiQuad::Type type = (BiQuad::Type) ui->typeComboBox->currentData().toInt();
 	QChar freqMode = ui->freqComboBox->itemData(index).toChar();
 	if (type == BiQuad::LOW_SHELF || type == BiQuad::HIGH_SHELF)
 	{
@@ -302,7 +307,7 @@ void BiQuadFilterGUI::on_qComboBox_currentIndexChanged(int index)
 
 	if (mode == 'F')
 	{
-		BiQuad::Type type = (BiQuad::Type)ui->typeComboBox->currentData().toInt();
+		BiQuad::Type type = (BiQuad::Type) ui->typeComboBox->currentData().toInt();
 		if (type == BiQuad::LOW_PASS || type == BiQuad::HIGH_PASS || type == BiQuad::BAND_PASS)
 			ui->qSpinBox->setValue(M_SQRT1_2);
 		else if (type == BiQuad::LOW_SHELF || type == BiQuad::HIGH_SHELF)
@@ -314,7 +319,7 @@ void BiQuadFilterGUI::on_qComboBox_currentIndexChanged(int index)
 	}
 	else if (qIsBwOrS && mode == 'Q')
 	{
-		BiQuad::Type type = (BiQuad::Type)ui->typeComboBox->currentData().toInt();
+		BiQuad::Type type = (BiQuad::Type) ui->typeComboBox->currentData().toInt();
 		double q;
 		if (type == BiQuad::LOW_SHELF || type == BiQuad::HIGH_SHELF) // from S
 		{

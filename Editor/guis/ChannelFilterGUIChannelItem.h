@@ -26,7 +26,10 @@ class ChannelFilterGUIChannelItem : public ChannelGraphItem
 public:
 	ChannelFilterGUIChannelItem(const QString& name);
 
-	enum {Type = UserType + 2};
+	enum
+	{
+		Type = UserType + 2
+	};
 	virtual int type() const
 	{
 		return Type;

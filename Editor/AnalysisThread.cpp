@@ -17,10 +17,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#include "AnalysisThread.h"
+
 #include <QElapsedTimer>
 
 #include "FilterEngine.h"
-#include "AnalysisThread.h"
 
 using namespace std;
 
@@ -52,7 +53,8 @@ AnalysisThread::~AnalysisThread()
 		fftwf_destroy_plan(planForward);
 }
 
-void AnalysisThread::setParameters(shared_ptr<AbstractAPOInfo> device, int channelMask, int channelIndex, QString configPath, int frameCount)
+void AnalysisThread::setParameters(
+	shared_ptr<AbstractAPOInfo> device, int channelMask, int channelIndex, QString configPath, int frameCount)
 {
 	QMutexLocker mutexLocker(&mutex);
 	this->device = device;
@@ -162,8 +164,10 @@ void AnalysisThread::run()
 		qint64 startTime = timer.nsecsElapsed();
 
 		FilterEngine engine;
-		engine.setDeviceInfo(device->isInput(), true, device->getDeviceName(), device->getConnectionName(), device->getDeviceGuid(), device->getDeviceString());
-		engine.initialize(sampleRate, channelCount, channelCount, channelCount, channelMask, frameCount, configPath.toStdWString());
+		engine.setDeviceInfo(device->isInput(), true, device->getDeviceName(), device->getConnectionName(),
+			device->getDeviceGuid(), device->getDeviceString());
+		engine.initialize(
+			sampleRate, channelCount, channelCount, channelCount, channelMask, frameCount, configPath.toStdWString());
 		double initializationTime = (timer.nsecsElapsed() - startTime) / 1e6;
 
 		if (frameCount != lastFrameCount || channelCount != lastChannelCount)

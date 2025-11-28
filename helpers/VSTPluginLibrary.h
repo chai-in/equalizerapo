@@ -20,11 +20,12 @@
 #pragma once
 
 #include <memory>
+#include <queue>
 #include <string>
 #include <unordered_map>
+
 #include "AbstractLibrary.h"
 #include "aeffectx.h"
-#include <queue>
 #include "VSTPluginInstance.h"
 
 class VSTPluginLibrary : public AbstractLibrary
@@ -35,7 +36,7 @@ public:
 
 	std::wstring getLibPath() override;
 
-	typedef AEffect* (* vstPluginMain)(audioMasterCallback audioMaster);
+	typedef AEffect* (*vstPluginMain)(audioMasterCallback audioMaster);
 	vstPluginMain VSTPluginMain;
 
 protected:

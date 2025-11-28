@@ -17,17 +17,17 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include <QPushButton>
 #include "VSTPluginFilterGUIDialog.h"
+
+#include <QPushButton>
+
 #include "ui_VSTPluginFilterGUIDialog.h"
 
 using namespace std;
 using namespace std::placeholders;
 
 VSTPluginFilterGUIDialog::VSTPluginFilterGUIDialog(QWidget* parent, VSTPluginInstance* effect, bool autoApply)
-	: QDialog(parent, Qt::WindowCloseButtonHint),
-	ui(new Ui::VSTPluginFilterGUIDialog),
-	effect(effect)
+	: QDialog(parent, Qt::WindowCloseButtonHint), ui(new Ui::VSTPluginFilterGUIDialog), effect(effect)
 {
 	ui->setupUi(this);
 	ui->autoApplyCheckBox->setChecked(autoApply);
@@ -35,7 +35,7 @@ VSTPluginFilterGUIDialog::VSTPluginFilterGUIDialog(QWidget* parent, VSTPluginIns
 	QString name = QString::fromStdWString(effect->getName());
 	setWindowTitle(name);
 
-	HWND hwnd = (HWND)ui->frame->winId();
+	HWND hwnd = (HWND) ui->frame->winId();
 
 	short width, height;
 

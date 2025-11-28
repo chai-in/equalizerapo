@@ -45,6 +45,7 @@
 /DeviceSelector/translations/DeviceSelector_*.qm
 
 # /Editor/
+/Editor/.qtcreator
 /Editor/Editor.pro.user*
 
 # /EqualizerAPO/

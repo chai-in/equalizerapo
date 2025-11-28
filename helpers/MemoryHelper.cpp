@@ -21,8 +21,8 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #ifdef _DEBUG
-#include <stdlib.h>
 #include <crtdbg.h>
+#include <stdlib.h>
 #endif
 #ifdef USE_WINDDK
 // disable the declarations to use our own (see below)
@@ -38,8 +38,7 @@
 
 #ifdef USE_WINDDK
 // someone forgot to add the __stdcall/WINAPI modifier to BaseAudioProcessingObject.h, so we can't use the existing declarations
-extern "C"
-{
+extern "C" {
 HRESULT __stdcall AERT_Allocate(size_t size, void** pMemory);
 HRESULT __stdcall AERT_Free(void* pMemory);
 }
@@ -72,11 +71,11 @@ void* MemoryHelper::alloc(size_t size)
 		return NULL;
 	}
 
-	size_t offset = 16 - ((size_t)memory) % 16;
+	size_t offset = 16 - ((size_t) memory) % 16;
 	if (alternative)
 		offset += 16;
-	void* ptr = ((char*)memory) + offset;
-	((char*)ptr)[-1] = (char)offset;
+	void* ptr = ((char*) memory) + offset;
+	((char*) ptr)[-1] = (char) offset;
 
 	return ptr;
 }
@@ -84,11 +83,11 @@ void* MemoryHelper::alloc(size_t size)
 void MemoryHelper::free(void* ptr)
 {
 	bool alternative = false;
-	char offset = ((char*)ptr)[-1];
+	char offset = ((char*) ptr)[-1];
 	if (offset > 16)
 		alternative = true;
 
-	void* memory = ((char*)ptr) - offset;
+	void* memory = ((char*) ptr) - offset;
 
 #ifdef USE_WINDDK
 	if (alternative)

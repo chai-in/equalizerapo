@@ -18,12 +18,13 @@
 */
 
 #include "stdafx.h"
+
 #include <cstdarg>
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-#include "RegistryHelper.h"
 #include "LogHelper.h"
+#include "RegistryHelper.h"
 
 using namespace std;
 
@@ -77,9 +78,9 @@ void LogHelper::log(const char* file, int line, const void* caller, bool trace, 
 	{
 		HANDLE con = GetStdHandle(STD_OUTPUT_HANDLE);
 		if (trace)
-			SetConsoleTextAttribute(con, 2);// Set console color to green
+			SetConsoleTextAttribute(con, 2); // Set console color to green
 		else
-			SetConsoleTextAttribute(con, 12);// Set console color to red
+			SetConsoleTextAttribute(con, 12); // Set console color to red
 	}
 
 	if (!compact)
@@ -87,8 +88,9 @@ void LogHelper::log(const char* file, int line, const void* caller, bool trace, 
 		SYSTEMTIME ___st;
 		GetLocalTime(&___st);
 		DWORD threadId = GetCurrentThreadId();
-		fwprintf(fp, L"%04d-%02d-%02d %02d:%02d:%02d.%03d %d %08X (%S:%d): ",
-			___st.wYear, ___st.wMonth, ___st.wDay, ___st.wHour, ___st.wMinute, ___st.wSecond, ___st.wMilliseconds, threadId, (DWORD)(unsigned long long)caller, file, line);
+		fwprintf(fp, L"%04d-%02d-%02d %02d:%02d:%02d.%03d %d %08X (%S:%d): ", ___st.wYear, ___st.wMonth, ___st.wDay,
+			___st.wHour, ___st.wMinute, ___st.wSecond, ___st.wMilliseconds, threadId,
+			(DWORD) (unsigned long long) caller, file, line);
 	}
 
 	if (trace)

@@ -17,9 +17,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include <QWidget>
-
 #include "DisableWheelFilter.h"
+
+#include <QWidget>
 
 DisableWheelFilter::DisableWheelFilter(QObject* scrollTarget, QObject* parent)
 	: QObject(parent), scrollTarget(scrollTarget)

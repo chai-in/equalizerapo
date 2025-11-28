@@ -19,9 +19,9 @@
 
 #pragma once
 
+#include <stdexcept>
 #include <string>
 #include <vector>
-#include <stdexcept>
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
@@ -69,7 +69,9 @@ class RegistryException
 {
 public:
 	RegistryException(const std::wstring& message)
-		: message(message) {}
+		: message(message)
+	{
+	}
 
 	std::wstring getMessage()
 	{

@@ -18,9 +18,10 @@
 */
 
 #include "stdafx.h"
-#include <algorithm>
 
 #include "GainIterator.h"
+
+#include <algorithm>
 
 using namespace std;
 

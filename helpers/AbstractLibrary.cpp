@@ -18,8 +18,11 @@
 */
 
 #include "stdafx.h"
-#include <Imagehlp.h>
+
 #include "AbstractLibrary.h"
+
+#include <Imagehlp.h>
+
 #include "helpers/LogHelper.h"
 
 using namespace std;
@@ -54,8 +57,9 @@ int AbstractLibrary::initialize()
 #else
 			int bitDepth = 32;
 #endif
-			if (arch != 0 && (bitDepth == 64 && arch != IMAGE_FILE_MACHINE_AMD64
-				|| bitDepth == 32 && arch != IMAGE_FILE_MACHINE_I386))
+			if (arch != 0
+				&& (bitDepth == 64 && arch != IMAGE_FILE_MACHINE_AMD64
+					|| bitDepth == 32 && arch != IMAGE_FILE_MACHINE_I386))
 				return WRONG_ARCHITECTURE;
 
 			return LOADING_FAILED;
@@ -90,7 +94,8 @@ unsigned short AbstractLibrary::getFileArchitecture(const wstring& filePath)
 {
 	unsigned short result = 0;
 
-	HANDLE hFile = CreateFileW(filePath.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	HANDLE hFile = CreateFileW(
+		filePath.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (hFile != INVALID_HANDLE_VALUE)
 	{
 		HANDLE hMap = CreateFileMappingW(hFile, NULL, PAGE_READONLY, 0, 0, NULL);

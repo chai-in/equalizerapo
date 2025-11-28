@@ -19,8 +19,9 @@
 
 #pragma once
 
-#include <DeviceAPOInfo.h>
 #include <QThread>
+#include <DeviceAPOInfo.h>
+
 #include "ReceiveThread.h"
 
 enum class ItemStatusType
@@ -79,7 +80,7 @@ private:
 	{
 	public:
 		DeviceTestInfo(std::shared_ptr<DeviceAPOInfo> deviceInfo)
-			:deviceInfo(deviceInfo)
+			: deviceInfo(deviceInfo)
 		{
 		}
 

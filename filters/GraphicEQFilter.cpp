@@ -54,7 +54,7 @@ void GraphicEQFilter::initializeFilters(unsigned frameCount)
 	{
 		double freq = i * 1.0 * sampleRate / (filterLength * 2);
 		double dbGain = gainIterator.gainAt(freq);
-		float gain = (float)pow(10.0, dbGain / 20.0);
+		float gain = (float) pow(10.0, dbGain / 20.0);
 
 		freqData[i][0] = gain;
 		freqData[i][1] = 0;
@@ -74,7 +74,7 @@ void GraphicEQFilter::initializeFilters(unsigned frameCount)
 
 	for (unsigned i = 0; i < filterLength; i++)
 	{
-		float factor = (float)(0.5 * (1 + cos(2 * M_PI * i * 1.0 / (2 * filterLength))));
+		float factor = (float) (0.5 * (1 + cos(2 * M_PI * i * 1.0 / (2 * filterLength))));
 		timeData[i][0] *= factor;
 		timeData[i][1] *= factor;
 	}
@@ -90,7 +90,7 @@ void GraphicEQFilter::initializeFilters(unsigned frameCount)
 	fftwf_destroy_plan(planForward);
 	fftwf_destroy_plan(planReverse);
 
-	filters = (HConvSingle*)MemoryHelper::alloc(sizeof(HConvSingle) * channelCount);
+	filters = (HConvSingle*) MemoryHelper::alloc(sizeof(HConvSingle) * channelCount);
 	for (unsigned i = 0; i < channelCount; i++)
 	{
 		hcInitSingle(&filters[i], buf, filterLength, frameCount, 1);
@@ -100,10 +100,11 @@ void GraphicEQFilter::initializeFilters(unsigned frameCount)
 }
 
 // Minimum phase spectrum from coefficients
-void GraphicEQFilter::mps(fftwf_complex* timeData, fftwf_complex* freqData, fftwf_plan planForward, fftwf_plan planReverse)
+void GraphicEQFilter::mps(
+	fftwf_complex* timeData, fftwf_complex* freqData, fftwf_plan planForward, fftwf_plan planReverse)
 {
 	double threshold = pow(10.0, -100.0 / 20.0);
-	float logThreshold = (float)log(threshold);
+	float logThreshold = (float) log(threshold);
 
 	for (unsigned i = 0; i < filterLength * 2; i++)
 	{

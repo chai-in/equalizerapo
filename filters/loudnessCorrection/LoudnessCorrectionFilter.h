@@ -19,12 +19,12 @@
 
 #pragma once
 
-#include "ParameterArchive.h"
-#include <IFilter.h>
 #include <filters/BiQuad.h>
-
+#include <IFilter.h>
 #include <regex>
 #include <sstream>
+
+#include "ParameterArchive.h"
 
 #pragma AVRT_VTABLES_BEGIN
 class LoudnessCorrectionFilter : public IFilter
@@ -53,7 +53,8 @@ public:
 			error += archive.get(referenceLevel, std::wregex(L"\\s*ReferenceLevel\\s+([-+0-9]+)"));
 			error += archive.get(referenceOffset, std::wregex(L"\\s*ReferenceOffset\\s+([-+0-9]+)"));
 			// attenuation is only an optional parameter
-			int errorAtt = archive.get(attenuation, std::wregex(L"\\s*Attenuation\\s+((1((\\.|,)0+)?)|(0((\\.|,)[0-9]+)?))"));
+			int errorAtt = archive.get(
+				attenuation, std::wregex(L"\\s*Attenuation\\s+((1((\\.|,)0+)?)|(0((\\.|,)[0-9]+)?))"));
 			if (errorAtt > 0)
 			{
 				attenuation = 1.0;
@@ -70,20 +71,26 @@ public:
 		{
 			return _isInitialized;
 		}
-private:
+
+	private:
 		bool _isInitialized;
 	};
 
 	LoudnessCorrectionFilter(const FilterParameters& fParameters);
 	virtual ~LoudnessCorrectionFilter();
-	virtual bool getInPlace() {return true;}
-	virtual std::vector<std::wstring> initialize(float sampleRate, unsigned maxFrameCount, std::vector<std::wstring> channelNames);
+	virtual bool getInPlace()
+	{
+		return true;
+	}
+	virtual std::vector<std::wstring> initialize(
+		float sampleRate, unsigned maxFrameCount, std::vector<std::wstring> channelNames);
 	virtual void process(float** output, float** input, unsigned frameCount);
 
 private:
 	void getLShelfParamter(const float& volume, double& frequence, double& q, double& gain, double& preAmp);
 	void getHShelfParamter(const float& volume, double& frequence, double& q, double& gain);
-	void upDateBiquadCoefficients(const double& freq, const double& bandwidthOrQOrS, const double& dbGain, bool highshelf);
+	void upDateBiquadCoefficients(
+		const double& freq, const double& bandwidthOrQOrS, const double& dbGain, bool highshelf);
 	bool upDateNeutral();
 
 	void* _parameterUpdateThreadHandle;

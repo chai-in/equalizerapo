@@ -17,15 +17,16 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include <algorithm>
+#include "CopyFilterGUIForm.h"
+
 #include <QComboBox>
 #include <QDoubleSpinBox>
 #include <QLabel>
 #include <QLayout>
 #include <QPushButton>
+#include <algorithm>
 
 #include "CopyFilterGUIRow.h"
-#include "CopyFilterGUIForm.h"
 
 using namespace std;
 
@@ -191,9 +192,9 @@ vector<Assignment> CopyFilterGUIForm::buildAssignments(QWidget* pressedButton)
 	}
 
 	// remove empty assignments (can be caused by remove button)
-	assignments.erase(remove_if(assignments.begin(), assignments.end(), [](Assignment assignment) {
-		return assignment.sourceSum.empty();
-	}), assignments.end());
+	assignments.erase(remove_if(assignments.begin(), assignments.end(),
+						  [](Assignment assignment) { return assignment.sourceSum.empty(); }),
+		assignments.end());
 
 	return assignments;
 }

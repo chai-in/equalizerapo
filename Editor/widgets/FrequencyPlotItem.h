@@ -26,7 +26,10 @@ class FrequencyPlotItem : public QGraphicsItem
 public:
 	FrequencyPlotItem(double hz, double db);
 
-	enum {Type = UserType + 1};
+	enum
+	{
+		Type = UserType + 1
+	};
 	virtual int type() const
 	{
 		return Type;

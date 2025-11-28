@@ -17,11 +17,12 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#include "GraphicEQFilterGUIItem.h"
+
 #include <QPainter>
 
 #include "Editor/helpers/GUIHelper.h"
 #include "GraphicEQFilterGUIScene.h"
-#include "GraphicEQFilterGUIItem.h"
 
 static double size = 10;
 
@@ -47,15 +48,15 @@ QPainterPath GraphicEQFilterGUIItem::shape() const
 
 void GraphicEQFilterGUIItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
-    bool dark = GUIHelper::isDarkMode();
-    painter->setBrush(dark ? Qt::black : Qt::white);
+	bool dark = GUIHelper::isDarkMode();
+	painter->setBrush(dark ? Qt::black : Qt::white);
 	if (isSelected())
 		painter->setBrush(QColor(38, 147, 255));
 	painter->drawPath(shape());
 	if (index < 99)
 	{
 		if (isSelected())
-            painter->setPen(Qt::white);
+			painter->setPen(Qt::white);
 
 		QFont font;
 		font.setPixelSize(GUIHelper::scale(9));

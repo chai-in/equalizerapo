@@ -18,6 +18,7 @@
 */
 
 #include "stdafx.h"
+
 #include "LogicalOperators.h"
 
 using namespace std;
@@ -25,7 +26,8 @@ using namespace mup;
 
 NotOperator::NotOperator()
 	: IOprtInfix(L"not", prINFIX)
-{}
+{
+}
 
 void NotOperator::Eval(ptr_val_type& ret, const ptr_val_type* arg, int argc)
 {

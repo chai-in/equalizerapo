@@ -17,16 +17,17 @@
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include <QTranslator>
 #include <QApplication>
-#include <QDir>
 #include <QCommandLineParser>
+#include <QDir>
 #include <QSettings>
 #include <QStyleHints>
+#include <QTranslator>
+
+#include "Editor/helpers/GUIHelper.h"
+#include "helpers/RegistryHelper.h"
 #include "CustomStyle.h"
 #include "MainWindow.h"
-#include "helpers/RegistryHelper.h"
-#include "Editor/helpers/GUIHelper.h"
 
 using namespace std;
 
@@ -45,7 +46,7 @@ int main(int argc, char* argv[])
 	do
 	{
 		QApplication application(argc, argv);
-		if(GUIHelper::isDarkMode())
+		if (GUIHelper::isDarkMode())
 			application.setStyle("fusion");
 		application.setStyle(new CustomStyle(application.style()));
 

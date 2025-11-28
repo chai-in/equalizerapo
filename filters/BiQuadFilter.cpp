@@ -18,13 +18,21 @@
 */
 
 #include "stdafx.h"
-#include "helpers/MemoryHelper.h"
+
 #include "BiQuadFilter.h"
+
+#include "helpers/MemoryHelper.h"
 
 using namespace std;
 
-BiQuadFilter::BiQuadFilter(BiQuad::Type type, double dbGain, double freq, double bandwidthOrQOrS, bool isBandwidthOrS, bool isCornerFreq)
-	: type(type), dbGain(dbGain), freq(freq), bandwidthOrQOrS(bandwidthOrQOrS), isBandwidthOrS(isBandwidthOrS), isCornerFreq(isCornerFreq)
+BiQuadFilter::BiQuadFilter(
+	BiQuad::Type type, double dbGain, double freq, double bandwidthOrQOrS, bool isBandwidthOrS, bool isCornerFreq)
+	: type(type),
+	  dbGain(dbGain),
+	  freq(freq),
+	  bandwidthOrQOrS(bandwidthOrQOrS),
+	  isBandwidthOrS(isBandwidthOrS),
+	  isCornerFreq(isCornerFreq)
 {
 	channelCount = 0;
 	biquads = NULL;
@@ -42,7 +50,7 @@ BiQuadFilter::~BiQuadFilter()
 vector<wstring> BiQuadFilter::initialize(float sampleRate, unsigned maxFrameCount, vector<wstring> channelNames)
 {
 	this->channelCount = channelNames.size();
-	biquads = (BiQuad*)MemoryHelper::alloc(channelCount * sizeof(BiQuad));
+	biquads = (BiQuad*) MemoryHelper::alloc(channelCount * sizeof(BiQuad));
 	double biquadFreq = freq;
 	if (isCornerFreq && (type == BiQuad::LOW_SHELF || type == BiQuad::HIGH_SHELF))
 	{
@@ -64,7 +72,7 @@ vector<wstring> BiQuadFilter::initialize(float sampleRate, unsigned maxFrameCoun
 
 	for (unsigned i = 0; i < channelCount; i++)
 	{
-		new(biquads + i)BiQuad(type, dbGain, biquadFreq, sampleRate, bandwidthOrQOrS, isBandwidthOrS);
+		new (biquads + i) BiQuad(type, dbGain, biquadFreq, sampleRate, bandwidthOrQOrS, isBandwidthOrS);
 	}
 
 	return channelNames;
@@ -81,7 +89,7 @@ void BiQuadFilter::process(float** output, float** input, unsigned frameCount)
 		float* outputChannel = output[i];
 
 		for (unsigned j = 0; j < frameCount; j++)
-			outputChannel[j] = (float)bq.process(inputChannel[j]);
+			outputChannel[j] = (float) bq.process(inputChannel[j]);
 
 		bq.removeDenormals();
 		biquads[i] = bq;

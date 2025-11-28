@@ -18,6 +18,7 @@
 */
 
 #include "stdafx.h"
+
 #include "UpdateChecker.h"
 
 UpdateChecker::UpdateChecker(QWidget* parent, const QJsonDocument& doc)
@@ -29,7 +30,8 @@ UpdateChecker::UpdateChecker(QWidget* parent, const QJsonDocument& doc)
 	downloadUrl = docObj.value("download-url").toString();
 
 	QJsonArray versionsArray = docObj.value("versions").toArray();
-	QString html = "<style>\n.date{font-size:small;font-style:italic;color:gray;}\nul{margin:5px;}\nli{margin:2px;}\n</style>\n";
+	QString html
+		= "<style>\n.date{font-size:small;font-style:italic;color:gray;}\nul{margin:5px;}\nli{margin:2px;}\n</style>\n";
 	bool first = true;
 	for (QJsonValue versionValue : versionsArray)
 	{
@@ -41,7 +43,9 @@ UpdateChecker::UpdateChecker(QWidget* parent, const QJsonDocument& doc)
 			first = false;
 		}
 		QDate date = QDate::fromString(versionObj.value("date").toString(), Qt::ISODate);
-		html.append(QString("<div><b>%0 </b><span class=\"date\">(%1)</span></div>").arg(version).arg(QLocale().toString(date, QLocale::ShortFormat)));
+		html.append(QString("<div><b>%0 </b><span class=\"date\">(%1)</span></div>")
+				.arg(version)
+				.arg(QLocale().toString(date, QLocale::ShortFormat)));
 		html.append("<ul>");
 		QJsonArray infoArray = versionObj.value("info").toArray();
 		for (QJsonValue v : infoArray)
@@ -56,7 +60,7 @@ UpdateChecker::UpdateChecker(QWidget* parent, const QJsonDocument& doc)
 
 	// workaround for Qt 6 to not initially have scrollbars despite correct dialog size
 	ui.versionBrowser->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	QTimer::singleShot(0, [&] {ui.versionBrowser->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded); });
+	QTimer::singleShot(0, [&] { ui.versionBrowser->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded); });
 
 	connect(ui.goButton, &QPushButton::pressed, this, &UpdateChecker::goToWebsite);
 	connect(ui.laterButton, &QPushButton::pressed, this, &UpdateChecker::remindMeLater);

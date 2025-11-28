@@ -20,8 +20,9 @@
 #pragma once
 
 #include <QTimer>
-#include "Editor/IFilterGUIFactory.h"
+
 #include "Editor/FilterTable.h"
+#include "Editor/IFilterGUIFactory.h"
 #include "filters/loudnessCorrection/VolumeController.h"
 
 class LoudnessCorrectionFilterGUIFactory : public IFilterGUIFactory

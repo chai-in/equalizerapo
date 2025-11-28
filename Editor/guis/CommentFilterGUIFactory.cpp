@@ -17,9 +17,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#include "CommentFilterGUIFactory.h"
+
 #include "helpers/StringHelper.h"
 #include "CommentFilterGUI.h"
-#include "CommentFilterGUIFactory.h"
 
 using namespace std;
 

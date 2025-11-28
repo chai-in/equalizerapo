@@ -17,10 +17,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#include "IncludeFilterGUI.h"
+
 #include <QFileDialog>
 
 #include "helpers/RegistryHelper.h"
-#include "IncludeFilterGUI.h"
 #include "ui_IncludeFilterGUI.h"
 
 IncludeFilterGUI::IncludeFilterGUI(FilterTable* filterTable, const QString& path)
@@ -123,7 +124,8 @@ void IncludeFilterGUI::updateFileInfo()
 			}
 
 			if ((mask & GENERIC_READ) != GENERIC_READ && (mask & FILE_GENERIC_READ) != FILE_GENERIC_READ)
-				error = tr("The file is not readable for the audio service.\nChange the file permissions or copy the file to the config directory.");
+				error = tr(
+					"The file is not readable for the audio service.\nChange the file permissions or copy the file to the config directory.");
 		}
 	}
 

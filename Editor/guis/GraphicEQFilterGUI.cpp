@@ -17,17 +17,18 @@
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include <vector>
+#include "GraphicEQFilterGUI.h"
+
 #include <QFileDialog>
 #include <QScrollBar>
 #include <QTextStream>
+#include <vector>
 
-#include "helpers/GainIterator.h"
+#include "Editor/FilterTable.h"
 #include "Editor/helpers/GUIHelper.h"
 #include "Editor/widgets/ResizeCorner.h"
-#include "Editor/FilterTable.h"
+#include "helpers/GainIterator.h"
 #include "GraphicEQFilterGUIView.h"
-#include "GraphicEQFilterGUI.h"
 #include "ui_GraphicEQFilterGUI.h"
 
 static const double DEFAULT_TABLE_WIDTH = 119;
@@ -41,7 +42,7 @@ GraphicEQFilterGUI::GraphicEQFilterGUI(GraphicEQFilter* filter, QString configPa
 	: ui(new Ui::GraphicEQFilterGUI), configPath(configPath)
 {
 	ui->setupUi(this);
-	if(GUIHelper::isDarkMode())
+	if (GUIHelper::isDarkMode())
 	{
 		ui->actionInvertResponse->setIcon(QIcon(":/icons/dark-mode/invert_response.svg"));
 		ui->actionNormalizeResponse->setIcon(QIcon(":/icons/dark-mode/normalize_response.svg"));
@@ -55,15 +56,15 @@ GraphicEQFilterGUI::GraphicEQFilterGUI(GraphicEQFilter* filter, QString configPa
 	scene = new GraphicEQFilterGUIScene(ui->graphicsView);
 	ui->graphicsView->setScene(scene);
 
-	ResizeCorner* cornerWidget = new ResizeCorner(filterTable,
-			QSize(0, ui->graphicsView->minimumHeight()), QSize(10000 - ui->tableWidget->minimumWidth(), INT_MAX),
-			[this]() {
-		return QSize(10000 - ui->tableWidget->width(), ui->graphicsView->height());
-	},
-			[this](QSize size) {
-		ui->tableWidget->setFixedWidth(10000 - size.width());
-		ui->graphicsView->setFixedHeight(size.height());
-	}, ui->graphicsView);
+	ResizeCorner* cornerWidget = new ResizeCorner(
+		filterTable, QSize(0, ui->graphicsView->minimumHeight()),
+		QSize(10000 - ui->tableWidget->minimumWidth(), INT_MAX),
+		[this]() { return QSize(10000 - ui->tableWidget->width(), ui->graphicsView->height()); },
+		[this](QSize size) {
+			ui->tableWidget->setFixedWidth(10000 - size.width());
+			ui->graphicsView->setFixedHeight(size.height());
+		},
+		ui->graphicsView);
 	ui->graphicsView->setCornerWidget(cornerWidget);
 
 	ui->toolBar->addAction(ui->actionImport);
@@ -72,11 +73,11 @@ GraphicEQFilterGUI::GraphicEQFilterGUI(GraphicEQFilter* filter, QString configPa
 	ui->toolBar->addAction(ui->actionNormalizeResponse);
 	ui->toolBar->addAction(ui->actionResetResponse);
 
-	connect(scene, SIGNAL(nodeInserted(int,double,double)), this, SLOT(insertRow(int,double,double)));
+	connect(scene, SIGNAL(nodeInserted(int, double, double)), this, SLOT(insertRow(int, double, double)));
 	connect(scene, SIGNAL(nodeRemoved(int)), this, SLOT(removeRow(int)));
-	connect(scene, SIGNAL(nodeUpdated(int,double,double)), this, SLOT(updateRow(int,double,double)));
-	connect(scene, SIGNAL(nodeMoved(int,int)), this, SLOT(moveRow(int,int)));
-	connect(scene, SIGNAL(nodeSelectionChanged(int,bool)), this, SLOT(selectRow(int,bool)));
+	connect(scene, SIGNAL(nodeUpdated(int, double, double)), this, SLOT(updateRow(int, double, double)));
+	connect(scene, SIGNAL(nodeMoved(int, int)), this, SLOT(moveRow(int, int)));
+	connect(scene, SIGNAL(nodeSelectionChanged(int, bool)), this, SLOT(selectRow(int, bool)));
 	connect(scene, SIGNAL(updateModel()), this, SIGNAL(updateModel()));
 
 	scene->setNodes(filter->getNodes());

@@ -17,10 +17,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#include "GUIChannelHelper.h"
+
 #include <Ks.h>
 #include <KsMedia.h>
-
-#include "GUIChannelHelper.h"
 
 GUIChannelHelper* GUIChannelHelper::instance = NULL;
 

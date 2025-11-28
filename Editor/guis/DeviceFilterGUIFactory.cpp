@@ -17,9 +17,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#include "DeviceFilterGUIFactory.h"
+
 #include "Editor/FilterTable.h"
 #include "DeviceFilterGUI.h"
-#include "DeviceFilterGUIFactory.h"
 
 using namespace std;
 

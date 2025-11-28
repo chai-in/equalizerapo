@@ -17,10 +17,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include "DeviceAPOInfo.h"
+#include "ConvolutionFilterGUIFactory.h"
+
 #include "Editor/FilterTable.h"
 #include "ConvolutionFilterGUI.h"
-#include "ConvolutionFilterGUIFactory.h"
+#include "DeviceAPOInfo.h"
 
 using namespace std;
 
@@ -40,7 +41,8 @@ void ConvolutionFilterGUIFactory::initialize(FilterTable* filterTable)
 QList<FilterTemplate> ConvolutionFilterGUIFactory::createFilterTemplates()
 {
 	QList<FilterTemplate> list;
-	list.append(FilterTemplate(tr("Convolution (Convolution with impulse response)"), "Convolution:", QStringList(tr("Advanced filters"))));
+	list.append(FilterTemplate(
+		tr("Convolution (Convolution with impulse response)"), "Convolution:", QStringList(tr("Advanced filters"))));
 	return list;
 }
 

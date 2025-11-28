@@ -18,9 +18,10 @@
 */
 
 #include "stdafx.h"
-#include "LoudnessCorrectionFilter.h"
-#include "helpers/MemoryHelper.h"
 
+#include "LoudnessCorrectionFilter.h"
+
+#include "helpers/MemoryHelper.h"
 #include "VolumeController.h"
 
 #ifndef _USE_MATH_DEFINES
@@ -55,7 +56,8 @@ LoudnessCorrectionFilter::~LoudnessCorrectionFilter()
 	CloseHandle(_parameterchangedEvent);
 }
 
-std::vector<std::wstring> LoudnessCorrectionFilter::initialize(float sampleRate, unsigned maxFrameCount, std::vector<std::wstring> channelNames)
+std::vector<std::wstring> LoudnessCorrectionFilter::initialize(
+	float sampleRate, unsigned maxFrameCount, std::vector<std::wstring> channelNames)
 {
 	this->_channelCount = channelNames.size();
 	_lowShelfBiquads.resize(_channelCount);
@@ -74,7 +76,7 @@ std::vector<std::wstring> LoudnessCorrectionFilter::initialize(float sampleRate,
 		double preAmp;
 		getLShelfParamter(vol, freqLS, qLS, gainLS, preAmp);
 		_attFactor = exp(preAmp / 6 * log(2));
-		getHShelfParamter(vol + (float)preAmp, freqHS, qHS, gainHS);
+		getHShelfParamter(vol + (float) preAmp, freqHS, qHS, gainHS);
 		_neutral = std::max<double>(std::abs(gainLS), std::abs(gainHS)) < 0.2 ? true : false;
 	}
 
@@ -90,7 +92,8 @@ std::vector<std::wstring> LoudnessCorrectionFilter::initialize(float sampleRate,
 	return channelNames;
 }
 
-void LoudnessCorrectionFilter::getLShelfParamter(const float& volume, double& frequence, double& q, double& gain, double& preAmp)
+void LoudnessCorrectionFilter::getLShelfParamter(
+	const float& volume, double& frequence, double& q, double& gain, double& preAmp)
 {
 	frequence = 75;
 	q = 0.52;
@@ -132,7 +135,7 @@ void LoudnessCorrectionFilter::getHShelfParamter(const float& volume, double& fr
 
 unsigned long __stdcall LoudnessCorrectionFilter::parameterUpdateThread(void* parameter)
 {
-	LoudnessCorrectionFilter* lCorrection = (LoudnessCorrectionFilter*)parameter;
+	LoudnessCorrectionFilter* lCorrection = (LoudnessCorrectionFilter*) parameter;
 	VolumeController VolumeController;
 	float volOld(lCorrection->_parameters.referenceLevel);
 	float vol(lCorrection->_parameters.referenceLevel);
@@ -150,12 +153,13 @@ unsigned long __stdcall LoudnessCorrectionFilter::parameterUpdateThread(void* pa
 				{
 					lCorrection->getLShelfParamter(vol, freqLS, qLS, gainLS, preAmp);
 					lCorrection->_attFactor = exp(preAmp / 6 * log(2));
-					lCorrection->getHShelfParamter(vol + (float)preAmp, freqHS, qHS, gainHS);
+					lCorrection->getHShelfParamter(vol + (float) preAmp, freqHS, qHS, gainHS);
 					lCorrection->upDateBiquadCoefficients(freqHS, qHS, gainHS, true);
 					lCorrection->upDateBiquadCoefficients(freqLS, qLS, gainLS, false);
 					volOld = vol;
 
-					lCorrection->_neutralUpDate = std::max<double>(std::abs(gainLS), std::abs(gainHS)) < 0.2 ? true : false;
+					lCorrection->_neutralUpDate = std::max<double>(std::abs(gainLS), std::abs(gainHS)) < 0.2 ? true
+																											 : false;
 
 					SetEvent(lCorrection->_parameterchangedEvent);
 				}
@@ -206,7 +210,7 @@ void LoudnessCorrectionFilter::process(float** output, float** input, unsigned f
 			_tempResult = _lowShelfBiquads[i].process(inputChannel[j]);
 			_lowShelfBiquads[i].removeDenormals();
 			_tempResult *= _attFactor;
-			outputChannel[j] = (float)_highShelfBiquads[i].process(_tempResult);
+			outputChannel[j] = (float) _highShelfBiquads[i].process(_tempResult);
 			_highShelfBiquads[i].removeDenormals();
 
 			// if there is nearly no loudness correction necessary => set output=input to achive best quality
@@ -218,7 +222,8 @@ void LoudnessCorrectionFilter::process(float** output, float** input, unsigned f
 	}
 }
 
-void LoudnessCorrectionFilter::upDateBiquadCoefficients(const double& freq, const double& bandwidthOrQOrS, const double& dbGain, bool highshelf)
+void LoudnessCorrectionFilter::upDateBiquadCoefficients(
+	const double& freq, const double& bandwidthOrQOrS, const double& dbGain, bool highshelf)
 {
 	double A;
 	A = pow(10, dbGain / 40);
@@ -237,22 +242,22 @@ void LoudnessCorrectionFilter::upDateBiquadCoefficients(const double& freq, cons
 	if (highshelf)
 	{
 		a0 = (A + 1) - (A - 1) * cs + beta;
-		_a0HS = (float)((A * ((A + 1) + (A - 1) * cs + beta)) / a0);
-		_aHS[0] = (float)((-2 * A * ((A - 1) + (A + 1) * cs)) / a0);
-		_aHS[1] = (float)((A * ((A + 1) + (A - 1) * cs - beta)) / a0);
+		_a0HS = (float) ((A * ((A + 1) + (A - 1) * cs + beta)) / a0);
+		_aHS[0] = (float) ((-2 * A * ((A - 1) + (A + 1) * cs)) / a0);
+		_aHS[1] = (float) ((A * ((A + 1) + (A - 1) * cs - beta)) / a0);
 
-		_aHS[2] = (float)((2 * ((A - 1) - (A + 1) * cs)) / a0);
-		_aHS[3] = (float)(((A + 1) - (A - 1) * cs - beta) / a0);
+		_aHS[2] = (float) ((2 * ((A - 1) - (A + 1) * cs)) / a0);
+		_aHS[3] = (float) (((A + 1) - (A - 1) * cs - beta) / a0);
 	}
 	else
 	{
 		a0 = (A + 1) + (A - 1) * cs + beta;
-		_a0LS = (float)((A * ((A + 1) - (A - 1) * cs + beta)) / a0);
-		_aLS[0] = (float)((2 * A * ((A - 1) - (A + 1) * cs)) / a0);
-		_aLS[1] = (float)((A * ((A + 1) - (A - 1) * cs - beta)) / a0);
+		_a0LS = (float) ((A * ((A + 1) - (A - 1) * cs + beta)) / a0);
+		_aLS[0] = (float) ((2 * A * ((A - 1) - (A + 1) * cs)) / a0);
+		_aLS[1] = (float) ((A * ((A + 1) - (A - 1) * cs - beta)) / a0);
 
-		_aLS[2] = (float)((-2 * ((A - 1) + (A + 1) * cs)) / a0);
-		_aLS[3] = (float)(((A + 1) + (A - 1) * cs - beta) / a0);
+		_aLS[2] = (float) ((-2 * ((A - 1) + (A + 1) * cs)) / a0);
+		_aLS[3] = (float) (((A + 1) + (A - 1) * cs - beta) / a0);
 	}
 	LeaveCriticalSection(&_parameterUpdateSection);
 }

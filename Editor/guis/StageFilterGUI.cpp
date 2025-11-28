@@ -18,6 +18,7 @@
 */
 
 #include "StageFilterGUI.h"
+
 #include "ui_StageFilterGUI.h"
 
 StageFilterGUI::StageFilterGUI(const QString& parameters)

@@ -17,10 +17,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#include "ChannelFilterGUIChannelItem.h"
+
 #include <QPainter>
 
 #include "ChannelFilterGUIScene.h"
-#include "ChannelFilterGUIChannelItem.h"
 
 ChannelFilterGUIChannelItem::ChannelFilterGUIChannelItem(const QString& name)
 	: ChannelGraphItem(name)

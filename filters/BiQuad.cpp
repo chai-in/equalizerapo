@@ -18,6 +18,7 @@
 */
 
 #include "stdafx.h"
+
 #include "BiQuad.h"
 
 using namespace std;
@@ -137,7 +138,8 @@ double BiQuad::gainAt(double freq, double srate)
 	double a1 = this->a[2];
 	double a2 = this->a[3];
 
-	double dbGain = 10 * log10(pow(b0 + b1 + b2, 2) - 4 * (b0 * b1 + 4 * b0 * b2 + b1 * b2) * phi + 16 * b0 * b2 * phi * phi)
+	double dbGain = 10
+			* log10(pow(b0 + b1 + b2, 2) - 4 * (b0 * b1 + 4 * b0 * b2 + b1 * b2) * phi + 16 * b0 * b2 * phi * phi)
 		- 10 * log10(pow(a0 + a1 + a2, 2) - 4 * (a0 * a1 + 4 * a0 * a2 + a1 * a2) * phi + 16 * a0 * a2 * phi * phi);
 
 	return dbGain;

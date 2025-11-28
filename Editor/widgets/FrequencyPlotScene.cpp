@@ -17,9 +17,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#include "FrequencyPlotScene.h"
+
 #include "Editor/helpers/GUIHelper.h"
 #include "FrequencyPlotView.h"
-#include "FrequencyPlotScene.h"
 
 using namespace std;
 
@@ -30,9 +31,10 @@ static double maxHz = 30000;
 static double minDb = -100;
 static double maxDb = 100;
 
-vector<double> FrequencyPlotScene::bands15 = {25, 40, 63, 100, 160, 250, 400, 630, 1000, 1600, 2500, 4000, 6300, 10000, 16000};
-vector<double> FrequencyPlotScene::bands31 = {20, 25, 31.5, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 400, 500, 630, 800,
-											  1000, 1250, 1600, 2000, 2500, 3150, 4000, 5000, 6300, 8000, 10000, 12500, 16000, 20000};
+vector<double> FrequencyPlotScene::bands15 = {
+	25, 40, 63, 100, 160, 250, 400, 630, 1000, 1600, 2500, 4000, 6300, 10000, 16000};
+vector<double> FrequencyPlotScene::bands31 = {20, 25, 31.5, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 400, 500, 630,
+	800, 1000, 1250, 1600, 2000, 2500, 3150, 4000, 5000, 6300, 8000, 10000, 12500, 16000, 20000};
 vector<double> FrequencyPlotScene::bandsVar;
 
 FrequencyPlotScene::FrequencyPlotScene(QObject* parent)
@@ -64,7 +66,7 @@ double FrequencyPlotScene::hzToX(double hz)
 
 double FrequencyPlotScene::yToDb(double y)
 {
-	return(minDb + (1 - y / zoomY / maxY) * (maxDb - minDb));
+	return (minDb + (1 - y / zoomY / maxY) * (maxDb - minDb));
 }
 
 double FrequencyPlotScene::dbToY(double db)
@@ -95,7 +97,7 @@ void FrequencyPlotScene::setZoom(double zoomX, double zoomY)
 
 		for (QGraphicsItem* item : items())
 		{
-			FrequencyPlotItem* plotItem = (FrequencyPlotItem*)item;
+			FrequencyPlotItem* plotItem = (FrequencyPlotItem*) item;
 			plotItem->updatePos();
 		}
 	}

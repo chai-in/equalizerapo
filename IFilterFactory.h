@@ -31,14 +31,32 @@ class FilterEngine;
 class IFilterFactory
 {
 public:
-	virtual ~IFilterFactory() {}
+	virtual ~IFilterFactory()
+	{
+	}
 
-	virtual void initialize(FilterEngine* engine) {}
-	virtual std::vector<IFilter*> startOfConfiguration() {return std::vector<IFilter*>();}
-	virtual std::vector<IFilter*> startOfFile(const std::wstring& configPath) {return std::vector<IFilter*>();}
+	virtual void initialize(FilterEngine* engine)
+	{
+	}
+	virtual std::vector<IFilter*> startOfConfiguration()
+	{
+		return std::vector<IFilter*>();
+	}
+	virtual std::vector<IFilter*> startOfFile(const std::wstring& configPath)
+	{
+		return std::vector<IFilter*>();
+	}
 	// command and parameter may be altered by the factory
-	virtual std::vector<IFilter*> createFilter(const std::wstring& configPath, std::wstring& command, std::wstring& parameters) = 0;
-	virtual std::vector<IFilter*> endOfFile(const std::wstring& configPath) {return std::vector<IFilter*>();}
-	virtual std::vector<IFilter*> endOfConfiguration() {return std::vector<IFilter*>();}
+	virtual std::vector<IFilter*> createFilter(
+		const std::wstring& configPath, std::wstring& command, std::wstring& parameters)
+		= 0;
+	virtual std::vector<IFilter*> endOfFile(const std::wstring& configPath)
+	{
+		return std::vector<IFilter*>();
+	}
+	virtual std::vector<IFilter*> endOfConfiguration()
+	{
+		return std::vector<IFilter*>();
+	}
 };
 #pragma AVRT_VTABLES_END

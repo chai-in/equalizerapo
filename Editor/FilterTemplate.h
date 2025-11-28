@@ -22,7 +22,9 @@
 class FilterTemplate
 {
 public:
-	FilterTemplate() {}
+	FilterTemplate()
+	{
+	}
 	FilterTemplate(QString name, QString line, QStringList path);
 
 	QString getName() const;

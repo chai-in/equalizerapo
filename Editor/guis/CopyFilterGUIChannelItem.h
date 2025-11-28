@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include <QPainter>
 #include <QGraphicsSceneMouseEvent>
+#include <QPainter>
 
 #include "Editor/widgets/ChannelGraphItem.h"
 #include "CopyFilterGUIConnectionItem.h"
@@ -30,7 +30,10 @@ class CopyFilterGUIChannelItem : public ChannelGraphItem
 public:
 	CopyFilterGUIChannelItem(const QString& name, bool output);
 
-	enum {Type = UserType + 2};
+	enum
+	{
+		Type = UserType + 2
+	};
 	virtual int type() const
 	{
 		return Type;

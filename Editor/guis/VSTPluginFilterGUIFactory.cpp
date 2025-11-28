@@ -17,12 +17,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include "helpers/VSTPluginLibrary.h"
-#include "helpers/StringHelper.h"
-#include "filters/VSTPluginFilterFactory.h"
-#include "filters/VSTPluginFilter.h"
-#include "VSTPluginFilterGUI.h"
 #include "VSTPluginFilterGUIFactory.h"
+
+#include "filters/VSTPluginFilter.h"
+#include "filters/VSTPluginFilterFactory.h"
+#include "helpers/StringHelper.h"
+#include "helpers/VSTPluginLibrary.h"
+#include "VSTPluginFilterGUI.h"
 
 using namespace std;
 
@@ -45,7 +46,7 @@ IFilterGUI* VSTPluginFilterGUIFactory::createFilterGUI(QString& command, QString
 		std::vector<IFilter*> filters = factory.createFilter(L"", commandWStr, paramWStr);
 		if (!filters.empty())
 		{
-			VSTPluginFilter* filter = (VSTPluginFilter*)filters[0];
+			VSTPluginFilter* filter = (VSTPluginFilter*) filters[0];
 			result = new VSTPluginFilterGUI(filter->getLibrary(), filter->getChunkData(), filter->getParamMap());
 		}
 		else

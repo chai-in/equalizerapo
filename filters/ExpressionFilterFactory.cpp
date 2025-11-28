@@ -18,16 +18,18 @@
 */
 
 #include "stdafx.h"
+
+#include "ExpressionFilterFactory.h"
+
 #include <sstream>
 
 #include "helpers/LogHelper.h"
 #include "helpers/StringHelper.h"
+#include "parser/LogicalOperators.h"
 #include "parser/RegexFunctions.h"
 #include "parser/RegistryFunctions.h"
 #include "parser/StringOperators.h"
-#include "parser/LogicalOperators.h"
 #include "FilterEngine.h"
-#include "ExpressionFilterFactory.h"
 
 using namespace std;
 using namespace mup;
@@ -35,8 +37,8 @@ using namespace mup;
 void ExpressionFilterFactory::initialize(FilterEngine* engine)
 {
 	parser = engine->getParser();
-	parser->DefineConst(L"inputChannelCount", (int)engine->getInputChannelCount());
-	parser->DefineConst(L"outputChannelCount", (int)engine->getOutputChannelCount());
+	parser->DefineConst(L"inputChannelCount", (int) engine->getInputChannelCount());
+	parser->DefineConst(L"outputChannelCount", (int) engine->getOutputChannelCount());
 	parser->DefineConst(L"sampleRate", engine->getSampleRate());
 
 	parser->DefineFun(new ReadRegStringFunction(engine));

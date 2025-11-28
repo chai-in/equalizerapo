@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include <functional>
 #include <QLabel>
+#include <functional>
 
 #include "Editor/FilterTable.h"
 

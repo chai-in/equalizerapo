@@ -18,11 +18,13 @@
 */
 
 #include "stdafx.h"
+
+#include "VSTPluginFilterFactory.h"
+
+#include "helpers/LogHelper.h"
 #include "helpers/StringHelper.h"
 #include "helpers/VSTPluginLibrary.h"
-#include "helpers/LogHelper.h"
 #include "VSTPluginFilter.h"
-#include "VSTPluginFilterFactory.h"
 
 using namespace std;
 
@@ -105,7 +107,7 @@ vector<IFilter*> VSTPluginFilterFactory::createFilter(const wstring& configPath,
 			if (create)
 			{
 				void* mem = MemoryHelper::alloc(sizeof(VSTPluginFilter));
-				filter = new(mem) VSTPluginFilter(library, chunkData, paramMap);
+				filter = new (mem) VSTPluginFilter(library, chunkData, paramMap);
 			}
 		}
 	}

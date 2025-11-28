@@ -19,9 +19,10 @@
 
 #pragma once
 
-#include <string>
-#include <memory>
 #include <functional>
+#include <memory>
+#include <string>
+
 #include "aeffectx.h"
 
 class VSTPluginLibrary;

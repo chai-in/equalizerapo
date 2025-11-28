@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include "IFilter.h"
 #include "libHybridConv-0.1.1/libHybridConv_eapo.h"
+#include "IFilter.h"
 
 #pragma AVRT_VTABLES_BEGIN
 class ConvolutionFilter : public IFilter
@@ -28,8 +28,12 @@ class ConvolutionFilter : public IFilter
 public:
 	ConvolutionFilter(std::wstring filename);
 	virtual ~ConvolutionFilter();
-	bool getInPlace() override { return true; }
-	std::vector<std::wstring> initialize(float sampleRate, unsigned maxFrameCount, std::vector<std::wstring> channelNames) override;
+	bool getInPlace() override
+	{
+		return true;
+	}
+	std::vector<std::wstring> initialize(
+		float sampleRate, unsigned maxFrameCount, std::vector<std::wstring> channelNames) override;
 	void process(float** output, float** input, unsigned frameCount) override;
 
 protected:

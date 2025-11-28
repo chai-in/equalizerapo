@@ -18,13 +18,16 @@
 */
 
 #include "stdafx.h"
+
+#include "DeviceSelector.h"
+
 #include <DeviceAPOInfo.h>
 #include <helpers/RegistryHelper.h>
 #include <helpers/ServiceHelper.h>
 #include <VoicemeeterAPOInfo.h>
+
 #include "DeviceTestDialog.h"
 #include "version.h"
-#include "DeviceSelector.h"
 
 DeviceSelector::DeviceSelector(QWidget* parent)
 	: QDialog(parent)
@@ -70,7 +73,8 @@ DeviceSelector::DeviceSelector(QWidget* parent)
 
 	connect(ui.deviceTreeWidget, &QTreeWidget::itemChanged, this, &DeviceSelector::onDeviceToggled);
 	connect(ui.deviceTreeWidget, &QTreeWidget::itemSelectionChanged, this, &DeviceSelector::onDeviceSelectionChanged);
-	connect(ui.deviceTreeWidget, &QTreeWidget::customContextMenuRequested, this, &DeviceSelector::onDeviceContextMenuRequested);
+	connect(ui.deviceTreeWidget, &QTreeWidget::customContextMenuRequested, this,
+		&DeviceSelector::onDeviceContextMenuRequested);
 	connect(ui.buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
 	connect(ui.buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 	connect(this, &QDialog::accepted, this, &DeviceSelector::onDialogAccepted);
@@ -80,8 +84,10 @@ DeviceSelector::DeviceSelector(QWidget* parent)
 	connect(ui.installPreMixCheckBox, &QCheckBox::clicked, this, &DeviceSelector::onTroubleShootingOptionChanged);
 	connect(ui.installPostMixCheckBox, &QCheckBox::clicked, this, &DeviceSelector::onTroubleShootingOptionChanged);
 	connect(ui.useOriginalAPOPreMixCheckBox, &QCheckBox::clicked, this, &DeviceSelector::onTroubleShootingOptionChanged);
-	connect(ui.useOriginalAPOPostMixCheckBox, &QCheckBox::clicked, this, &DeviceSelector::onTroubleShootingOptionChanged);
-	connect(ui.installModeComboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, &DeviceSelector::onTroubleShootingOptionChanged);
+	connect(
+		ui.useOriginalAPOPostMixCheckBox, &QCheckBox::clicked, this, &DeviceSelector::onTroubleShootingOptionChanged);
+	connect(ui.installModeComboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this,
+		&DeviceSelector::onTroubleShootingOptionChanged);
 	connect(ui.allowSilentBufferCheckBox, &QCheckBox::clicked, this, &DeviceSelector::onTroubleShootingOptionChanged);
 	connect(ui.autoCheckBox, &QCheckBox::clicked, this, &DeviceSelector::onTroubleShootingOptionChanged);
 
@@ -90,14 +96,15 @@ DeviceSelector::DeviceSelector(QWidget* parent)
 
 	// workaround for Qt 6 to not initially have scrollbars despite correct dialog size
 	ui.deviceTreeWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	QTimer::singleShot(0, [&] {ui.deviceTreeWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded); });
+	QTimer::singleShot(0, [&] { ui.deviceTreeWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded); });
 
 	bool fixedAudioDG = !DeviceAPOInfo::checkProtectedAudioDG(true);
 	bool fixedRegistration = !DeviceAPOInfo::checkAPORegistration(true);
 	if (fixedAudioDG || fixedRegistration)
 	{
-		QMessageBox::information(this, tr("Info"), tr("A registry value that is required for the operation of Equalizer APO was not set correctly. "
-			"This might have been caused by a driver installation or uninstallation. The value has been corrected. A reboot may be required so that the changes can take effect."));
+		QMessageBox::information(this, tr("Info"),
+			tr("A registry value that is required for the operation of Equalizer APO was not set correctly. "
+			   "This might have been caused by a driver installation or uninstallation. The value has been corrected. A reboot may be required so that the changes can take effect."));
 		askForReboot = true;
 	}
 }
@@ -184,7 +191,8 @@ void DeviceSelector::onDialogAccepted()
 			}
 			catch (RegistryException e)
 			{
-				QMessageBox::critical(this, tr("Error while accessing the registry"), QString::fromStdWString(e.getMessage()));
+				QMessageBox::critical(
+					this, tr("Error while accessing the registry"), QString::fromStdWString(e.getMessage()));
 			}
 		}
 	}
@@ -198,8 +206,10 @@ void DeviceSelector::onDialogRejected()
 {
 	if (hasUpgrades())
 	{
-		if (QMessageBox::warning(this, tr("Upgrades available"), tr("The APO installation of some devices should be upgraded. Do you really want to cancel?"),
-			QMessageBox::StandardButtons(QMessageBox::Yes | QMessageBox::No)) == QMessageBox::No)
+		if (QMessageBox::warning(this, tr("Upgrades available"),
+				tr("The APO installation of some devices should be upgraded. Do you really want to cancel?"),
+				QMessageBox::StandardButtons(QMessageBox::Yes | QMessageBox::No))
+			== QMessageBox::No)
 			return;
 	}
 
@@ -209,8 +219,7 @@ void DeviceSelector::onDialogRejected()
 void DeviceSelector::finish(bool deviceUpdated)
 {
 	int dialogResult = 0;
-	if (QCoreApplication::instance()->arguments().contains("/i")
-		|| deviceUpdated || askForReboot)
+	if (QCoreApplication::instance()->arguments().contains("/i") || deviceUpdated || askForReboot)
 	{
 		DeviceTestDialog testDialog;
 		dialogResult = testDialog.exec();
@@ -219,13 +228,16 @@ void DeviceSelector::finish(bool deviceUpdated)
 	int returnCode = 0;
 	if (QCoreApplication::instance()->arguments().contains("/i"))
 	{
-		QMessageBox::information(this, tr("Info"), tr("This dialog can be reopened anytime by launching Device Selector from the start menu."));
+		QMessageBox::information(this, tr("Info"),
+			tr("This dialog can be reopened anytime by launching Device Selector from the start menu."));
 		if (dialogResult == -1)
 			returnCode = 1;
 	}
 	else if (dialogResult == -1)
 	{
-		if (QMessageBox::question(this, tr("Reboot"), tr("To apply the changes, Windows should be rebooted. Reboot now?")) == QMessageBox::Yes)
+		if (QMessageBox::question(
+				this, tr("Reboot"), tr("To apply the changes, Windows should be rebooted. Reboot now?"))
+			== QMessageBox::Yes)
 		{
 			HANDLE tokenHandle;
 			if (OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &tokenHandle))
@@ -239,7 +251,8 @@ void DeviceSelector::finish(bool deviceUpdated)
 					tp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
 
 					if (AdjustTokenPrivileges(tokenHandle, FALSE, &tp, sizeof(TOKEN_PRIVILEGES), NULL, NULL))
-						InitiateShutdownW(NULL, NULL, 0, SHUTDOWN_RESTART | SHUTDOWN_GRACE_OVERRIDE, SHTDN_REASON_MAJOR_APPLICATION | SHTDN_REASON_MINOR_MAINTENANCE);
+						InitiateShutdownW(NULL, NULL, 0, SHUTDOWN_RESTART | SHUTDOWN_GRACE_OVERRIDE,
+							SHTDN_REASON_MAJOR_APPLICATION | SHTDN_REASON_MINOR_MAINTENANCE);
 				}
 
 				CloseHandle(tokenHandle);
@@ -305,11 +318,14 @@ void DeviceSelector::onTroubleShootingOptionChanged()
 			else if (sender == ui.useOriginalAPOPreMixCheckBox)
 				deviceInfo->getSelectedInstallState().useOriginalAPOPreMix = ui.useOriginalAPOPreMixCheckBox->isChecked();
 			else if (sender == ui.useOriginalAPOPostMixCheckBox)
-				deviceInfo->getSelectedInstallState().useOriginalAPOPostMix = ui.useOriginalAPOPostMixCheckBox->isChecked();
+				deviceInfo->getSelectedInstallState().useOriginalAPOPostMix = ui.useOriginalAPOPostMixCheckBox
+																				  ->isChecked();
 			else if (sender == ui.installModeComboBox)
-				deviceInfo->getSelectedInstallState().installMode = (DeviceAPOInfo::InstallMode)ui.installModeComboBox->currentIndex();
+				deviceInfo->getSelectedInstallState().installMode = (DeviceAPOInfo::InstallMode)
+																		ui.installModeComboBox->currentIndex();
 			else if (sender == ui.allowSilentBufferCheckBox)
-				deviceInfo->getSelectedInstallState().allowSilentBufferModification = ui.allowSilentBufferCheckBox->isChecked();
+				deviceInfo->getSelectedInstallState().allowSilentBufferModification = ui.allowSilentBufferCheckBox
+																						  ->isChecked();
 			else if (sender == ui.autoCheckBox)
 				deviceInfo->getSelectedInstallState().autoAdjust = ui.autoCheckBox->isChecked();
 		}
@@ -389,7 +405,8 @@ void DeviceSelector::updateButtons()
 	ui.installPreMixCheckBox->setEnabled(enable);
 	ui.installPostMixCheckBox->setEnabled(enable && !isInput);
 	ui.useOriginalAPOPreMixCheckBox->setEnabled(enable && hasOriginalAPOPreMix && installState.installPreMix);
-	ui.useOriginalAPOPostMixCheckBox->setEnabled(enable && !isInput && hasOriginalAPOPostMix && installState.installPostMix);
+	ui.useOriginalAPOPostMixCheckBox->setEnabled(
+		enable && !isInput && hasOriginalAPOPostMix && installState.installPostMix);
 	ui.installModeComboBox->setEnabled(enable);
 	ui.allowSilentBufferCheckBox->setEnabled(enable);
 	ui.stackedWidget->setCurrentIndex(enable ? 1 : 0);
@@ -437,10 +454,12 @@ bool DeviceSelector::isChanged()
 		for (int i = 0; i < topItem->childCount(); i++)
 		{
 			QTreeWidgetItem* item = topItem->child(i);
-			std::shared_ptr<AbstractAPOInfo> apoInfo = item->data(0, Qt::UserRole).value<std::shared_ptr<AbstractAPOInfo>>();
+			std::shared_ptr<AbstractAPOInfo> apoInfo = item->data(0, Qt::UserRole)
+														   .value<std::shared_ptr<AbstractAPOInfo>>();
 			bool checked = item->checkState(0) == Qt::Checked;
 			if (checked != apoInfo->isInstalled()
-				|| checked && apoInfo->isInstalled() && (apoInfo->canBeUpgraded() || apoInfo->hasChanges() || apoInfo->isEnhancementsDisabled()))
+				|| checked && apoInfo->isInstalled()
+					&& (apoInfo->canBeUpgraded() || apoInfo->hasChanges() || apoInfo->isEnhancementsDisabled()))
 			{
 				changed = true;
 				break;
@@ -461,7 +480,8 @@ bool DeviceSelector::hasUpgrades()
 		for (int i = 0; i < topItem->childCount(); i++)
 		{
 			QTreeWidgetItem* item = topItem->child(i);
-			std::shared_ptr<AbstractAPOInfo> apoInfo = item->data(0, Qt::UserRole).value<std::shared_ptr<AbstractAPOInfo>>();
+			std::shared_ptr<AbstractAPOInfo> apoInfo = item->data(0, Qt::UserRole)
+														   .value<std::shared_ptr<AbstractAPOInfo>>();
 			bool checked = item->checkState(0) == Qt::Checked;
 			if (checked && apoInfo->isInstalled() && (apoInfo->canBeUpgraded() || apoInfo->isEnhancementsDisabled()))
 			{

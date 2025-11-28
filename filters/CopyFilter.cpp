@@ -18,13 +18,15 @@
 */
 
 #include "stdafx.h"
+
+#include "CopyFilter.h"
+
 #include <algorithm>
 #include <sstream>
 
+#include "helpers/ChannelHelper.h"
 #include "helpers/LogHelper.h"
 #include "helpers/MemoryHelper.h"
-#include "helpers/ChannelHelper.h"
-#include "CopyFilter.h"
 
 using namespace std;
 
@@ -45,8 +47,8 @@ vector<wstring> CopyFilter::initialize(float sampleRate, unsigned maxFrameCount,
 {
 	cleanup();
 
-	assignmentCount = (unsigned)assignments.size();
-	internalAssignments = (InternalAssignment*)MemoryHelper::alloc(assignmentCount * sizeof(Assignment));
+	assignmentCount = (unsigned) assignments.size();
+	internalAssignments = (InternalAssignment*) MemoryHelper::alloc(assignmentCount * sizeof(Assignment));
 
 	vector<wstring> outChannelNames;
 
@@ -60,12 +62,13 @@ vector<wstring> CopyFilter::initialize(float sampleRate, unsigned maxFrameCount,
 		if (channelIndex != -1)
 			channelName = channelNames[channelIndex];
 		vector<wstring>::const_iterator it = find(outChannelNames.begin(), outChannelNames.end(), channelName);
-		ia.targetChannel = (int)(it - outChannelNames.begin());
+		ia.targetChannel = (int) (it - outChannelNames.begin());
 		if (it == outChannelNames.end())
 			outChannelNames.push_back(channelName);
 
-		ia.sourceCount = (unsigned)a.sourceSum.size();
-		ia.sourceSum = (InternalAssignment::InternalSummand*)MemoryHelper::alloc(ia.sourceCount * sizeof(InternalAssignment::InternalSummand));
+		ia.sourceCount = (unsigned) a.sourceSum.size();
+		ia.sourceSum = (InternalAssignment::InternalSummand*) MemoryHelper::alloc(
+			ia.sourceCount * sizeof(InternalAssignment::InternalSummand));
 
 		for (unsigned j = 0; j < ia.sourceCount; j++)
 		{
@@ -78,9 +81,9 @@ vector<wstring> CopyFilter::initialize(float sampleRate, unsigned maxFrameCount,
 				is.channel = -1;
 
 			if (s.isDecibel)
-				is.factor = (float)pow(10.0, s.factor / 20.0);
+				is.factor = (float) pow(10.0, s.factor / 20.0);
 			else
-				is.factor = (float)s.factor;
+				is.factor = (float) s.factor;
 		}
 	}
 

@@ -26,7 +26,10 @@ class GraphicEQFilterGUIItem : public FrequencyPlotItem
 public:
 	GraphicEQFilterGUIItem(int index, double hz, double db);
 
-	enum {Type = UserType + 2};
+	enum
+	{
+		Type = UserType + 2
+	};
 	virtual int type() const
 	{
 		return Type;

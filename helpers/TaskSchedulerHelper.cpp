@@ -19,28 +19,31 @@
 
 #include "stdafx.h"
 #define _WIN32_DCOM
-#include <windows.h>
+#include <comdef.h>
 #include <iostream>
 #include <stdio.h>
-#include <comdef.h>
 #include <taskschd.h>
+#include <windows.h>
 #define SECURITY_WIN32
 #include <Security.h>
-#include "StringHelper.h"
+
 #include "ScopeGuard.h"
+#include "StringHelper.h"
 #include "TaskSchedulerHelper.h"
 
-void TaskSchedulerHelper::scheduleAtLogon(const std::wstring& taskName, const std::wstring& programPath, const std::wstring& programArgs, const std::wstring& workingDir)
+void TaskSchedulerHelper::scheduleAtLogon(const std::wstring& taskName, const std::wstring& programPath,
+	const std::wstring& programArgs, const std::wstring& workingDir)
 {
-	HRESULT hr = CoInitializeSecurity(NULL, -1, NULL, NULL, RPC_C_AUTHN_LEVEL_PKT_PRIVACY, RPC_C_IMP_LEVEL_IMPERSONATE, NULL, 0, NULL);
+	HRESULT hr = CoInitializeSecurity(
+		NULL, -1, NULL, NULL, RPC_C_AUTHN_LEVEL_PKT_PRIVACY, RPC_C_IMP_LEVEL_IMPERSONATE, NULL, 0, NULL);
 	if (FAILED(hr))
 		fail(L"CoInitializeSecurity", hr);
 
 	ITaskService* pService = NULL;
-	hr = CoCreateInstance(CLSID_TaskScheduler, NULL, CLSCTX_INPROC_SERVER, IID_ITaskService, (void**)&pService);
+	hr = CoCreateInstance(CLSID_TaskScheduler, NULL, CLSCTX_INPROC_SERVER, IID_ITaskService, (void**) &pService);
 	if (FAILED(hr))
 		fail(L"CoCreateInstance", hr);
-	SCOPE_EXIT{if (pService != NULL) pService->Release();};
+	SCOPE_EXIT(if (pService != NULL) pService->Release();)
 
 	hr = pService->Connect(_variant_t(), _variant_t(), _variant_t(), _variant_t());
 	if (FAILED(hr))
@@ -50,7 +53,7 @@ void TaskSchedulerHelper::scheduleAtLogon(const std::wstring& taskName, const st
 	hr = pService->GetFolder(_bstr_t(L"\\"), &pRootFolder);
 	if (FAILED(hr))
 		fail(L"ITaskService::GetFolder", hr);
-	SCOPE_EXIT{pRootFolder->Release(); };
+	SCOPE_EXIT(pRootFolder->Release();)
 
 	// possibly delete existing task
 	pRootFolder->DeleteTask(_bstr_t(taskName.c_str()), 0);
@@ -63,14 +66,14 @@ void TaskSchedulerHelper::scheduleAtLogon(const std::wstring& taskName, const st
 
 	if (FAILED(hr))
 		fail(L"ITaskService::NewTask", hr);
-	SCOPE_EXIT{pTask->Release(); };
+	SCOPE_EXIT(pTask->Release();)
 
 	wchar_t userName[255];
-	ULONG userNameSize = sizeof(userName)/sizeof(wchar_t);
+	ULONG userNameSize = sizeof(userName) / sizeof(wchar_t);
 	if (!GetUserNameExW(NameSamCompatible, userName, &userNameSize))
 		fail(L"GetUserNameExW", GetLastError());
 
-	IRegistrationInfo* pRegInfo= NULL;
+	IRegistrationInfo* pRegInfo = NULL;
 	hr = pTask->get_RegistrationInfo(&pRegInfo);
 	if (FAILED(hr))
 		fail(L"ITaskDefinition::get_RegistrationInfo", hr);
@@ -85,7 +88,7 @@ void TaskSchedulerHelper::scheduleAtLogon(const std::wstring& taskName, const st
 		hr = pTask->get_Settings(&pSettings);
 		if (FAILED(hr))
 			fail(L"ITaskDefinition::get_Settings", hr);
-		SCOPE_EXIT{pSettings->Release();};
+		SCOPE_EXIT(pSettings->Release();)
 
 		hr = pSettings->put_StartWhenAvailable(VARIANT_TRUE);
 		if (FAILED(hr))
@@ -117,12 +120,11 @@ void TaskSchedulerHelper::scheduleAtLogon(const std::wstring& taskName, const st
 
 	{
 		ILogonTrigger* pLogonTrigger = NULL;
-		hr = pTrigger->QueryInterface(
-			IID_ILogonTrigger, (void**)&pLogonTrigger);
+		hr = pTrigger->QueryInterface(IID_ILogonTrigger, (void**) &pLogonTrigger);
 		pTrigger->Release();
 		if (FAILED(hr))
 			fail(L"QueryInterface(ILogonTrigger)", hr);
-		SCOPE_EXIT{pLogonTrigger->Release();};
+		SCOPE_EXIT(pLogonTrigger->Release();)
 
 		hr = pLogonTrigger->put_Id(_bstr_t(L"Trigger1"));
 		if (FAILED(hr))
@@ -156,12 +158,11 @@ void TaskSchedulerHelper::scheduleAtLogon(const std::wstring& taskName, const st
 
 	{
 		IExecAction* pExecAction = NULL;
-		hr = pAction->QueryInterface(
-			IID_IExecAction, (void**)&pExecAction);
+		hr = pAction->QueryInterface(IID_IExecAction, (void**) &pExecAction);
 		pAction->Release();
 		if (FAILED(hr))
 			fail(L"QueryInterface(IExecAction)", hr);
-		SCOPE_EXIT{pExecAction->Release(); };
+		SCOPE_EXIT(pExecAction->Release();)
 
 		hr = pExecAction->put_Path(_bstr_t(programPath.c_str()));
 		if (FAILED(hr))
@@ -177,15 +178,8 @@ void TaskSchedulerHelper::scheduleAtLogon(const std::wstring& taskName, const st
 	}
 
 	IRegisteredTask* pRegisteredTask = NULL;
-	hr = pRootFolder->RegisterTaskDefinition(
-		_bstr_t(taskName.c_str()),
-		pTask,
-		TASK_CREATE_OR_UPDATE,
-		_variant_t(),
-		_variant_t(),
-		TASK_LOGON_INTERACTIVE_TOKEN,
-		_variant_t(L""),
-		&pRegisteredTask);
+	hr = pRootFolder->RegisterTaskDefinition(_bstr_t(taskName.c_str()), pTask, TASK_CREATE_OR_UPDATE, _variant_t(),
+		_variant_t(), TASK_LOGON_INTERACTIVE_TOKEN, _variant_t(L""), &pRegisteredTask);
 	if (FAILED(hr))
 		fail(L"ITaskFolder::RegisterTaskDefinition", hr);
 	pRegisteredTask->Release();
@@ -193,15 +187,16 @@ void TaskSchedulerHelper::scheduleAtLogon(const std::wstring& taskName, const st
 
 void TaskSchedulerHelper::unschedule(const std::wstring& taskName)
 {
-	HRESULT hr = CoInitializeSecurity(NULL, -1, NULL, NULL, RPC_C_AUTHN_LEVEL_PKT_PRIVACY, RPC_C_IMP_LEVEL_IMPERSONATE, NULL, 0, NULL);
+	HRESULT hr = CoInitializeSecurity(
+		NULL, -1, NULL, NULL, RPC_C_AUTHN_LEVEL_PKT_PRIVACY, RPC_C_IMP_LEVEL_IMPERSONATE, NULL, 0, NULL);
 	if (FAILED(hr))
 		fail(L"CoInitializeSecurity", hr);
 
 	ITaskService* pService = NULL;
-	hr = CoCreateInstance(CLSID_TaskScheduler, NULL, CLSCTX_INPROC_SERVER, IID_ITaskService, (void**)&pService);
+	hr = CoCreateInstance(CLSID_TaskScheduler, NULL, CLSCTX_INPROC_SERVER, IID_ITaskService, (void**) &pService);
 	if (FAILED(hr))
 		fail(L"CoCreateInstance", hr);
-	SCOPE_EXIT{pService->Release(); };
+	SCOPE_EXIT(pService->Release();)
 
 	hr = pService->Connect(_variant_t(), _variant_t(), _variant_t(), _variant_t());
 	if (FAILED(hr))
@@ -211,7 +206,7 @@ void TaskSchedulerHelper::unschedule(const std::wstring& taskName)
 	hr = pService->GetFolder(_bstr_t(L"\\"), &pRootFolder);
 	if (FAILED(hr))
 		fail(L"ITaskService::GetFolder", hr);
-	SCOPE_EXIT{pRootFolder->Release(); };
+	SCOPE_EXIT(pRootFolder->Release();)
 
 	// possibly delete existing task
 	pRootFolder->DeleteTask(_bstr_t(taskName.c_str()), 0);
@@ -219,5 +214,6 @@ void TaskSchedulerHelper::unschedule(const std::wstring& taskName)
 
 void TaskSchedulerHelper::fail(const std::wstring& functionName, unsigned long error)
 {
-	throw TaskSchedulerException(functionName + L" failed in task scheduling (" + StringHelper::getSystemErrorString(error) + L")");
+	throw TaskSchedulerException(
+		functionName + L" failed in task scheduling (" + StringHelper::getSystemErrorString(error) + L")");
 }

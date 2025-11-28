@@ -20,15 +20,15 @@
 #pragma once
 
 #include <string>
-#include <vector>
 #include <unordered_set>
+#include <vector>
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-#include "IFilterFactory.h"
-#include "FilterConfiguration.h"
-#include "helpers/PrecisionTimer.h"
 #include "helpers/MemoryHelper.h"
+#include "helpers/PrecisionTimer.h"
+#include "FilterConfiguration.h"
+#include "IFilterFactory.h"
 
 namespace mup {
 class ParserX;
@@ -42,28 +42,73 @@ public:
 	~FilterEngine();
 
 	void setPreMix(bool preMix);
-	void setDeviceInfo(bool capture, bool postMixInstalled, const std::wstring& deviceName, const std::wstring& connectionName, const std::wstring& deviceGuid, const std::wstring& deviceString);
-	void initialize(float sampleRate, unsigned inputChannelCount, unsigned realChannelCount, unsigned outputChannelCount, unsigned channelMask, unsigned maxFrameCount, const std::wstring& customPath = L"");
+	void setDeviceInfo(bool capture, bool postMixInstalled, const std::wstring& deviceName,
+		const std::wstring& connectionName, const std::wstring& deviceGuid, const std::wstring& deviceString);
+	void initialize(float sampleRate, unsigned inputChannelCount, unsigned realChannelCount,
+		unsigned outputChannelCount, unsigned channelMask, unsigned maxFrameCount,
+		const std::wstring& customPath = L"");
 	void loadConfig(const std::wstring& customPath = L"");
 	void loadConfigFile(const std::wstring& path);
 	void watchRegistryKey(const std::wstring& key);
 	void process(float* output, float* input, unsigned frameCount);
 	void process(float** output, float** input, unsigned frameCount);
 
-	bool isPreMix() const {return preMix;}
-	bool isCapture() const {return capture;}
-	bool isPostMixInstalled() const {return postMixInstalled;}
-	std::wstring getDeviceName() const {return deviceName;}
-	std::wstring getConnectionName() const {return connectionName;}
-	std::wstring getDeviceGuid() const {return deviceGuid;}
-	std::wstring getDeviceString() const {return deviceString;}
-	unsigned getInputChannelCount() const {return inputChannelCount;}
-	unsigned getRealChannelCount() const {return realChannelCount;}
-	unsigned getOutputChannelCount() const {return outputChannelCount;}
-	unsigned getChannelMask() const {return channelMask;}
-	float getSampleRate() const {return sampleRate;}
-	unsigned getMaxFrameCount() const {return maxFrameCount;}
-	mup::ParserX* getParser() {return parser;}
+	bool isPreMix() const
+	{
+		return preMix;
+	}
+	bool isCapture() const
+	{
+		return capture;
+	}
+	bool isPostMixInstalled() const
+	{
+		return postMixInstalled;
+	}
+	std::wstring getDeviceName() const
+	{
+		return deviceName;
+	}
+	std::wstring getConnectionName() const
+	{
+		return connectionName;
+	}
+	std::wstring getDeviceGuid() const
+	{
+		return deviceGuid;
+	}
+	std::wstring getDeviceString() const
+	{
+		return deviceString;
+	}
+	unsigned getInputChannelCount() const
+	{
+		return inputChannelCount;
+	}
+	unsigned getRealChannelCount() const
+	{
+		return realChannelCount;
+	}
+	unsigned getOutputChannelCount() const
+	{
+		return outputChannelCount;
+	}
+	unsigned getChannelMask() const
+	{
+		return channelMask;
+	}
+	float getSampleRate() const
+	{
+		return sampleRate;
+	}
+	unsigned getMaxFrameCount() const
+	{
+		return maxFrameCount;
+	}
+	mup::ParserX* getParser()
+	{
+		return parser;
+	}
 
 private:
 	void addFilters(std::vector<IFilter*> filters);

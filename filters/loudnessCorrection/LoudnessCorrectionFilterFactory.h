@@ -21,12 +21,13 @@
 
 #include <string>
 
-#include "IFilterFactory.h"
 #include "IFilter.h"
+#include "IFilterFactory.h"
 
 class LoudnessCorrectionFilterFactory : public IFilterFactory
 {
 public:
 	LoudnessCorrectionFilterFactory();
-	virtual std::vector<IFilter*> createFilter(const std::wstring& configPath, std::wstring& command, std::wstring& parameters);
+	virtual std::vector<IFilter*> createFilter(
+		const std::wstring& configPath, std::wstring& command, std::wstring& parameters);
 };

@@ -19,8 +19,9 @@
 
 #pragma once
 
-#include <DeviceAPOInfo.h>
 #include <QtWidgets/QDialog>
+#include <DeviceAPOInfo.h>
+
 #include "DeviceTestThread.h"
 #include "OpacityIconEngine.h"
 #include "ui_DeviceTestDialog.h"
@@ -31,7 +32,8 @@ class DeviceTestDialog : public QDialog
 
 public:
 	DeviceTestDialog(QWidget* parent = nullptr);
-	std::vector<std::shared_ptr<DeviceAPOInfo>> filterDevices(const std::vector<std::shared_ptr<AbstractAPOInfo>>& devices);
+	std::vector<std::shared_ptr<DeviceAPOInfo>> filterDevices(
+		const std::vector<std::shared_ptr<AbstractAPOInfo>>& devices);
 	void addDevices(std::vector<std::shared_ptr<DeviceAPOInfo>>& devices, QTreeWidgetItem* parentNode);
 
 protected:

@@ -19,9 +19,9 @@
 
 #pragma once
 
-#include <vector>
-#include <QWidget>
 #include <QGridLayout>
+#include <QWidget>
+#include <vector>
 
 #include "filters/CopyFilter.h"
 

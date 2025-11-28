@@ -17,10 +17,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#include "PreampFilterGUI.h"
+
 #include <cmath>
 
 #include "Editor/helpers/GUIHelper.h"
-#include "PreampFilterGUI.h"
 #include "ui_PreampFilterGUI.h"
 
 using namespace std;

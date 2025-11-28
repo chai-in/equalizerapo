@@ -30,9 +30,16 @@ class ChannelFilter : public IFilter
 public:
 	ChannelFilter(const std::vector<std::wstring>& words);
 	virtual ~ChannelFilter();
-	bool getAllChannels() override {return true;}
-	bool getSelectChannels() override {return true;}
-	std::vector<std::wstring> initialize(float sampleRate, unsigned maxFrameCount, std::vector<std::wstring> channelNames) override;
+	bool getAllChannels() override
+	{
+		return true;
+	}
+	bool getSelectChannels() override
+	{
+		return true;
+	}
+	std::vector<std::wstring> initialize(
+		float sampleRate, unsigned maxFrameCount, std::vector<std::wstring> channelNames) override;
 	void process(float** output, float** input, unsigned frameCount) override;
 
 private:

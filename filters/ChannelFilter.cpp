@@ -18,13 +18,15 @@
 */
 
 #include "stdafx.h"
-#include <sstream>
-#include <algorithm>
 
-#include "helpers/MemoryHelper.h"
-#include "helpers/LogHelper.h"
-#include "helpers/ChannelHelper.h"
 #include "ChannelFilter.h"
+
+#include <algorithm>
+#include <sstream>
+
+#include "helpers/ChannelHelper.h"
+#include "helpers/LogHelper.h"
+#include "helpers/MemoryHelper.h"
 
 using namespace std;
 
@@ -52,7 +54,7 @@ vector<wstring> ChannelFilter::initialize(float sampleRate, unsigned maxFrameCou
 		else
 			channelNr = ChannelHelper::getChannelIndex(currentWord, channelNames);
 
-		if (channelNr != -1 && channelNr < (int)channelCount)
+		if (channelNr != -1 && channelNr < (int) channelCount)
 		{
 			selectedChannels[channelNr] = true;
 		}

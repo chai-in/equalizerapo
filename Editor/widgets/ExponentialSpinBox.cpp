@@ -17,8 +17,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include <cmath>
 #include "ExponentialSpinBox.h"
+
+#include <cmath>
 
 using namespace std;
 
@@ -43,7 +44,7 @@ void ExponentialSpinBox::stepBy(int steps)
 			v = minimum();
 	}
 
-	setValue((int)v);
+	setValue((int) v);
 }
 
 int ExponentialSpinBox::valueFromText(const QString& text) const

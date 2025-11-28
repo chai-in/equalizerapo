@@ -18,32 +18,35 @@
 */
 
 #include "stdafx.h"
+
+#include "FilterConfiguration.h"
+
 #include <algorithm>
 
-#include "FilterEngine.h"
 #include "helpers/MemoryHelper.h"
-#include "FilterConfiguration.h"
+#include "FilterEngine.h"
 
 using namespace std;
 
-FilterConfiguration::FilterConfiguration(FilterEngine* engine, const vector<FilterInfo*>& filterInfos, unsigned allChannelCount)
+FilterConfiguration::FilterConfiguration(
+	FilterEngine* engine, const vector<FilterInfo*>& filterInfos, unsigned allChannelCount)
 {
 	this->allChannelCount = allChannelCount;
 	realChannelCount = engine->getRealChannelCount();
 	outputChannelCount = engine->getOutputChannelCount();
 	unsigned maxFrameCount = engine->getMaxFrameCount();
 
-	allSamples = (float**)MemoryHelper::alloc(allChannelCount * sizeof(float*));
+	allSamples = (float**) MemoryHelper::alloc(allChannelCount * sizeof(float*));
 	for (size_t i = 0; i < allChannelCount; i++)
-		allSamples[i] = (float*)MemoryHelper::alloc(maxFrameCount * sizeof(float));
-	allSamples2 = (float**)MemoryHelper::alloc(allChannelCount * sizeof(float*));
+		allSamples[i] = (float*) MemoryHelper::alloc(maxFrameCount * sizeof(float));
+	allSamples2 = (float**) MemoryHelper::alloc(allChannelCount * sizeof(float*));
 	for (size_t i = 0; i < allChannelCount; i++)
-		allSamples2[i] = (float*)MemoryHelper::alloc(maxFrameCount * sizeof(float));
-	currentSamples = (float**)MemoryHelper::alloc(allChannelCount * sizeof(float*));
-	currentSamples2 = (float**)MemoryHelper::alloc(allChannelCount * sizeof(float*));
+		allSamples2[i] = (float*) MemoryHelper::alloc(maxFrameCount * sizeof(float));
+	currentSamples = (float**) MemoryHelper::alloc(allChannelCount * sizeof(float*));
+	currentSamples2 = (float**) MemoryHelper::alloc(allChannelCount * sizeof(float*));
 
-	filterCount = (unsigned)filterInfos.size();
-	this->filterInfos = (FilterInfo**)MemoryHelper::alloc(filterCount * sizeof(FilterInfo*));
+	filterCount = (unsigned) filterInfos.size();
+	this->filterInfos = (FilterInfo**) MemoryHelper::alloc(filterCount * sizeof(FilterInfo*));
 	for (size_t i = 0; i < filterCount; i++)
 		this->filterInfos[i] = filterInfos[i];
 }
@@ -77,17 +80,17 @@ FilterConfiguration::~FilterConfiguration()
 #pragma AVRT_CODE_BEGIN
 void FilterConfiguration::read(float* input, unsigned frameCount)
 {
-#define DEINTERLEAVE_MACRO(ccount)\
-	{\
-		for (size_t c = 0; c < ccount; c++)\
-		{\
-			float* sampleChannel = allSamples[c];\
-			float* i2 = input + c;\
-			for (size_t i = 0; i < frameCount; i++)\
-			{\
-				sampleChannel[i] = i2[i * ccount];\
-			}\
-		}\
+#define DEINTERLEAVE_MACRO(ccount) \
+	{ \
+		for (size_t c = 0; c < ccount; c++) \
+		{ \
+			float* sampleChannel = allSamples[c]; \
+			float* i2 = input + c; \
+			for (size_t i = 0; i < frameCount; i++) \
+			{ \
+				sampleChannel[i] = i2[i * ccount]; \
+			} \
+		} \
 	}
 
 	switch (realChannelCount)
@@ -151,14 +154,15 @@ void FilterConfiguration::process(unsigned frameCount)
 	}
 }
 
-unsigned FilterConfiguration::doTransition(FilterConfiguration* nextConfig, unsigned frameCount, unsigned transitionCounter, unsigned transitionLength)
+unsigned FilterConfiguration::doTransition(
+	FilterConfiguration* nextConfig, unsigned frameCount, unsigned transitionCounter, unsigned transitionLength)
 {
 	float** currentSamples = allSamples;
 	float** nextSamples = nextConfig->allSamples;
 
 	for (unsigned f = 0; f < frameCount; f++)
 	{
-		float factor = 0.5f * (1.0f - cos(transitionCounter * (float)M_PI / transitionLength));
+		float factor = 0.5f * (1.0f - cos(transitionCounter * (float) M_PI / transitionLength));
 		if (transitionCounter >= transitionLength)
 			factor = 1.0f;
 
@@ -173,15 +177,15 @@ unsigned FilterConfiguration::doTransition(FilterConfiguration* nextConfig, unsi
 
 void FilterConfiguration::write(float* output, unsigned frameCount)
 {
-#define INTERLEAVE_MACRO(ccount)\
-	for (size_t c = 0; c < ccount; c++)\
-	{\
-		float* sampleChannel = allSamples[c];\
-		float* o2 = output + c;\
-		for (unsigned i = 0; i < frameCount; i++)\
-		{\
-			o2[i * ccount] = sampleChannel[i];\
-		}\
+#define INTERLEAVE_MACRO(ccount) \
+	for (size_t c = 0; c < ccount; c++) \
+	{ \
+		float* sampleChannel = allSamples[c]; \
+		float* o2 = output + c; \
+		for (unsigned i = 0; i < frameCount; i++) \
+		{ \
+			o2[i * ccount] = sampleChannel[i]; \
+		} \
 	}
 
 	switch (outputChannelCount)

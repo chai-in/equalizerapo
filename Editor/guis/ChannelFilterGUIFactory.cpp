@@ -17,9 +17,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#include "ChannelFilterGUIFactory.h"
+
 #include "Editor/FilterTable.h"
 #include "ChannelFilterGUI.h"
-#include "ChannelFilterGUIFactory.h"
 
 ChannelFilterGUIFactory::ChannelFilterGUIFactory()
 {

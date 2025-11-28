@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include <QDialog>
 #include <QBuffer>
+#include <QDialog>
 
 namespace Ui {
 class LoudnessCorrectionFilterGUIDialog;

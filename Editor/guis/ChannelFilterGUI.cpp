@@ -18,6 +18,7 @@
 */
 
 #include "ChannelFilterGUI.h"
+
 #include "ChannelFilterGUIDialog.h"
 #include "ui_ChannelFilterGUI.h"
 

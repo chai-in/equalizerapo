@@ -17,12 +17,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#include "AnalysisPlotView.h"
+
 #include <algorithm>
 
-#include "helpers/GainIterator.h"
 #include "Editor/helpers/GUIHelper.h"
+#include "helpers/GainIterator.h"
 #include "AnalysisPlotScene.h"
-#include "AnalysisPlotView.h"
 
 using namespace std;
 
@@ -55,7 +56,7 @@ void AnalysisPlotView::drawBackground(QPainter* painter, const QRectF& rect)
 				y = sceneRect().top() - 1;
 		}
 
-        if (abs(db-lastDb) < 0.001f)
+		if (abs(db - lastDb) < 0.001f)
 			y = floor(y) + 0.5;
 		lastDb = db;
 		if (first)
@@ -84,7 +85,7 @@ void AnalysisPlotView::drawBackground(QPainter* painter, const QRectF& rect)
 		painter->setBrush(Qt::NoBrush);
 	}
 
-    bool dark = GUIHelper::isDarkMode();
-    painter->setPen(dark ? Qt::white : Qt::black);
+	bool dark = GUIHelper::isDarkMode();
+	painter->setPen(dark ? Qt::white : Qt::black);
 	painter->drawPath(path);
 }

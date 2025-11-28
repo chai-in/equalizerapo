@@ -18,13 +18,15 @@
 */
 
 #include "stdafx.h"
+
+#include "DelayFilterFactory.h"
+
 #include <sstream>
 
+#include "helpers/LogHelper.h"
 #include "helpers/MemoryHelper.h"
 #include "helpers/StringHelper.h"
-#include "helpers/LogHelper.h"
 #include "DelayFilter.h"
-#include "DelayFilterFactory.h"
 
 using namespace std;
 
@@ -48,13 +50,13 @@ vector<IFilter*> DelayFilterFactory::createFilter(const wstring& configPath, wst
 			{
 				TraceF(L"Delaying by %g ms", delay);
 				void* mem = MemoryHelper::alloc(sizeof(DelayFilter));
-				filter = new(mem) DelayFilter(delay, true);
+				filter = new (mem) DelayFilter(delay, true);
 			}
 			else if (StringHelper::toLowerCase(unit) == L"samples")
 			{
 				TraceF(L"Delaying by %g samples", delay);
 				void* mem = MemoryHelper::alloc(sizeof(DelayFilter));
-				filter = new(mem) DelayFilter(delay, false);
+				filter = new (mem) DelayFilter(delay, false);
 			}
 		}
 	}

@@ -19,8 +19,9 @@
 
 #pragma once
 
-#include <QDialog>
 #include <QCheckBox>
+#include <QDialog>
+
 #include "helpers/VSTPluginInstance.h"
 
 namespace Ui {

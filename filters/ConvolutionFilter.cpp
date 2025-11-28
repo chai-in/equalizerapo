@@ -18,12 +18,13 @@
 */
 
 #include "stdafx.h"
+
 #include <cmath>
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #define ENABLE_SNDFILE_WINDOWS_PROTOTYPES 1
-#include <sndfile.h>
 #include <fftw3.h>
+#include <sndfile.h>
 
 #include "helpers/LogHelper.h"
 #include "helpers/MemoryHelper.h"
@@ -48,7 +49,7 @@ vector<wstring> ConvolutionFilter::initialize(float sampleRate, unsigned maxFram
 
 	this->sampleRate = sampleRate;
 	this->maxFrameCount = maxFrameCount;
-	channelCount = (unsigned)channelNames.size();
+	channelCount = (unsigned) channelNames.size();
 	beforeFirstProcess = true;
 
 	initializeFilters(maxFrameCount);
@@ -108,13 +109,14 @@ void ConvolutionFilter::initializeFilters(unsigned frameCount)
 	}
 	else if (abs(sampleRate - info.samplerate) > 1.0f)
 	{
-		LogF(L"Impulse response sample rate (%d Hz) does not match device sample rate (%f Hz)", info.samplerate, sampleRate);
+		LogF(L"Impulse response sample rate (%d Hz) does not match device sample rate (%f Hz)", info.samplerate,
+			sampleRate);
 	}
 	else
 	{
 		TraceF(L"Convolving using impulse response file %s", filename.c_str());
 		unsigned fileChannelCount = info.channels;
-		unsigned fileFrameCount = (unsigned)info.frames;
+		unsigned fileFrameCount = (unsigned) info.frames;
 
 		float* interleavedBuf = new float[fileFrameCount * fileChannelCount];
 
@@ -125,7 +127,7 @@ void ConvolutionFilter::initializeFilters(unsigned frameCount)
 		sf_close(inFile);
 		inFile = NULL;
 
-		float** bufs = new float* [fileChannelCount];
+		float** bufs = new float*[fileChannelCount];
 		for (unsigned i = 0; i < fileChannelCount; i++)
 		{
 			float* buf = new float[fileFrameCount];
@@ -139,7 +141,7 @@ void ConvolutionFilter::initializeFilters(unsigned frameCount)
 		}
 
 		fftwf_make_planner_thread_safe();
-		filters = (HConvSingle*)MemoryHelper::alloc(sizeof(HConvSingle) * channelCount);
+		filters = (HConvSingle*) MemoryHelper::alloc(sizeof(HConvSingle) * channelCount);
 		for (unsigned i = 0; i < channelCount; i++)
 		{
 			hcInitSingle(&filters[i], bufs[i % fileChannelCount], fileFrameCount, frameCount, 1);

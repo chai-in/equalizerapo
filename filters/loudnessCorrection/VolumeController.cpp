@@ -18,7 +18,9 @@
 */
 
 #include "stdafx.h"
+
 #include "VolumeController.h"
+
 #include <mmdeviceapi.h>
 
 VolumeController::VolumeController()
@@ -26,15 +28,16 @@ VolumeController::VolumeController()
 	HRESULT hr;
 	CoInitialize(NULL);
 	IMMDeviceEnumerator* deviceEnumerator = NULL;
-	hr = CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_INPROC_SERVER, __uuidof(IMMDeviceEnumerator), (LPVOID*)&deviceEnumerator);
+	hr = CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_INPROC_SERVER, __uuidof(IMMDeviceEnumerator),
+		(LPVOID*) &deviceEnumerator);
 	IMMDevice* defaultDevice = NULL;
 
-	hr = deviceEnumerator->GetDefaultAudioEndpoint(eRender, eMultimedia,  &defaultDevice);
+	hr = deviceEnumerator->GetDefaultAudioEndpoint(eRender, eMultimedia, &defaultDevice);
 	deviceEnumerator->Release();
 	deviceEnumerator = NULL;
 
 	_endpointVolume = NULL;
-	hr = defaultDevice->Activate(__uuidof(IAudioEndpointVolume), CLSCTX_INPROC_SERVER, NULL, (LPVOID*)&_endpointVolume);
+	hr = defaultDevice->Activate(__uuidof(IAudioEndpointVolume), CLSCTX_INPROC_SERVER, NULL, (LPVOID*) &_endpointVolume);
 	defaultDevice->Release();
 	defaultDevice = NULL;
 	float inkrement;

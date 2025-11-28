@@ -20,8 +20,8 @@
 #pragma once
 
 #define _USE_MATH_DEFINES
-#include <cmath>
 #include <climits>
+#include <cmath>
 #include <string>
 
 #define IS_DENORMAL(d) (abs(d) < DBL_MIN)
@@ -31,14 +31,22 @@ class BiQuad
 public:
 	enum Type
 	{
-		LOW_PASS, HIGH_PASS, BAND_PASS, NOTCH, ALL_PASS, PEAKING, LOW_SHELF, HIGH_SHELF
+		LOW_PASS,
+		HIGH_PASS,
+		BAND_PASS,
+		NOTCH,
+		ALL_PASS,
+		PEAKING,
+		LOW_SHELF,
+		HIGH_SHELF
 	};
 
-	BiQuad() {}
+	BiQuad()
+	{
+	}
 	BiQuad(Type type, double dbGain, double freq, double srate, double bandwidthOrQOrS, bool isBandwidthOrS);
 
-	__forceinline
-	void removeDenormals()
+	__forceinline void removeDenormals()
 	{
 		if (IS_DENORMAL(x1))
 			x1 = 0.0;
@@ -50,8 +58,7 @@ public:
 			y2 = 0.0;
 	}
 
-	__forceinline
-	double process(double sample)
+	__forceinline double process(double sample)
 	{
 		// changed order of additions leads to better pipelining
 		double result = a0 * sample + a[1] * x2 + a[0] * x1 - a[3] * y2 - a[2] * y1;
@@ -65,8 +72,7 @@ public:
 		return result;
 	}
 
-	__forceinline
-	void setCoefficients(double ain[], const double& a0in)
+	__forceinline void setCoefficients(double ain[], const double& a0in)
 	{
 		for (int i = 0; i < 4; i++)
 			a[i] = ain[i];

@@ -18,8 +18,10 @@
 */
 
 #include "stdafx.h"
-#include <regex>
+
 #include <mpParser.h>
+#include <regex>
+
 #include "helpers/LogHelper.h"
 #include "helpers/StringHelper.h"
 #ifndef NO_FILTERENGINE
@@ -56,7 +58,8 @@ vector<IFilter*> DeviceFilterFactory::createFilter(const wstring& configPath, ws
 	{
 		bool matches = matchDevice(deviceString, parameters);
 
-		TraceF(L"%satching pattern \"%s\" with device \"%s\"", matches ? L"M" : L"Not m", StringHelper::trim(parameters).c_str(), deviceString.c_str());
+		TraceF(L"%satching pattern \"%s\" with device \"%s\"", matches ? L"M" : L"Not m",
+			StringHelper::trim(parameters).c_str(), deviceString.c_str());
 		deviceMatches = matches;
 	}
 

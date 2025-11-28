@@ -21,8 +21,8 @@
 
 #include <QGraphicsView>
 
-#include "FrequencyPlotScene.h"
 #include "FrequencyPlotHRuler.h"
+#include "FrequencyPlotScene.h"
 #include "FrequencyPlotVRuler.h"
 
 class FrequencyPlotView : public QGraphicsView

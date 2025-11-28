@@ -36,6 +36,7 @@ public:
 	virtual HRESULT __stdcall LockServer(BOOL bLock);
 
 	static long lockCount;
+
 private:
 	long refCount;
 };

@@ -18,17 +18,18 @@
 */
 
 #include "stdafx.h"
-#include <mmdeviceapi.h>
-#include <audioclient.h>
-#include <mmreg.h>
-#include <shellapi.h>
-#include <comdef.h>
 
 #include "DeviceAPOInfo.h"
-#include "VoicemeeterAPOInfo.h"
 
-#include "helpers/StringHelper.h"
+#include <audioclient.h>
+#include <comdef.h>
+#include <mmdeviceapi.h>
+#include <mmreg.h>
+#include <shellapi.h>
+
 #include "helpers/RegistryHelper.h"
+#include "helpers/StringHelper.h"
+#include "VoicemeeterAPOInfo.h"
 
 using namespace std;
 
@@ -59,7 +60,8 @@ static const wchar_t* multiSfxGuidValueName = L"{d04e05a6-594b-4fb6-a80d-01af5ee
 static const wchar_t* multiMfxGuidValueName = L"{d04e05a6-594b-4fb6-a80d-01af5eed7d1d},14";
 static const wchar_t* multiEfxGuidValueName = L"{d04e05a6-594b-4fb6-a80d-01af5eed7d1d},15";
 static const unsigned allGuidValueNameCount = 5;
-static const wchar_t* allGuidValueNames[] = {lfxGuidValueName, gfxGuidValueName, sfxGuidValueName, mfxGuidValueName, efxGuidValueName};
+static const wchar_t* allGuidValueNames[] = {
+	lfxGuidValueName, gfxGuidValueName, sfxGuidValueName, mfxGuidValueName, efxGuidValueName};
 enum GuidValueIndices
 {
 	LFX_INDEX = 0,
@@ -106,11 +108,12 @@ wstring DeviceAPOInfo::getDefaultDevice(bool input, int role)
 	wstring result;
 
 	IMMDeviceEnumerator* enumerator = NULL;
-	HRESULT hr = CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_ALL, __uuidof(IMMDeviceEnumerator), (void**)&enumerator);
+	HRESULT hr = CoCreateInstance(
+		__uuidof(MMDeviceEnumerator), NULL, CLSCTX_ALL, __uuidof(IMMDeviceEnumerator), (void**) &enumerator);
 	if (SUCCEEDED(hr))
 	{
 		IMMDevice* endPoint = NULL;
-		hr = enumerator->GetDefaultAudioEndpoint(input ? eCapture : eRender, (ERole)role, &endPoint);
+		hr = enumerator->GetDefaultAudioEndpoint(input ? eCapture : eRender, (ERole) role, &endPoint);
 		if (SUCCEEDED(hr))
 		{
 			IPropertyStore* propertyStore = NULL;
@@ -139,7 +142,8 @@ bool DeviceAPOInfo::checkProtectedAudioDG(bool fix)
 {
 	bool result = true;
 
-	if (!RegistryHelper::valueExists(protectedDGKeyPath, protectedDGValueName) || RegistryHelper::readDWORDValue(protectedDGKeyPath, protectedDGValueName) != 1)
+	if (!RegistryHelper::valueExists(protectedDGKeyPath, protectedDGValueName)
+		|| RegistryHelper::readDWORDValue(protectedDGKeyPath, protectedDGValueName) != 1)
 	{
 		result = false;
 
@@ -154,8 +158,10 @@ bool DeviceAPOInfo::checkAPORegistration(bool fix)
 {
 	bool result = true;
 
-	if (!RegistryHelper::keyExists(apoRegistrationKeyPath L"\\" + RegistryHelper::getGuidString(EQUALIZERAPO_PRE_MIX_GUID))
-		|| !RegistryHelper::keyExists(apoRegistrationKeyPath L"\\" + RegistryHelper::getGuidString(EQUALIZERAPO_POST_MIX_GUID))
+	if (!RegistryHelper::keyExists(
+			apoRegistrationKeyPath L"\\" + RegistryHelper::getGuidString(EQUALIZERAPO_PRE_MIX_GUID))
+		|| !RegistryHelper::keyExists(
+			apoRegistrationKeyPath L"\\" + RegistryHelper::getGuidString(EQUALIZERAPO_POST_MIX_GUID))
 		|| !RegistryHelper::keyExists(clsidKeyPath L"\\" + RegistryHelper::getGuidString(EQUALIZERAPO_PRE_MIX_GUID))
 		|| !RegistryHelper::keyExists(clsidKeyPath L"\\" + RegistryHelper::getGuidString(EQUALIZERAPO_POST_MIX_GUID)))
 	{
@@ -210,12 +216,12 @@ bool DeviceAPOInfo::load(const wstring& deviceGuid, wstring defaultDeviceGuid)
 		std::vector<unsigned char> format = RegistryHelper::readBinaryValue(keyPath + L"\\Properties", formatValueName);
 		if (format.size() >= sizeof(WAVEFORMATEX) + 8)
 		{
-			WAVEFORMATEX* waveFormat = (WAVEFORMATEX*)&format[8];
+			WAVEFORMATEX* waveFormat = (WAVEFORMATEX*) &format[8];
 			channelCount = waveFormat->nChannels;
 			sampleRate = waveFormat->nSamplesPerSec;
 			if (waveFormat->wFormatTag == WAVE_FORMAT_EXTENSIBLE)
 			{
-				WAVEFORMATEXTENSIBLE* waveFormatExtensible = (WAVEFORMATEXTENSIBLE*)waveFormat;
+				WAVEFORMATEXTENSIBLE* waveFormatExtensible = (WAVEFORMATEXTENSIBLE*) waveFormat;
 				channelMask = waveFormatExtensible->dwChannelMask;
 			}
 		}
@@ -227,14 +233,17 @@ bool DeviceAPOInfo::load(const wstring& deviceGuid, wstring defaultDeviceGuid)
 		defaultDeviceGuid = getDefaultDevice(input);
 
 	GUID guid1, guid2;
-	if (SUCCEEDED(CLSIDFromString(deviceGuid.c_str(), &guid1)) && SUCCEEDED(CLSIDFromString(defaultDeviceGuid.c_str(), &guid2)))
+	if (SUCCEEDED(CLSIDFromString(deviceGuid.c_str(), &guid1))
+		&& SUCCEEDED(CLSIDFromString(defaultDeviceGuid.c_str(), &guid2)))
 		defaultDevice = (guid1 == guid2) != 0;
 	else
 		defaultDevice = false;
 
 	enhancementsDisabled = false;
-	if (RegistryHelper::keyExists(keyPath + L"\\FxProperties") && RegistryHelper::valueExists(keyPath + L"\\FxProperties", disableEnhancementsValueName))
-		enhancementsDisabled = RegistryHelper::readDWORDValue(keyPath + L"\\FxProperties", disableEnhancementsValueName) != 0;
+	if (RegistryHelper::keyExists(keyPath + L"\\FxProperties")
+		&& RegistryHelper::valueExists(keyPath + L"\\FxProperties", disableEnhancementsValueName))
+		enhancementsDisabled = RegistryHelper::readDWORDValue(keyPath + L"\\FxProperties", disableEnhancementsValueName)
+			!= 0;
 
 	installed = false;
 	currentInstallState.installMode = INSTALL_LFX_GFX;
@@ -260,7 +269,8 @@ bool DeviceAPOInfo::load(const wstring& deviceGuid, wstring defaultDeviceGuid)
 			if (RegistryHelper::valueExists(keyPath + L"\\FxProperties", allGuidValueNames[i]))
 			{
 				wstring originalApoGuid = RegistryHelper::readValue(keyPath + L"\\FxProperties", allGuidValueNames[i]);
-				if (originalApoGuid == RegistryHelper::getGuidString(EQUALIZERAPO_PRE_MIX_GUID) || originalApoGuid == RegistryHelper::getGuidString(EQUALIZERAPO_POST_MIX_GUID))
+				if (originalApoGuid == RegistryHelper::getGuidString(EQUALIZERAPO_PRE_MIX_GUID)
+					|| originalApoGuid == RegistryHelper::getGuidString(EQUALIZERAPO_POST_MIX_GUID))
 					originalApoGuid = APOGUID_NOVALUE;
 				originalApoGuids[i] = originalApoGuid;
 			}
@@ -302,7 +312,8 @@ bool DeviceAPOInfo::load(const wstring& deviceGuid, wstring defaultDeviceGuid)
 				{
 					version = RegistryHelper::readValue(childApoPath L"\\" + deviceGuid, versionValueName);
 					if (version != installVersion)
-						throw RegistryException(L"Unsupported version of APO installation detected! Please uninstall newer Equalizer APO before using this version of Device Selector.");
+						throw RegistryException(
+							L"Unsupported version of APO installation detected! Please uninstall newer Equalizer APO before using this version of Device Selector.");
 				}
 				else
 				{
@@ -312,15 +323,18 @@ bool DeviceAPOInfo::load(const wstring& deviceGuid, wstring defaultDeviceGuid)
 				for (int i = 0; i < allGuidValueNameCount; i++)
 				{
 					if (RegistryHelper::valueExists(childApoPath L"\\" + deviceGuid, allGuidValueNames[i]))
-						originalApoGuids[i] = RegistryHelper::readValue(childApoPath L"\\" + deviceGuid, allGuidValueNames[i]);
+						originalApoGuids[i] = RegistryHelper::readValue(
+							childApoPath L"\\" + deviceGuid, allGuidValueNames[i]);
 				}
 
 				if (version == installVersion)
 				{
 					if (RegistryHelper::valueExists(childApoPath L"\\" + deviceGuid, preMixChildGuidValueName))
-						preMixChildGuid = RegistryHelper::readValue(childApoPath L"\\" + deviceGuid, preMixChildGuidValueName);
+						preMixChildGuid = RegistryHelper::readValue(
+							childApoPath L"\\" + deviceGuid, preMixChildGuidValueName);
 					if (RegistryHelper::valueExists(childApoPath L"\\" + deviceGuid, postMixChildGuidValueName))
-						postMixChildGuid = RegistryHelper::readValue(childApoPath L"\\" + deviceGuid, postMixChildGuidValueName);
+						postMixChildGuid = RegistryHelper::readValue(
+							childApoPath L"\\" + deviceGuid, postMixChildGuidValueName);
 
 					currentInstallState.installPreMix = foundAt[LFX_INDEX] || foundAt[SFX_INDEX];
 					currentInstallState.installPostMix = foundAt[GFX_INDEX] || foundAt[MFX_INDEX] || foundAt[EFX_INDEX];
@@ -338,9 +352,14 @@ bool DeviceAPOInfo::load(const wstring& deviceGuid, wstring defaultDeviceGuid)
 						currentInstallState.installMode = INSTALL_SFX_MFX;
 
 					if (RegistryHelper::valueExists(childApoPath L"\\" + deviceGuid, allowSilentBufferValueName))
-						currentInstallState.allowSilentBufferModification = RegistryHelper::readValue(childApoPath L"\\" + deviceGuid, allowSilentBufferValueName) != L"false";
+						currentInstallState.allowSilentBufferModification = RegistryHelper::readValue(
+																				childApoPath L"\\" + deviceGuid,
+																				allowSilentBufferValueName)
+							!= L"false";
 					if (RegistryHelper::valueExists(childApoPath L"\\" + deviceGuid, disableAutoAdjustValueName))
-						currentInstallState.autoAdjust = RegistryHelper::readValue(childApoPath L"\\" + deviceGuid, disableAutoAdjustValueName) == L"false";
+						currentInstallState.autoAdjust = RegistryHelper::readValue(childApoPath L"\\" + deviceGuid,
+															 disableAutoAdjustValueName)
+							== L"false";
 				}
 				else
 				{
@@ -378,7 +397,8 @@ bool DeviceAPOInfo::load(const wstring& deviceGuid, wstring defaultDeviceGuid)
 			{
 				// only use LFX/GFX if the audio driver supplied only those APOs
 				if (RegistryHelper::keyExists(keyPath + L"\\FxProperties")
-					&& (RegistryHelper::valueExists(keyPath + L"\\FxProperties", lfxGuidValueName) || RegistryHelper::valueExists(keyPath + L"\\FxProperties", gfxGuidValueName))
+					&& (RegistryHelper::valueExists(keyPath + L"\\FxProperties", lfxGuidValueName)
+						|| RegistryHelper::valueExists(keyPath + L"\\FxProperties", gfxGuidValueName))
 					&& !RegistryHelper::valueExists(keyPath + L"\\FxProperties", sfxGuidValueName)
 					&& !RegistryHelper::valueExists(keyPath + L"\\FxProperties", mfxGuidValueName)
 					&& !RegistryHelper::valueExists(keyPath + L"\\FxProperties", efxGuidValueName)
@@ -529,7 +549,8 @@ void DeviceAPOInfo::install()
 
 		if (!valuenames.empty())
 			RegistryHelper::saveToFile(keyPath + L"\\FxProperties", valuenames,
-				L"backup_" + StringHelper::replaceIllegalCharacters(deviceName) + L"_" + StringHelper::replaceIllegalCharacters(connectionName) + L".reg");
+				L"backup_" + StringHelper::replaceIllegalCharacters(deviceName) + L"_"
+					+ StringHelper::replaceIllegalCharacters(connectionName) + L".reg");
 	}
 
 	wstring preMixValue;
@@ -541,7 +562,8 @@ void DeviceAPOInfo::install()
 	RegistryHelper::writeValue(childApoPath L"\\" + deviceGuid, preMixChildGuidValueName, preMixValue);
 	RegistryHelper::writeValue(childApoPath L"\\" + deviceGuid, postMixChildGuidValueName, postMixValue);
 
-	RegistryHelper::writeValue(childApoPath L"\\" + deviceGuid, allowSilentBufferValueName, selectedInstallState.allowSilentBufferModification ? L"true" : L"false");
+	RegistryHelper::writeValue(childApoPath L"\\" + deviceGuid, allowSilentBufferValueName,
+		selectedInstallState.allowSilentBufferModification ? L"true" : L"false");
 	if (selectedInstallState.autoAdjust)
 	{
 		if (RegistryHelper::valueExists(childApoPath L"\\" + deviceGuid, disableAutoAdjustValueName))
@@ -556,9 +578,11 @@ void DeviceAPOInfo::install()
 	if (selectedInstallState.installMode == INSTALL_LFX_GFX)
 	{
 		if (selectedInstallState.installPreMix)
-			RegistryHelper::writeValue(keyPath + L"\\FxProperties", lfxGuidValueName, RegistryHelper::getGuidString(EQUALIZERAPO_PRE_MIX_GUID));
+			RegistryHelper::writeValue(keyPath + L"\\FxProperties", lfxGuidValueName,
+				RegistryHelper::getGuidString(EQUALIZERAPO_PRE_MIX_GUID));
 		if (selectedInstallState.installPostMix && !input)
-			RegistryHelper::writeValue(keyPath + L"\\FxProperties", gfxGuidValueName, RegistryHelper::getGuidString(EQUALIZERAPO_POST_MIX_GUID));
+			RegistryHelper::writeValue(keyPath + L"\\FxProperties", gfxGuidValueName,
+				RegistryHelper::getGuidString(EQUALIZERAPO_POST_MIX_GUID));
 		if (RegistryHelper::valueExists(keyPath + L"\\FxProperties", sfxGuidValueName))
 			RegistryHelper::deleteValue(keyPath + L"\\FxProperties", sfxGuidValueName);
 		if (RegistryHelper::valueExists(keyPath + L"\\FxProperties", mfxGuidValueName))
@@ -574,15 +598,19 @@ void DeviceAPOInfo::install()
 			RegistryHelper::deleteValue(keyPath + L"\\FxProperties", gfxGuidValueName);
 		if (selectedInstallState.installPreMix)
 		{
-			RegistryHelper::writeValue(keyPath + L"\\FxProperties", sfxGuidValueName, RegistryHelper::getGuidString(EQUALIZERAPO_PRE_MIX_GUID));
+			RegistryHelper::writeValue(keyPath + L"\\FxProperties", sfxGuidValueName,
+				RegistryHelper::getGuidString(EQUALIZERAPO_PRE_MIX_GUID));
 			if (!RegistryHelper::valueExists(keyPath + L"\\FxProperties", sfxProcessingModesValueName))
-				RegistryHelper::writeMultiValue(keyPath + L"\\FxProperties", sfxProcessingModesValueName, defaultProcessingModeValue);
+				RegistryHelper::writeMultiValue(
+					keyPath + L"\\FxProperties", sfxProcessingModesValueName, defaultProcessingModeValue);
 		}
 		if (selectedInstallState.installPostMix && !input)
 		{
-			RegistryHelper::writeValue(keyPath + L"\\FxProperties", mfxGuidValueName, RegistryHelper::getGuidString(EQUALIZERAPO_POST_MIX_GUID));
+			RegistryHelper::writeValue(keyPath + L"\\FxProperties", mfxGuidValueName,
+				RegistryHelper::getGuidString(EQUALIZERAPO_POST_MIX_GUID));
 			if (!RegistryHelper::valueExists(keyPath + L"\\FxProperties", mfxProcessingModesValueName))
-				RegistryHelper::writeMultiValue(keyPath + L"\\FxProperties", mfxProcessingModesValueName, defaultProcessingModeValue);
+				RegistryHelper::writeMultiValue(
+					keyPath + L"\\FxProperties", mfxProcessingModesValueName, defaultProcessingModeValue);
 		}
 		// don't change efx
 	}
@@ -594,16 +622,20 @@ void DeviceAPOInfo::install()
 			RegistryHelper::deleteValue(keyPath + L"\\FxProperties", gfxGuidValueName);
 		if (selectedInstallState.installPreMix)
 		{
-			RegistryHelper::writeValue(keyPath + L"\\FxProperties", sfxGuidValueName, RegistryHelper::getGuidString(EQUALIZERAPO_PRE_MIX_GUID));
+			RegistryHelper::writeValue(keyPath + L"\\FxProperties", sfxGuidValueName,
+				RegistryHelper::getGuidString(EQUALIZERAPO_PRE_MIX_GUID));
 			if (!RegistryHelper::valueExists(keyPath + L"\\FxProperties", sfxProcessingModesValueName))
-				RegistryHelper::writeMultiValue(keyPath + L"\\FxProperties", sfxProcessingModesValueName, defaultProcessingModeValue);
+				RegistryHelper::writeMultiValue(
+					keyPath + L"\\FxProperties", sfxProcessingModesValueName, defaultProcessingModeValue);
 		}
 		// don't change mfx
 		if (selectedInstallState.installPostMix && !input)
 		{
-			RegistryHelper::writeValue(keyPath + L"\\FxProperties", efxGuidValueName, RegistryHelper::getGuidString(EQUALIZERAPO_POST_MIX_GUID));
+			RegistryHelper::writeValue(keyPath + L"\\FxProperties", efxGuidValueName,
+				RegistryHelper::getGuidString(EQUALIZERAPO_POST_MIX_GUID));
 			if (!RegistryHelper::valueExists(keyPath + L"\\FxProperties", efxProcessingModesValueName))
-				RegistryHelper::writeMultiValue(keyPath + L"\\FxProperties", efxProcessingModesValueName, defaultProcessingModeValue);
+				RegistryHelper::writeMultiValue(
+					keyPath + L"\\FxProperties", efxProcessingModesValueName, defaultProcessingModeValue);
 		}
 	}
 
@@ -749,15 +781,16 @@ void DeviceAPOInfo::testAPOInstallation()
 	IAudioClient* audioClient = NULL;
 	WAVEFORMATEX* format = NULL;
 
-	HRESULT hr = CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_ALL, __uuidof(IMMDeviceEnumerator), (void**)&enumerator);
+	HRESULT hr = CoCreateInstance(
+		__uuidof(MMDeviceEnumerator), NULL, CLSCTX_ALL, __uuidof(IMMDeviceEnumerator), (void**) &enumerator);
 	if (FAILED(hr))
 		fail(L"CoCreateInstance for IMMDeviceEnumerator", hr);
-	SCOPE_EXIT{enumerator->Release(); };
+	SCOPE_EXIT(enumerator->Release();)
 
 	hr = enumerator->GetDevice(((input ? L"{0.0.1.00000000}." : L"{0.0.0.00000000}.") + deviceGuid).c_str(), &device);
 	if (FAILED(hr))
 		fail(L"GetDevice", hr);
-	SCOPE_EXIT{device->Release(); };
+	SCOPE_EXIT(device->Release();)
 
 	DWORD state;
 	hr = device->GetState(&state);
@@ -766,15 +799,15 @@ void DeviceAPOInfo::testAPOInstallation()
 	if (state & DEVICE_STATE_DISABLED || state & DEVICE_STATE_UNPLUGGED)
 		return;
 
-	hr = device->Activate(__uuidof(IAudioClient), CLSCTX_ALL, NULL, (void**)&audioClient);
+	hr = device->Activate(__uuidof(IAudioClient), CLSCTX_ALL, NULL, (void**) &audioClient);
 	if (FAILED(hr))
 		fail(L"Activate", hr);
-	SCOPE_EXIT{audioClient->Release(); };
+	SCOPE_EXIT(audioClient->Release();)
 
 	hr = audioClient->GetMixFormat(&format);
 	if (FAILED(hr))
 		fail(L"GetMixFormat", hr);
-	SCOPE_EXIT{CoTaskMemFree(format); };
+	SCOPE_EXIT(CoTaskMemFree(format);)
 
 	hr = audioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, 0, 1000000 /*100 ms*/, 0, format, NULL);
 	if (FAILED(hr))

@@ -21,13 +21,13 @@
 
 sf_count_t getFileLenDevice(void* user_data)
 {
-	QIODevice* device = (QIODevice*)user_data;
+	QIODevice* device = (QIODevice*) user_data;
 	return device->size();
 }
 
 sf_count_t seekDevice(sf_count_t offset, int whence, void* user_data)
 {
-	QIODevice* device = (QIODevice*)user_data;
+	QIODevice* device = (QIODevice*) user_data;
 	qint64 pos;
 	if (whence == SF_SEEK_SET)
 		pos = 0;
@@ -42,19 +42,19 @@ sf_count_t seekDevice(sf_count_t offset, int whence, void* user_data)
 
 sf_count_t readDevice(void* ptr, sf_count_t count, void* user_data)
 {
-	QIODevice* device = (QIODevice*)user_data;
-	return device->read((char*)ptr, count);
+	QIODevice* device = (QIODevice*) user_data;
+	return device->read((char*) ptr, count);
 }
 
 sf_count_t writeDevice(const void* ptr, sf_count_t count, void* user_data)
 {
-	QIODevice* device = (QIODevice*)user_data;
-	return device->write((const char*)ptr, count);
+	QIODevice* device = (QIODevice*) user_data;
+	return device->write((const char*) ptr, count);
 }
 
 sf_count_t tellDevice(void* user_data)
 {
-	QIODevice* device = (QIODevice*)user_data;
+	QIODevice* device = (QIODevice*) user_data;
 	return device->pos();
 }
 

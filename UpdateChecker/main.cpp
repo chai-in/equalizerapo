@@ -18,13 +18,15 @@
 */
 
 #include "stdafx.h"
-#include <QDir>
-#include <QStyleHints>
+
 #include <QCommandLineParser>
+#include <QDir>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+#include <QStyleHints>
 #include <QtWidgets/QApplication>
 #include <helpers/TaskSchedulerHelper.h>
+
 #include "UpdateChecker.h"
 #include "version.h"
 
@@ -47,12 +49,12 @@ int main(int argc, char* argv[])
 		app.installTranslator(&qtTranslator);
 
 	QTranslator updateCheckerTranslator;
-	if (updateCheckerTranslator.load(
-		QLocale(), ":/translations/UpdateChecker", "_"))
+	if (updateCheckerTranslator.load(QLocale(), ":/translations/UpdateChecker", "_"))
 		app.installTranslator(&updateCheckerTranslator);
 
 	QCommandLineParser parser;
-	QCommandLineOption autoOption("a", "Automatic mode (no dialog if no new version, respect skip version, only check every 24 hours)");
+	QCommandLineOption autoOption(
+		"a", "Automatic mode (no dialog if no new version, respect skip version, only check every 24 hours)");
 	QCommandLineOption installOption("i", "Install scheduled task");
 	QCommandLineOption uninstallOption("u", "Uninstall scheduled task");
 	parser.addOptions(QList<QCommandLineOption>() << autoOption << installOption << uninstallOption);
@@ -63,11 +65,13 @@ int main(int argc, char* argv[])
 		{
 			QString programPath = QDir::toNativeSeparators(QCoreApplication::applicationFilePath());
 			QString workingDir = QDir::toNativeSeparators(QCoreApplication::applicationDirPath());
-			TaskSchedulerHelper::scheduleAtLogon(L"EqualizerAPOUpdateChecker", programPath.toStdWString(), L"-a", workingDir.toStdWString());
+			TaskSchedulerHelper::scheduleAtLogon(
+				L"EqualizerAPOUpdateChecker", programPath.toStdWString(), L"-a", workingDir.toStdWString());
 		}
 		catch (TaskSchedulerException e)
 		{
-			QMessageBox::critical(nullptr, UpdateChecker::tr("Error installing Update Checker"), QString::fromStdWString(e.getMessage()));
+			QMessageBox::critical(
+				nullptr, UpdateChecker::tr("Error installing Update Checker"), QString::fromStdWString(e.getMessage()));
 			return 2;
 		}
 		return 0;
@@ -80,7 +84,8 @@ int main(int argc, char* argv[])
 		}
 		catch (TaskSchedulerException e)
 		{
-			QMessageBox::critical(nullptr, UpdateChecker::tr("Error uninstalling Update Checker"), QString::fromStdWString(e.getMessage()));
+			QMessageBox::critical(nullptr, UpdateChecker::tr("Error uninstalling Update Checker"),
+				QString::fromStdWString(e.getMessage()));
 			return 2;
 		}
 		return 0;
@@ -99,7 +104,8 @@ int main(int argc, char* argv[])
 
 		if (lastCheckDate.isValid() && lastCheckDate.toUTC().daysTo(QDateTime::currentDateTimeUtc()) < 1)
 			return 1;
-		settings.setValue("lastCheckDate", QDateTime::currentDateTime(QTimeZone::systemTimeZone()).toString(Qt::DateFormat::ISODate));
+		settings.setValue(
+			"lastCheckDate", QDateTime::currentDateTime(QTimeZone::systemTimeZone()).toString(Qt::DateFormat::ISODate));
 
 		QString skipVersion = settings.value("skipVersion").toString();
 		if (!skipVersion.isEmpty())
@@ -144,7 +150,8 @@ int main(int argc, char* argv[])
 			if (json.isEmpty())
 			{
 				if (!autoMode)
-					QMessageBox::information(nullptr, UpdateChecker::tr("No update available"), UpdateChecker::tr("The installed version %0 of Equalizer APO is up to date.").arg(version));
+					QMessageBox::information(nullptr, UpdateChecker::tr("No update available"),
+						UpdateChecker::tr("The installed version %0 of Equalizer APO is up to date.").arg(version));
 			}
 			else
 			{
@@ -152,7 +159,8 @@ int main(int argc, char* argv[])
 				QJsonDocument doc = QJsonDocument::fromJson(json, &error);
 				if (error.error != QJsonParseError::NoError)
 				{
-					showFailureMessage(error.errorString(), UpdateChecker::tr("Error while reading response of update check"));
+					showFailureMessage(
+						error.errorString(), UpdateChecker::tr("Error while reading response of update check"));
 				}
 				else
 				{

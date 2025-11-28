@@ -17,9 +17,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include "BiQuadFilterGUI.h"
 #include "BiQuadFilterGUIFactory.h"
+
 #include <filters/BiQuadFilterFactory.h>
+
+#include "BiQuadFilterGUI.h"
 
 BiQuadFilterGUIFactory::BiQuadFilterGUIFactory()
 {
@@ -53,7 +55,7 @@ IFilterGUI* BiQuadFilterGUIFactory::createFilterGUI(QString& command, QString& p
 		std::vector<IFilter*> filters = factory.createFilter(L"", commandWStr, paramWStr);
 		if (!filters.empty())
 		{
-			BiQuadFilter* filter = (BiQuadFilter*)filters[0];
+			BiQuadFilter* filter = (BiQuadFilter*) filters[0];
 			result = new BiQuadFilterGUI(filter);
 		}
 

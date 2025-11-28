@@ -17,9 +17,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include <QMouseEvent>
-
 #include "MiddleClickTabBar.h"
+
+#include <QMouseEvent>
 
 MiddleClickTabBar::MiddleClickTabBar(QWidget* parent)
 	: QTabBar(parent)

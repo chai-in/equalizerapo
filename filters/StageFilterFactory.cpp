@@ -18,11 +18,14 @@
 */
 
 #include "stdafx.h"
+
+#include "StageFilterFactory.h"
+
 #include <mpParser.h>
+
 #include "helpers/LogHelper.h"
 #include "helpers/StringHelper.h"
 #include "FilterEngine.h"
-#include "StageFilterFactory.h"
 
 using namespace std;
 
@@ -32,7 +35,10 @@ void StageFilterFactory::initialize(FilterEngine* engine)
 	capture = engine->isCapture();
 	postMixInstalled = engine->isPostMixInstalled();
 
-	engine->getParser()->DefineConst(L"stage", engine->isCapture() ? L"capture" : engine->isPreMix() ? L"pre-mix" : L"post-mix");
+	engine->getParser()->DefineConst(L"stage",
+		engine->isCapture()		 ? L"capture"
+			: engine->isPreMix() ? L"pre-mix"
+								 : L"post-mix");
 }
 
 vector<IFilter*> StageFilterFactory::startOfConfiguration()

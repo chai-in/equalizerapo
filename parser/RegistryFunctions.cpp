@@ -18,9 +18,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 #include "stdafx.h"
+
 #include "RegistryFunctions.h"
-#include "../helpers/RegistryHelper.h"
+
 #include "../FilterEngine.h"
+#include "../helpers/RegistryHelper.h"
 
 using namespace std;
 using namespace mup;
@@ -85,7 +87,7 @@ void ReadRegDWORDFunction::Eval(ptr_val_type& ret, const ptr_val_type* arg, int 
 	{
 		unsigned long value = RegistryHelper::readDWORDValue(key, valuename);
 
-		*ret = (int)value;
+		*ret = (int) value;
 
 		engine->watchRegistryKey(key);
 	}

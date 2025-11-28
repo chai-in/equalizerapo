@@ -19,9 +19,10 @@
 
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
+
 #include "AbstractAPOInfo.h"
 
 class VoicemeeterAPOInfo : public AbstractAPOInfo

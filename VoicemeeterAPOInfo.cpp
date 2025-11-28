@@ -18,34 +18,35 @@
 */
 
 #include "stdafx.h"
-#include <ShlObj.h>
-#include <fstream>
+
+#include "VoicemeeterAPOInfo.h"
+
 #include <algorithm>
+#include <fstream>
 #include <KsMedia.h>
 #include <shellapi.h>
+#include <ShlObj.h>
 #include <TlHelp32.h>
 #include <Winternl.h>
+
 #include "helpers/RegistryHelper.h"
 #include "helpers/StringHelper.h"
-#include "VoicemeeterAPOInfo.h"
 
 using namespace std;
 
-#define voicemeeterKeyPath L"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\VB:Voicemeeter {17359A74-1236-5467}"
-#define voicemeeterWowKeyPath L"HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\VB:Voicemeeter {17359A74-1236-5467}"
+#define voicemeeterKeyPath \
+	L"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\VB:Voicemeeter {17359A74-1236-5467}"
+#define voicemeeterWowKeyPath \
+	L"HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\VB:Voicemeeter {17359A74-1236-5467}"
 #define uninstallStringValueName L"UninstallString"
 static const wchar_t* startupFilename = L"Equalizer APO Voicemeeter Client.lnk";
 static const wchar_t* clientFilename = L"VoicemeeterClient.exe";
 static const wchar_t* voicemeeterClientKeyPath = USER_REGPATH L"\\Voicemeeter Client";
 static const wchar_t* sampleRateValueName = L"sampleRate";
 
-typedef NTSTATUS(NTAPI* pfnNtQueryInformationProcess)(
-	IN HANDLE ProcessHandle,
-	IN PROCESSINFOCLASS ProcessInformationClass,
-	OUT PVOID ProcessInformation,
-	IN ULONG ProcessInformationLength,
-	OUT PULONG ReturnLength OPTIONAL
-	);
+typedef NTSTATUS(NTAPI* pfnNtQueryInformationProcess)(IN HANDLE ProcessHandle,
+	IN PROCESSINFOCLASS ProcessInformationClass, OUT PVOID ProcessInformation, IN ULONG ProcessInformationLength,
+	OUT PULONG ReturnLength OPTIONAL);
 
 void VoicemeeterAPOInfo::prependInfos(vector<shared_ptr<AbstractAPOInfo>>& list)
 {
@@ -62,9 +63,9 @@ void VoicemeeterAPOInfo::prependInfos(vector<shared_ptr<AbstractAPOInfo>>& list)
 		wstring setupFilename = StringHelper::toLowerCase(voicemeeterDirectory.substr(index + 1));
 		long voicemeeterType = 1;
 		if (setupFilename == L"voicemeeterprosetup.exe")
-			voicemeeterType = 2;// banana
+			voicemeeterType = 2; // banana
 		else if (setupFilename == L"voicemeeter8setup.exe")
-			voicemeeterType = 3;// potato
+			voicemeeterType = 3; // potato
 
 		unsigned outputCount;
 		if (voicemeeterType == 3)
@@ -75,24 +76,27 @@ void VoicemeeterAPOInfo::prependInfos(vector<shared_ptr<AbstractAPOInfo>>& list)
 			outputCount = 1;
 
 		bool defaultDevice = false;
-		list.erase(remove_if(list.begin(), list.end(), [&defaultDevice](shared_ptr<AbstractAPOInfo>& info) {
-			if (info->getDeviceName().find(L"VB-Audio VoiceMeeter") != wstring::npos)
-			{
-				if (info->isDefaultDevice())
-					defaultDevice = true;
+		list.erase(remove_if(list.begin(), list.end(),
+					   [&defaultDevice](shared_ptr<AbstractAPOInfo>& info) {
+						   if (info->getDeviceName().find(L"VB-Audio VoiceMeeter") != wstring::npos)
+						   {
+							   if (info->isDefaultDevice())
+								   defaultDevice = true;
 
-				return true;
-			}
+							   return true;
+						   }
 
-			return false;
-			}), list.end());
+						   return false;
+					   }),
+			list.end());
 
 		bool anyInstalled = false;
 		for (unsigned i = 0; i < outputCount; i++)
 		{
 			wstringstream sstream;
 			sstream << "Output A" << (i + 1);
-			shared_ptr<AbstractAPOInfo> info = *list.insert(list.begin() + i, make_shared<VoicemeeterAPOInfo>(sstream.str(), true));
+			shared_ptr<AbstractAPOInfo> info = *list.insert(
+				list.begin() + i, make_shared<VoicemeeterAPOInfo>(sstream.str(), true));
 			if (info->isInstalled())
 				anyInstalled = true;
 		}
@@ -101,7 +105,7 @@ void VoicemeeterAPOInfo::prependInfos(vector<shared_ptr<AbstractAPOInfo>>& list)
 		{
 			for (unsigned i = 0; i < outputCount; i++)
 			{
-				shared_ptr<VoicemeeterAPOInfo>& info = (shared_ptr<VoicemeeterAPOInfo>&)list[i];
+				shared_ptr<VoicemeeterAPOInfo>& info = (shared_ptr<VoicemeeterAPOInfo>&) list[i];
 				if (!anyInstalled || info->isInstalled())
 				{
 					info->defaultDevice = true;
@@ -120,7 +124,8 @@ void VoicemeeterAPOInfo::prependInfos(vector<shared_ptr<AbstractAPOInfo>>& list)
 		int i = 0;
 		for (wstring arg : args)
 		{
-			shared_ptr<AbstractAPOInfo> info = *list.insert(list.begin() + i, make_shared<VoicemeeterAPOInfo>(arg, false));
+			shared_ptr<AbstractAPOInfo> info = *list.insert(
+				list.begin() + i, make_shared<VoicemeeterAPOInfo>(arg, false));
 			i++;
 		}
 	}
@@ -138,8 +143,9 @@ VoicemeeterAPOInfo::VoicemeeterAPOInfo(const wstring& connectionName, bool voice
 	sampleRate = 48000;
 	try
 	{
-		if (RegistryHelper::keyExists(voicemeeterClientKeyPath) && RegistryHelper::valueExists(voicemeeterClientKeyPath, sampleRateValueName))
-			sampleRate = (unsigned)RegistryHelper::readDWORDValue(voicemeeterClientKeyPath, sampleRateValueName);
+		if (RegistryHelper::keyExists(voicemeeterClientKeyPath)
+			&& RegistryHelper::valueExists(voicemeeterClientKeyPath, sampleRateValueName))
+			sampleRate = (unsigned) RegistryHelper::readDWORDValue(voicemeeterClientKeyPath, sampleRateValueName);
 	}
 	catch (RegistryException e)
 	{
@@ -309,13 +315,13 @@ wstring VoicemeeterAPOInfo::getClientPath()
 void VoicemeeterAPOInfo::createLink(const wstring& lnkPath, const wstring& path, const wstring& args)
 {
 	IShellLink* shellLink;
-	HRESULT hr = CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (LPVOID*)&shellLink);
+	HRESULT hr = CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (LPVOID*) &shellLink);
 	if (SUCCEEDED(hr))
 	{
 		shellLink->SetPath(path.c_str());
 		shellLink->SetArguments(args.c_str());
 		IPersistFile* persistFile;
-		hr = shellLink->QueryInterface(IID_IPersistFile, (LPVOID*)&persistFile);
+		hr = shellLink->QueryInterface(IID_IPersistFile, (LPVOID*) &persistFile);
 		if (SUCCEEDED(hr))
 		{
 			hr = persistFile->Save(lnkPath.c_str(), TRUE);
@@ -331,11 +337,11 @@ wstring VoicemeeterAPOInfo::getLinkArgs(const wstring& lnkPath, wstring* path)
 	wstring result;
 
 	IShellLink* shellLink;
-	HRESULT hr = CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (LPVOID*)&shellLink);
+	HRESULT hr = CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (LPVOID*) &shellLink);
 	if (SUCCEEDED(hr))
 	{
 		IPersistFile* persistFile;
-		hr = shellLink->QueryInterface(IID_IPersistFile, (LPVOID*)&persistFile);
+		hr = shellLink->QueryInterface(IID_IPersistFile, (LPVOID*) &persistFile);
 		if (SUCCEEDED(hr))
 		{
 			hr = persistFile->Load(lnkPath.c_str(), STGM_READ);
@@ -421,16 +427,17 @@ void VoicemeeterAPOInfo::ensureVoicemeeterClientRunning()
 	HMODULE module = LoadLibraryW(L"ntdll.dll");
 	if (module == NULL)
 		throw exception("Could not load ntdll.dll");
-	SCOPE_EXIT{FreeLibrary(module); };
+	SCOPE_EXIT(FreeLibrary(module);)
 
-	pfnNtQueryInformationProcess NtQueryInformationProcess = (pfnNtQueryInformationProcess)GetProcAddress(module, "NtQueryInformationProcess");
+	pfnNtQueryInformationProcess NtQueryInformationProcess = (pfnNtQueryInformationProcess) GetProcAddress(
+		module, "NtQueryInformationProcess");
 	if (NtQueryInformationProcess == NULL)
 		throw exception("Function NtQueryInformationProcess not found in ntdll.dll");
 
 	HANDLE snapshotHandle = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 	if (snapshotHandle == INVALID_HANDLE_VALUE)
 		throw exception("Could not take a snapshot of all processes");
-	SCOPE_EXIT{CloseHandle(snapshotHandle); };
+	SCOPE_EXIT(CloseHandle(snapshotHandle);)
 
 	bool matchingProcessExists = false;
 
@@ -441,13 +448,15 @@ void VoicemeeterAPOInfo::ensureVoicemeeterClientRunning()
 	{
 		if (wcscmp(entry.szExeFile, clientFilename) == 0)
 		{
-			HANDLE processHandle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_TERMINATE, FALSE, entry.th32ProcessID);
+			HANDLE processHandle = OpenProcess(
+				PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_TERMINATE, FALSE, entry.th32ProcessID);
 			if (processHandle == INVALID_HANDLE_VALUE)
 				throw exception("Could not open process");
-			SCOPE_EXIT{CloseHandle(processHandle); };
+			SCOPE_EXIT(CloseHandle(processHandle);)
 
 			PROCESS_BASIC_INFORMATION basicInformation;
-			NTSTATUS status = NtQueryInformationProcess(processHandle, ProcessBasicInformation, &basicInformation, sizeof(basicInformation), NULL);
+			NTSTATUS status = NtQueryInformationProcess(
+				processHandle, ProcessBasicInformation, &basicInformation, sizeof(basicInformation), NULL);
 			if (status < 0)
 				throw exception("Could not query process information");
 
@@ -460,8 +469,9 @@ void VoicemeeterAPOInfo::ensureVoicemeeterClientRunning()
 				throw exception("Could not read process parameters from process memory");
 
 			wchar_t* cmdLineBuf = new wchar_t[processParams.CommandLine.Length / sizeof(wchar_t)];
-			SCOPE_EXIT{delete cmdLineBuf; };
-			if (!ReadProcessMemory(processHandle, processParams.CommandLine.Buffer, cmdLineBuf, processParams.CommandLine.Length, NULL))
+			SCOPE_EXIT(delete cmdLineBuf;)
+			if (!ReadProcessMemory(processHandle, processParams.CommandLine.Buffer, cmdLineBuf,
+					processParams.CommandLine.Length, NULL))
 				throw exception("Could not read command line from process memory");
 			wstring cmdLine(cmdLineBuf, processParams.CommandLine.Length / sizeof(wchar_t));
 
@@ -502,7 +512,7 @@ void VoicemeeterAPOInfo::closeProcess(unsigned long processId)
 	HANDLE snapshotHandle = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
 	if (snapshotHandle == INVALID_HANDLE_VALUE)
 		throw exception("Could not take a snapshot of all processes");
-	SCOPE_EXIT{CloseHandle(snapshotHandle); };
+	SCOPE_EXIT(CloseHandle(snapshotHandle);)
 
 	THREADENTRY32 entry;
 	entry.dwSize = sizeof(THREADENTRY32);

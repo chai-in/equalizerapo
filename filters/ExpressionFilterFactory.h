@@ -19,17 +19,18 @@
 
 #pragma once
 
-#include <string>
 #include <mpParser.h>
+#include <string>
 
-#include "IFilterFactory.h"
 #include "IFilter.h"
+#include "IFilterFactory.h"
 
 class ExpressionFilterFactory : public IFilterFactory
 {
 public:
 	void initialize(FilterEngine* engine) override;
-	std::vector<IFilter*> createFilter(const std::wstring& configPath, std::wstring& command, std::wstring& parameters) override;
+	std::vector<IFilter*> createFilter(
+		const std::wstring& configPath, std::wstring& command, std::wstring& parameters) override;
 
 private:
 	mup::ParserX* parser;

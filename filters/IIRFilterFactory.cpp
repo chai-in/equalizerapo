@@ -23,9 +23,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <regex>
 #include <sstream>
 
+#include "helpers/LogHelper.h"
 #include "helpers/MemoryHelper.h"
 #include "helpers/StringHelper.h"
-#include "helpers/LogHelper.h"
 #include "IIRFilter.h"
 #include "IIRFilterFactory.h"
 
@@ -74,7 +74,8 @@ vector<IFilter*> IIRFilterFactory::createFilter(const wstring& configPath, wstri
 							vector<wstring> coefficientStrings = StringHelper::split(coefficientsString, L' ');
 							if (coefficientStrings.size() != (order + 1) * 2)
 							{
-								LogF(L"Invalid number of coefficients. Expected %d coefficients instead of %d", (order + 1) * 2, coefficientStrings.size());
+								LogF(L"Invalid number of coefficients. Expected %d coefficients instead of %d",
+									(order + 1) * 2, coefficientStrings.size());
 							}
 							else
 							{
@@ -94,7 +95,7 @@ vector<IFilter*> IIRFilterFactory::createFilter(const wstring& configPath, wstri
 								TraceF(L"%s", stream.str().c_str());
 
 								void* mem = MemoryHelper::alloc(sizeof(IIRFilter));
-								filter = new(mem) IIRFilter(coefficients);
+								filter = new (mem) IIRFilter(coefficients);
 							}
 						}
 					}

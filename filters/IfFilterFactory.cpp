@@ -18,12 +18,14 @@
 */
 
 #include "stdafx.h"
+
+#include "IfFilterFactory.h"
+
 #include "helpers/LogHelper.h"
 #include "helpers/StringHelper.h"
 #include "parser/RegexFunctions.h"
 #include "parser/RegistryFunctions.h"
 #include "FilterEngine.h"
-#include "IfFilterFactory.h"
 
 using namespace std;
 using namespace mup;
@@ -73,7 +75,8 @@ vector<IFilter*> IfFilterFactory::createFilter(const wstring& configPath, wstrin
 				if (result.GetType() == L'b')
 					TraceF(L"If(%s) evaluated to %s", expression.c_str(), result.ToString().c_str());
 				else
-					TraceF(L"If(%s) evaluated to %s (%s)", expression.c_str(), result.ToString().c_str(), isTrue ? L"true" : L"false");
+					TraceF(L"If(%s) evaluated to %s (%s)", expression.c_str(), result.ToString().c_str(),
+						isTrue ? L"true" : L"false");
 
 				if (isTrue)
 				{
@@ -120,7 +123,8 @@ vector<IFilter*> IfFilterFactory::createFilter(const wstring& configPath, wstrin
 				if (result.GetType() == L'b')
 					TraceF(L"ElseIf(%s) evaluated to %s", expression.c_str(), result.ToString().c_str());
 				else
-					TraceF(L"ElseIf(%s) evaluated to %s (%s)", expression.c_str(), result.ToString().c_str(), isTrue ? L"true" : L"false");
+					TraceF(L"ElseIf(%s) evaluated to %s (%s)", expression.c_str(), result.ToString().c_str(),
+						isTrue ? L"true" : L"false");
 
 				if (isTrue)
 				{
@@ -201,35 +205,30 @@ bool IfFilterFactory::toBoolean(const Value& value)
 	wchar_t type = value.GetType();
 	switch (type)
 	{
-	case 'i':
-		{
-			int i = value.GetInteger();
-			result = (i != 0);
-		}
-		break;
-	case 'f':
-		{
-			double f = value.GetFloat();
-			result = (f != 0.0 && f == f);
-		}
-		break;
-	case 'b':
-		{
-			result = value.GetBool();
-		}
-		break;
-	case 's':
-		{
-			wstring s = value.GetString();
-			result = s.length() > 0 && s != L"false" && s != L"0";
-		}
-		break;
-	case 'm':
-		{
-			Matrix<Value> m = value.GetArray();
-			result = m.GetRows() > 0 && m.GetCols() > 0;
-		}
-		break;
+	case 'i': {
+		int i = value.GetInteger();
+		result = (i != 0);
+	}
+	break;
+	case 'f': {
+		double f = value.GetFloat();
+		result = (f != 0.0 && f == f);
+	}
+	break;
+	case 'b': {
+		result = value.GetBool();
+	}
+	break;
+	case 's': {
+		wstring s = value.GetString();
+		result = s.length() > 0 && s != L"false" && s != L"0";
+	}
+	break;
+	case 'm': {
+		Matrix<Value> m = value.GetArray();
+		result = m.GetRows() > 0 && m.GetCols() > 0;
+	}
+	break;
 	default:
 		result = false;
 		break;

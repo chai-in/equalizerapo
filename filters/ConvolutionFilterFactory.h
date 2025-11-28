@@ -21,11 +21,12 @@
 
 #include <string>
 
-#include "IFilterFactory.h"
 #include "IFilter.h"
+#include "IFilterFactory.h"
 
 class ConvolutionFilterFactory : public IFilterFactory
 {
 public:
-	std::vector<IFilter*> createFilter(const std::wstring& configPath, std::wstring& command, std::wstring& parameters) override;
+	std::vector<IFilter*> createFilter(
+		const std::wstring& configPath, std::wstring& command, std::wstring& parameters) override;
 };

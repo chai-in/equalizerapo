@@ -17,9 +17,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#include "GraphicEQFilterGUIView.h"
+
 #include "Editor/helpers/GUIHelper.h"
 #include "GraphicEQFilterGUIScene.h"
-#include "GraphicEQFilterGUIView.h"
 
 GraphicEQFilterGUIView::GraphicEQFilterGUIView(QWidget* parent)
 	: FrequencyPlotView(parent)
@@ -55,7 +56,7 @@ void GraphicEQFilterGUIView::drawBackground(QPainter* painter, const QRectF& rec
 			path.lineTo(x, y);
 		}
 	}
-    bool dark = GUIHelper::isDarkMode();
-    painter->setPen(dark ? Qt::white : Qt::black);
+	bool dark = GUIHelper::isDarkMode();
+	painter->setPen(dark ? Qt::white : Qt::black);
 	painter->drawPath(path);
 }

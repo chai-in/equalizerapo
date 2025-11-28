@@ -17,6 +17,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+// do not reorder as import order is important for some files
+// clang-format off
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <climits>
@@ -37,3 +39,4 @@
 #include <Ks.h>
 #include <KsMedia.h>
 #include "helpers/ScopeGuard.h"
+// clang-format on

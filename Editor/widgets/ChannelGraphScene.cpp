@@ -17,10 +17,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#include "ChannelGraphScene.h"
+
 #include <QGraphicsItem>
 
 #include "Editor/helpers/GUIHelper.h"
-#include "ChannelGraphScene.h"
 
 ChannelGraphScene::ChannelGraphScene(QWidget* parent)
 	: QGraphicsScene(parent)
