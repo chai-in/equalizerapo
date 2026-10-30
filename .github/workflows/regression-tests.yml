@@ -1,0 +1,22 @@
+name: Regression tests
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  convolution:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Configure regression harness
+        run: cmake -S tests -B build-regression -DENABLE_SANITIZERS=${{ runner.os != 'Windows' && 'ON' || 'OFF' }}
+      - name: Compile production filter and test doubles
+        run: cmake --build build-regression --config Debug
+      - name: Exercise valid and failing impulse responses
+        run: ctest --test-dir build-regression -C Debug --output-on-failure
