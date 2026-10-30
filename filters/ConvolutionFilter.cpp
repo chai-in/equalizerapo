@@ -20,6 +20,8 @@
 #include "stdafx.h"
 
 #include <cmath>
+#include <climits>
+#include <memory>
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #define ENABLE_SNDFILE_WINDOWS_PROTOTYPES 1
@@ -60,7 +62,7 @@ vector<wstring> ConvolutionFilter::initialize(float sampleRate, unsigned maxFram
 #pragma AVRT_CODE_BEGIN
 void ConvolutionFilter::process(float** output, float** input, unsigned frameCount)
 {
-	if (filters == NULL)
+	if (filters == NULL || frameCount == 0)
 		return;
 
 	if (beforeFirstProcess && frameCount != maxFrameCount)
@@ -72,6 +74,10 @@ void ConvolutionFilter::process(float** output, float** input, unsigned frameCou
 
 	// only allow reinitialization before first process call
 	beforeFirstProcess = false;
+
+	// Reopening the impulse response can fail after a device block-size change.
+	if (filters == NULL)
+		return;
 
 	for (unsigned i = 0; i < channelCount; i++)
 	{
@@ -100,58 +106,63 @@ void ConvolutionFilter::cleanup()
 
 void ConvolutionFilter::initializeFilters(unsigned frameCount)
 {
-	SF_INFO info;
-
-	SNDFILE* inFile = sf_wchar_open(filename.c_str(), SFM_READ, &info);
-	if (inFile == NULL)
+	// libHybridConv uses signed int lengths and byte counts for its FFT buffers.
+	if (channelCount == 0 || frameCount == 0 || frameCount > INT_MAX / sizeof(fftwf_complex) - 1)
 	{
-		LogF(L"Error while reading impulse response file: %S", sf_strerror(inFile));
+		LogF(L"Invalid convolution block size or channel count: %u frames, %u channels", frameCount, channelCount);
+		return;
 	}
-	else if (abs(sampleRate - info.samplerate) > 1.0f)
+
+	SF_INFO info = {};
+	unique_ptr<SNDFILE, decltype(&sf_close)> inFile(sf_wchar_open(filename.c_str(), SFM_READ, &info), &sf_close);
+	if (!inFile)
+	{
+		LogF(L"Error while reading impulse response file: %S", sf_strerror(NULL));
+		return;
+	}
+	if (abs(sampleRate - info.samplerate) > 1.0f)
 	{
 		LogF(L"Impulse response sample rate (%d Hz) does not match device sample rate (%f Hz)", info.samplerate,
 			sampleRate);
+		return;
 	}
-	else
+	if (info.channels <= 0 || info.frames <= 0 || info.frames > INT_MAX - frameCount
+		|| static_cast<unsigned long long>(info.frames) > vector<float>().max_size() / info.channels)
 	{
-		TraceF(L"Convolving using impulse response file %s", filename.c_str());
-		unsigned fileChannelCount = info.channels;
-		unsigned fileFrameCount = (unsigned) info.frames;
+		LogF(L"Invalid or oversized impulse response: %s", filename.c_str());
+		return;
+	}
 
-		float* interleavedBuf = new float[fileFrameCount * fileChannelCount];
+	TraceF(L"Convolving using impulse response file %s", filename.c_str());
+	unsigned fileChannelCount = (unsigned) info.channels;
+	unsigned fileFrameCount = (unsigned) info.frames;
+	vector<float> interleavedBuf(static_cast<size_t>(fileFrameCount) * fileChannelCount);
 
-		sf_count_t numRead = 0;
-		while (numRead < fileFrameCount)
-			numRead += sf_readf_float(inFile, interleavedBuf + numRead * fileChannelCount, fileFrameCount - numRead);
-
-		sf_close(inFile);
-		inFile = NULL;
-
-		float** bufs = new float*[fileChannelCount];
-		for (unsigned i = 0; i < fileChannelCount; i++)
+	sf_count_t numRead = 0;
+	while (numRead < info.frames)
+	{
+		sf_count_t read = sf_readf_float(inFile.get(),
+			interleavedBuf.data() + static_cast<size_t>(numRead) * fileChannelCount, info.frames - numRead);
+		if (read <= 0 || read > info.frames - numRead)
 		{
-			float* buf = new float[fileFrameCount];
-			float* p = interleavedBuf + i;
-			for (unsigned j = 0; j < fileFrameCount; j++)
-			{
-				buf[j] = p[j * fileChannelCount];
-			}
-
-			bufs[i] = buf;
+			LogF(L"Incomplete impulse response file: %s", filename.c_str());
+			return;
 		}
+		numRead += read;
+	}
+	inFile.reset();
 
-		fftwf_make_planner_thread_safe();
-		filters = (HConvSingle*) MemoryHelper::alloc(sizeof(HConvSingle) * channelCount);
-		for (unsigned i = 0; i < channelCount; i++)
-		{
-			hcInitSingle(&filters[i], bufs[i % fileChannelCount], fileFrameCount, frameCount, 1);
-		}
+	vector<vector<float>> bufs(fileChannelCount, vector<float>(fileFrameCount));
+	for (unsigned i = 0; i < fileChannelCount; i++)
+	{
+		for (unsigned j = 0; j < fileFrameCount; j++)
+			bufs[i][j] = interleavedBuf[static_cast<size_t>(j) * fileChannelCount + i];
+	}
 
-		for (unsigned i = 0; i < fileChannelCount; i++)
-		{
-			delete[] bufs[i];
-		}
-		delete bufs;
-		delete interleavedBuf;
+	fftwf_make_planner_thread_safe();
+	filters = (HConvSingle*) MemoryHelper::alloc(sizeof(HConvSingle) * channelCount);
+	for (unsigned i = 0; i < channelCount; i++)
+	{
+		hcInitSingle(&filters[i], bufs[i % fileChannelCount].data(), fileFrameCount, frameCount, 1);
 	}
 }
